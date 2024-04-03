@@ -54,12 +54,6 @@ const PASSKEY_SERVER_URL =
 
 const CHAIN = polygonMumbai;
 
-const contractAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
-const contractABI = parseAbi([
-  "function mint(address _to) public",
-  "function balanceOf(address owner) external view returns (uint256 balance)",
-]);
-
 const usdcContractAddress = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
 
 const usdcContractABI = parseAbi([
@@ -129,7 +123,7 @@ export default function Home() {
     );
     setSessionData("sessionKey", serializedSessionKey);
     setIsCreatingKey(false);
-    setStep(2);
+    setStep(3);
   };
 
   const createAccountAndClient = async (passkeyValidator: any) => {
@@ -363,18 +357,18 @@ export default function Home() {
             <div>
               <Card>
                 <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  Onboarding Buyer
+                  Onboarding
                 </h5>
                 <ol className="mb-4 items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0 rtl:space-x-reverse">
                   <OnboardingStep
-                    title="Create a Session Key"
-                    description="Click button / confirm with passkey to create a wallet"
+                    title="Fund your wallet with USDC"
+                    description="Transfer your USDC to your wallet"
                     step="1"
                     active={step === 1}
                   />
                   <OnboardingStep
-                    title="Fund with USDC"
-                    description="Transfer your USDC to your wallet"
+                    title="Grant permission to spend USDC"
+                    description="Click button / confirm with passkey to enable user's sender wallet"
                     step="2"
                     active={step === 2}
                   />
@@ -385,7 +379,7 @@ export default function Home() {
                     active={step === 3}
                   />
                 </ol>
-                {step === 1 && (
+                {step === 2 && (
                   <div>
                     <Button
                       onClick={providePermissions}
@@ -396,15 +390,15 @@ export default function Home() {
                       ) : (
                         <HiOutlinePlus className="h-5 w-5 mr-2" />
                       )}
-                      Create a session key
+                      Enable Sender Wallet
                     </Button>
                     <span className="text-sm">
-                      * This gives us a permission to send USDC to specific
-                      wallet
+                      * This action gives us a permission to send USDC to
+                      specific wallet
                     </span>
                   </div>
                 )}
-                {step === 2 && (
+                {step === 1 && (
                   <>
                     <div className="mb-2">
                       <p className="my-2">Your Address (Polygon Mumbai)</p>
@@ -428,7 +422,7 @@ export default function Home() {
                           <HiExternalLink className="ml-2 w-5 h-5" />
                         </button>
                       </div>
-                      <Button className="mt-4" onClick={() => setStep(3)}>
+                      <Button className="mt-4" onClick={() => setStep(2)}>
                         Confirm
                       </Button>
                     </div>
