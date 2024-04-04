@@ -1,12 +1,6 @@
 "use client";
 
-import Link from "next/link";
-
-import {
-  createKernelAccount,
-  createKernelAccountClient,
-  createZeroDevPaymasterClient,
-} from "@zerodev/sdk";
+import { createKernelAccount } from "@zerodev/sdk";
 import {
   createPasskeyValidator,
   getPasskeyValidator,
@@ -14,196 +8,43 @@ import {
 import {
   signerToSessionKeyValidator,
   serializeSessionKeyAccount,
-  deserializeSessionKeyAccount,
   oneAddress,
 } from "@zerodev/session-key";
 
-import { bundlerActions } from "permissionless";
 import React, { useEffect, useState } from "react";
-import { createPublicClient, http, parseAbi, encodeFunctionData } from "viem";
-import { polygonMumbai, sepolia } from "viem/chains";
+import { createPublicClient, http } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import Image from "next/image";
 
-import { Badge, Button, Card, Kbd } from "flowbite-react";
-import Sidebar from "@/src/Sidebar";
+import { Button, Card, Kbd } from "flowbite-react";
+import Sidebar from "@/src/common/components/Sidebar";
 import { AiOutlineLoading } from "react-icons/ai";
 import { HiMiniArrowRightOnRectangle, HiMiniUserPlus } from "react-icons/hi2";
-import { HiClipboardCopy, HiExternalLink, HiOutlinePlus } from "react-icons/hi";
-
-export const setSessionData = async (key: string, data: string) => {
-  if (key) {
-    window["localStorage"].setItem(key, data);
-  } else {
-    setSessionData(key, data);
-  }
-};
-
-export const getSessionData = (key: string): any => {
-  const storageData = window["localStorage"].getItem(key) || "";
-  return storageData;
-};
-
-// POLYGON
-const BUNDLER_URL =
-  "https://rpc.zerodev.app/api/v2/bundler/b2d846e8-8201-4a8d-a01c-81c086532660";
-const PAYMASTER_URL =
-  "https://rpc.zerodev.app/api/v2/paymaster/b2d846e8-8201-4a8d-a01c-81c086532660";
-const PASSKEY_SERVER_URL =
-  "https://passkeys.zerodev.app/api/v3/b2d846e8-8201-4a8d-a01c-81c086532660";
-
-const CHAIN = polygonMumbai;
-
-const usdcContractAddress = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
-
-const usdcContractABI = parseAbi([
-  "function transfer(address recipient, uint256 amount)",
-]);
-
-const sessionPrivateKey = generatePrivateKey();
-const sessionKeySigner = privateKeyToAccount(sessionPrivateKey);
+import { HiExternalLink, HiOutlinePlus } from "react-icons/hi";
+import {
+  BUNDLER_URL,
+  PASSKEY_SERVER_URL,
+  USDC_CONTRACT_ADDRESS,
+  USDC_CONTRACT_ABI,
+} from "@/src/common/lib/constant";
+import { setSessionData } from "@/src/common/lib/utils";
+import OnboardingStep from "./components/OnboardingStep";
 
 const publicClient = createPublicClient({
   transport: http(BUNDLER_URL),
 });
 
-let kernelAccount: any;
-let kernelClient: any;
-
-let sessionKeyAccount: any;
-let passkeyValidatorLogin: any;
+let passkeyValidator: any;
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [username, setUsername] = useState("");
   const [step, setStep] = useState(1);
-  const [account, setAccount] = useState();
+  const [accountAddress, setAccountAddress] = useState("");
 
   const [isCreatingKey, setIsCreatingKey] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  const providePermissions = async () => {
-    setIsCreatingKey(true);
-    const sessionKeyValidator = await signerToSessionKeyValidator(
-      publicClient,
-      {
-        signer: sessionKeySigner,
-        validatorData: {
-          paymaster: oneAddress,
-          permissions: [
-            {
-              target: usdcContractAddress,
-              // Maximum value that can be transferred.  In this case we
-              // set it to zero so that no value transfer is possible.
-              valueLimit: BigInt(100000000),
-              // Contract abi
-              abi: usdcContractABI,
-              // Function name
-              functionName: "transfer",
-              // An array of conditions, each corresponding to an argument for
-              // the function.
-              args: [null, null],
-            },
-          ],
-        },
-      }
-    );
-
-    const sessionKeyAccount = await createKernelAccount(publicClient, {
-      plugins: {
-        sudo: passkeyValidatorLogin,
-        regular: sessionKeyValidator,
-      },
-    });
-
-    const serializedSessionKey = await serializeSessionKeyAccount(
-      sessionKeyAccount,
-      sessionPrivateKey
-    );
-    setSessionData("sessionKey", serializedSessionKey);
-    setIsCreatingKey(false);
-    setStep(3);
-  };
-
-  const createAccountAndClient = async (passkeyValidator: any) => {
-    const sessionKeyValidator = await signerToSessionKeyValidator(
-      publicClient,
-      {
-        signer: sessionKeySigner,
-        validatorData: {
-          paymaster: oneAddress,
-          permissions: [
-            {
-              target: usdcContractAddress,
-              // Maximum value that can be transferred.  In this case we
-              // set it to zero so that no value transfer is possible.
-              valueLimit: BigInt(100000000),
-              // Contract abi
-              abi: usdcContractABI,
-              // Function name
-              functionName: "transfer",
-              // An array of conditions, each corresponding to an argument for
-              // the function.
-              args: [null, null],
-            },
-          ],
-        },
-      }
-    );
-
-    sessionKeyAccount = await createKernelAccount(publicClient, {
-      plugins: {
-        sudo: passkeyValidator,
-        regular: sessionKeyValidator,
-      },
-    });
-
-    kernelClient = createKernelAccountClient({
-      account: sessionKeyAccount,
-      chain: CHAIN,
-      transport: http(BUNDLER_URL),
-      sponsorUserOperation: async ({ userOperation }) => {
-        const zerodevPaymaster = createZeroDevPaymasterClient({
-          chain: CHAIN,
-          transport: http(PAYMASTER_URL),
-        });
-        return zerodevPaymaster.sponsorUserOperation({
-          userOperation,
-        });
-      },
-    });
-
-    setAccount(sessionKeyAccount);
-  };
-
-  // Function to be called when "Register" is clicked
-  const handleRegister = async () => {
-    setIsRegistering(true);
-
-    const passkeyValidator = await createPasskeyValidator(publicClient, {
-      passkeyName: username,
-      passkeyServerUrl: PASSKEY_SERVER_URL,
-    });
-
-    await createAccountAndClient(passkeyValidator);
-
-    setIsRegistering(false);
-  };
-
-  const handleLogin = async () => {
-    setIsLoggingIn(true);
-
-    const passkeyValidator = await getPasskeyValidator(publicClient, {
-      passkeyServerUrl: PASSKEY_SERVER_URL,
-    });
-
-    await createAccountAndClient(passkeyValidator);
-
-    passkeyValidatorLogin = passkeyValidator;
-
-    setIsLoggingIn(false);
-  };
 
   useEffect(() => {
     setMounted(true);
@@ -211,35 +52,91 @@ export default function Home() {
 
   if (!mounted) return <></>;
 
-  // Spinner component for visual feedback during loading states
-  const Spinner = () => (
-    <svg
-      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      ></circle>
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      ></path>
-    </svg>
-  );
+  /**
+   * Create a session key that allows us to transfer USDC from this wallet
+   * https://docs.zerodev.app/sdk/plugins/session-keys
+   */
+  const createSessionKey = async () => {
+    setIsCreatingKey(true);
 
-  if (!account?.address) {
+    const sessionPrivateKey = generatePrivateKey(); // Not sure why this needs to be generated for this steps
+    const sessionKeySigner = privateKeyToAccount(sessionPrivateKey);
+    const sessionKeyValidator = await signerToSessionKeyValidator(
+      publicClient,
+      {
+        signer: sessionKeySigner,
+        validatorData: {
+          paymaster: oneAddress,
+          permissions: [
+            {
+              target: USDC_CONTRACT_ADDRESS,
+              valueLimit: BigInt(100000000),
+              abi: USDC_CONTRACT_ABI,
+              functionName: "transfer",
+              args: [null, null],
+            },
+          ],
+        },
+      }
+    );
+
+    // Create a Kernel Account with the session key validator
+    const sessionKeyAccount = await createKernelAccount(publicClient, {
+      plugins: {
+        sudo: passkeyValidator,
+        regular: sessionKeyValidator,
+      },
+    });
+
+    // Serialize the session key and save it to the local storage for future use
+    const serializedSessionKey = await serializeSessionKeyAccount(
+      sessionKeyAccount,
+      sessionPrivateKey
+    );
+    setSessionData("sessionKey", serializedSessionKey);
+
+    setIsCreatingKey(false);
+    setStep(3);
+  };
+
+  const createAccount = async (passkeyValidator: any) => {
+    const kernelAccount = await createKernelAccount(publicClient, {
+      plugins: {
+        sudo: passkeyValidator,
+      },
+    });
+    setAccountAddress(kernelAccount.address);
+  };
+
+  const handleRegister = async () => {
+    setIsRegistering(true);
+
+    passkeyValidator = await createPasskeyValidator(publicClient, {
+      passkeyName: username,
+      passkeyServerUrl: PASSKEY_SERVER_URL,
+    });
+    await createAccount(passkeyValidator);
+
+    setIsRegistering(false);
+  };
+
+  const handleLogin = async () => {
+    setIsLoggingIn(true);
+
+    passkeyValidator = await getPasskeyValidator(publicClient, {
+      passkeyServerUrl: PASSKEY_SERVER_URL,
+    });
+    await createAccount(passkeyValidator);
+
+    setIsLoggingIn(false);
+  };
+
+  // Sign Up
+  if (!accountAddress) {
     return (
       <main className="flex items-center justify-center min-h-screen px-4 py-24">
-        <div className="w-full max-w-lg mx-auto">
-          <h1 className="text-4xl font-semibold text-center mb-12">
+        <div className="w-full max-w-xl mx-auto">
+          <h2 className="text-4xl font-semibold text-center mb-12">
             <Image
               src="/images/logo_white.svg"
               loading="lazy"
@@ -247,31 +144,15 @@ export default function Home() {
               width="160"
               height="40"
             />
-          </h1>
+          </h2>
 
           <div className="flex gap-6">
             <div className="w-1/2 flex flex-col gap-2">
               <h2 className="text-white">Register</h2>
-              {/* Account Address Label */}
-              {account?.address && (
-                <div className="text-center mb-4">
-                  Email Address:{" "}
-                  <a
-                    href={`https://jiffyscan.xyz/account/${account?.address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    {" "}
-                    {account?.address}{" "}
-                  </a>
-                </div>
-              )}
-
               {/* Input Box */}
               <input
-                type="email"
-                placeholder="Email Address"
+                type="text"
+                placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="p-2 text-black border border-gray-300 rounded-lg w-full"
@@ -310,43 +191,7 @@ export default function Home() {
     );
   }
 
-  function OnboardingStep({
-    title,
-    description,
-    step,
-    active,
-  }: {
-    title: string;
-    description: string;
-    step: string;
-    active: boolean;
-  }) {
-    if (active) {
-      return (
-        <li className="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
-          <span className="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
-            {step}
-          </span>
-          <span>
-            <h3 className="font-medium leading-tight">{title}</h3>
-            <p className="text-sm">{description}</p>
-          </span>
-        </li>
-      );
-    }
-    return (
-      <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
-        <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
-          {step}
-        </span>
-        <span>
-          <h3 className="font-medium leading-tight">{title}</h3>
-          <p className="text-sm">{description}</p>
-        </span>
-      </li>
-    );
-  }
-
+  // Logged in
   return (
     <div>
       <div className="flex h-full p-1">
@@ -381,20 +226,16 @@ export default function Home() {
                 </ol>
                 {step === 2 && (
                   <div>
-                    <Button
-                      onClick={providePermissions}
-                      disabled={isCreatingKey}
-                    >
+                    <Button onClick={createSessionKey} disabled={isCreatingKey}>
                       {isCreatingKey ? (
                         <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
                       ) : (
                         <HiOutlinePlus className="h-5 w-5 mr-2" />
                       )}
-                      Enable Sender Wallet
+                      Create a session key
                     </Button>
                     <span className="text-sm">
-                      * This action gives us a permission to send USDC to
-                      specific wallet
+                      * This action gives us a permission to transfer USDC
                     </span>
                   </div>
                 )}
@@ -406,15 +247,15 @@ export default function Home() {
                         <Kbd
                           className="cursor-pointer"
                           onClick={() => {
-                            navigator.clipboard.writeText(account.address);
+                            navigator.clipboard.writeText(accountAddress);
                           }}
                         >
-                          {account.address}
+                          {accountAddress}
                         </Kbd>
                         <button
                           onClick={() => {
                             window.open(
-                              `https://jiffyscan.xyz/account/${account.address}`,
+                              `https://jiffyscan.xyz/account/${accountAddress}`,
                               "_blank"
                             );
                           }}
