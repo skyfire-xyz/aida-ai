@@ -15,3 +15,6 @@ export const USDC_CONTRACT_ABI = parseAbi([
   "function transfer(address recipient, uint256 amount)",
 ]);
 export const RECEIVER_ADDRESS = "0x5C886A06B96F5Eb1f5cC62EFeE44DF4ad89b136e";
+
+export const BACKEND_API_URL =
+  process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:3000/";
