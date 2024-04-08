@@ -10,6 +10,7 @@
         "examplePrompts": {
             "search": "<b>Search dataset</b>: baseball",
             "image": "<b>Random image</b>: happy baby",
+            "generateImage": "<b>Generate image</b>: baby panda",
             "other": "Other prompts"
         },
         "aiPrompt": {
