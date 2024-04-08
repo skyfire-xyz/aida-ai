@@ -165,6 +165,47 @@ export default function ChatPane(props: any) {
           setBotThinking(false);
         }
       } else if (
+        inputText.toLocaleLowerCase().includes("generate gif") ||
+        inputText.toLocaleLowerCase().includes("generate meme") ||
+        inputText.toLocaleLowerCase().includes("generate image")
+      ) {
+        ///////////////////////////////////////////////////////////
+        // Generate Image Request
+        ///////////////////////////////////////////////////////////
+        let searchTerm = "";
+
+        let match = inputText.match(/generate image:(.+)/i);
+        if (!match) match = inputText.match(/generate gif:(.+)/i);
+        if (!match) match = inputText.match(/generate meme:(.+)/i);
+
+        if (match) {
+          searchTerm = match[1];
+        }
+
+        if (!searchTerm) {
+          addBotResponseMessage(t("aiPrompt.errorMessage"));
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+          return;
+        }
+
+        // Generate Image API
+        try {
+          setBotThinking(true);
+          const response = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
+            prompt: searchTerm.trim(),
+          });
+          addBotResponseMessage(
+            searchTerm.trim(),
+            response.data.body
+          );
+          processProtocolLogs(response?.data);
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+        } catch {
+          setBotThinking(false);
+        }
+      } else if (
         inputText.toLocaleLowerCase().includes("random gif") ||
         inputText.toLocaleLowerCase().includes("random meme") ||
         inputText.toLocaleLowerCase().includes("random image")
