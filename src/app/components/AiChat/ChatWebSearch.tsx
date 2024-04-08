@@ -1,5 +1,6 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
+import { Card } from "flowbite-react";
 
 interface ChatWebSearchProps {
   direction: "left" | "right";
@@ -24,32 +25,23 @@ function ChatWebSearch({
 
   const renderResults = () => {
     return results?.map((result, index) => (
-      <div key={index}>
-        <a href={result.link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>
-          <h3>{result.title}</h3>
-        </a>
-        <p style={{ fontStyle: 'italic' }}>{result.snippet}</p>
-        <br />
-      </div>
+      <Card
+        key={index}
+        className="max-w-lg mb-2 cursor-pointer"
+        onClick={() =>
+          window.open(result.link, "_blank", "noopener,noreferrer")
+        }
+        horizontal
+      >
+        <h5 className="font-bold tracking-tight text-gray-900 dark:text-white">
+          {result.title}
+        </h5>
+        <p className="font-normal text-gray-700 dark:text-gray-400">
+          {result.snippet}
+        </p>
+      </Card>
     ));
   };
-
-  if (direction === "right") {
-    return (
-      <div className="flex justify-end mb-4">
-        <div className="mr-2 py-3 px-4 bg-gray-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl">
-          <article className="text-white prose">
-            <Markdown>{textMessage}</Markdown>
-          </article>
-        </div>
-        <img
-          src={avatarUrl}
-          className="object-cover h-12 w-12 rounded-full"
-          alt=""
-        />
-      </div>
-    );
-  }
 
   return (
     <div className={`flex justify-start mb-4`}>
@@ -58,7 +50,7 @@ function ChatWebSearch({
         className="object-cover h-12 w-12 rounded-full"
         alt=""
       />
-      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl md:max-w-[400px] max-w-[calc(100%-80px)]">
+      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl max-w-[calc(100%-80px)]">
         <article className="text-white prose">
           <Markdown>{textMessage}</Markdown>
         </article>
