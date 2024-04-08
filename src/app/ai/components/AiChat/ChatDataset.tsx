@@ -1,6 +1,5 @@
-// import DownloadIcon from "@mui/icons-material/Download";
-// import AnalyticsIcon from "@mui/icons-material/Analytics";
-// import { Button, IconButton } from "@mui/material";
+import { TiZoom } from "react-icons/ti";
+import { FaFileDownload } from "react-icons/fa";
 import axios from "axios";
 import fileDownload from "js-file-download";
 import { useState } from "react";
@@ -91,24 +90,28 @@ function ChatDataset({
                   </div>
                 </div>
                 <div className="flex gap-1 mr-2">
-                  {/* <IconButton>
-                    <AnalyticsIcon
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        await onBeforeAnalyze(data);
-                        await onAnalyze(data.ref);
-                      }}
-                    />
-                  </IconButton>
-                  <IconButton
+                  <Button
+                    color="light"
+                    className="h-6 w-6 flex items-center"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      await onBeforeAnalyze(data);
+                      await onAnalyze(data.ref);
+                    }}
+                  >
+                    <TiZoom className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    color="light"
+                    className="h-6 w-6 flex items-center"
                     onClick={async (e) => {
                       e.preventDefault();
                       const filename = await getDataset(data);
                       const res = await downloadDataset(filename);
                     }}
                   >
-                    <DownloadIcon />
-                  </IconButton> */}
+                    <FaFileDownload />
+                  </Button>
                 </div>
               </li>
             );
@@ -116,8 +119,7 @@ function ChatDataset({
           <div className="flex justify-center">
             {!showMore && (
               <Button
-                // variant="contained"
-                // color="primary"
+                color="light"
                 onClick={() => {
                   setShowMore(true);
                 }}

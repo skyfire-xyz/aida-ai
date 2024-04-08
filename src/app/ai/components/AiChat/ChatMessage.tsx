@@ -59,9 +59,7 @@ function ChatMessage({
             />
             <div className="mt-2 flex mx-auto gap-2 justify-center">
               <Button
-                // variant="contained"
-                // color="primary"
-                // startIcon={<DownloadIcon />}
+                color="light"
                 onClick={() => {
                   fileDownload(contentImageUrl, textMessage + ".png");
                 }}

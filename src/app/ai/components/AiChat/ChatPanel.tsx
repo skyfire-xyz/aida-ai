@@ -1,18 +1,6 @@
 import axios from "axios";
-// import {
-//   Button,
-//   Dialog,
-//   DialogActions,
-//   DialogContent,
-//   DialogTitle,
-//   InputAdornment,
-//   TextField,
-//   Link,
-// } from '@mui/material';
-// import PaidIcon from '@mui/icons-material/Paid';
-// import InfoIcon from '@mui/icons-material/Info';
-// import IconButton from '@mui/material/IconButton';
-// import SendIcon from '@mui/icons-material/Send';
+import { HiOutlineCurrencyDollar } from "react-icons/hi2";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 import ChatMessage from "./ChatMessage";
 import ChatDataset from "./ChatDataset";
@@ -21,9 +9,10 @@ import BouncingDotsLoader from "./BouncingLoader";
 import { getLogoAIData, scrollToBottom } from "./utils";
 import { ChatMessageType, PaymentType } from "./types";
 import ExamplePrompts from "./ExamplePropts";
-import { TextInput } from "flowbite-react";
+import { Button, Modal, TextInput } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
@@ -332,17 +321,16 @@ export default function ChatPane(props: any) {
         )}
       </div>
       <div className="md:pt-5 py-5 px-3 flex-none pt-1">
-        {/* <div className="flex justify-end md:hidden mb-2">
-          <IconButton
-            className="p-1"
+        <div className="flex justify-end md:hidden mb-2">
+          <HiOutlineCurrencyDollar
+            className="w-5 h-5"
             onClick={() => setShowMicroPayments(true)}
-          >
-            <PaidIcon />
-          </IconButton>
-          <IconButton className="p-1" onClick={() => setShowExamples(true)}>
-            <InfoIcon />
-          </IconButton>
-        </div> */}
+          />
+          <IoIosInformationCircleOutline
+            className="w-5 h-5"
+            onClick={() => setShowExamples(true)}
+          />
+        </div>
         <TextInput
           className="w-full rounded-xl bg-[#f7f9fa]"
           placeholder={t("page.chatPlaceholder")}
@@ -377,41 +365,32 @@ export default function ChatPane(props: any) {
           onKeyDown={handleEnter}
         /> */}
       </div>
-      {/* <Dialog
-        open={showMicroPayments}
+      <Modal
+        show={showMicroPayments}
         onClose={() => setShowMicroPayments(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
+        <Modal.Header>
           <Link href="https://mumbai.polygonscan.com/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns">
             {t("page.titlePaymentLogs")}
           </Link>
-        </DialogTitle>
-        <DialogContent>
+        </Modal.Header>
+        <Modal.Body>
           <ProtocolLogsComp />
-        </DialogContent>
-        <DialogActions>
+        </Modal.Body>
+        <Modal.Footer>
           <Button onClick={() => setShowMicroPayments(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+        </Modal.Footer>
+      </Modal>
 
-      <Dialog
-        open={showExamples}
-        onClose={() => setShowExamples(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {t("page.titleExamplePrompts")}
-        </DialogTitle>
-        <DialogContent>
+      <Modal show={showExamples} onClose={() => setShowExamples(false)}>
+        <Modal.Header>{t("page.titleExamplePrompts")}</Modal.Header>
+        <Modal.Body>
           <ExamplePrompts />
-        </DialogContent>
-        <DialogActions>
+        </Modal.Body>
+        <Modal.Footer>
           <Button onClick={() => setShowExamples(false)}>Close</Button>
-        </DialogActions>
-      </Dialog> */}
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

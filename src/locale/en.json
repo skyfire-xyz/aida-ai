@@ -16,17 +16,17 @@
             "": "",
             "defaultGreeting": "Hello! How can I assist you today?",
             "errorMessage": "Sorry, something went wrong.",
-            "textAnalyzeDataset": "Analyze dataset: {{ dataset }}",
-            "textDownloadDataset":"Download dataset: {{ dataset }}",
+            "textAnalyzeDataset": "Analyze dataset: {dataset}",
+            "textDownloadDataset":"Download dataset: {dataset}",
             "textVisitAdminDashboard": "Visit [admin dashboard](/admin) to join network",
             "btnDownloadImage": "Download Image",
             "btnShowMore": "Show More"
     
         },
         "paymentLogs": {
-            "textQuote": "{{ destination }} quote {{ amount }}",
-            "textQuotePaidTo": "{{ amount }}{{ currency }} paid to {{ destination }}",
-            "textQuoteRejected": "Quote rejected. {{ errorMessage }}"
+            "textQuote": "{destination} quote {amount}",
+            "textQuotePaidTo": "{amount}{currency} paid to {destination}",
+            "textQuoteRejected": "Quote rejected. {errorMessage}"
         }
     }
 }
