@@ -14,6 +14,7 @@ import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ChatWebSearch from "./ChatWebSearch";
+import ChatVideoSearch from "./ChatVideoSearch";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
@@ -39,7 +40,7 @@ export default function ChatPane(props: any) {
   const addBotResponseMessage = (
     prompt: string,
     data?: any,
-    type?: "chat" | "dataset" | "websearch"
+    type?: "chat" | "dataset" | "websearch" | "videosearch"
   ) => {
     chatMessages.current = [
       ...chatMessages.current,
@@ -190,6 +191,37 @@ export default function ChatPane(props: any) {
             prompt: searchTerm.trim(),
           });
           addBotResponseMessage(searchTerm, response.data.results, "websearch");
+          processProtocolLogs(response?.data);
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+        } catch {
+          setBotThinking(false);
+        }
+      } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
+        ///////////////////////////////////////////////////////////
+        // Video Search Request
+        ///////////////////////////////////////////////////////////
+        let searchTerm = "";
+
+        const match = inputText.match(/videosearch:(.+)/i);
+        if (match) {
+          searchTerm = match[1];
+        }
+
+        if (!searchTerm) {
+          addBotResponseMessage(t("aiPrompt.errorMessage"));
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+          return;
+        }
+
+        // Video Search API
+        try {
+          setBotThinking(true);
+          const response = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
+            prompt: searchTerm.trim(),
+          });
+          addBotResponseMessage(searchTerm, response.data.results, "videosearch");
           processProtocolLogs(response?.data);
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
           setBotThinking(false);
@@ -378,6 +410,16 @@ export default function ChatPane(props: any) {
           } else if (message.type === "websearch") {
             return (
               <ChatWebSearch
+                key={index}
+                direction={message.direction}
+                avatarUrl={message.avatarUrl}
+                textMessage={message.textMessage}
+                results={message.data}
+              />
+            );
+          } else if (message.type === "videosearch") {
+            return (
+              <ChatVideoSearch
                 key={index}
                 direction={message.direction}
                 avatarUrl={message.avatarUrl}
