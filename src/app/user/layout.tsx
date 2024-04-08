@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "@/src/globals.css";
 
 export const metadata: Metadata = {
-  title: "Aida.AI - Powered by Supermojo Payments",
+  title: "AA Wallet(Zerodev) with passkey authentication",
   description: "",
 };
 

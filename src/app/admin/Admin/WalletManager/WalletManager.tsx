@@ -1,25 +1,18 @@
-import {
-  Alert,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Snackbar,
-  Typography,
-} from "@mui/material";
+"use client";
+
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SendIcon from "@mui/icons-material/Send";
 import DialogFundTransfer from "./DialogFundTransfer";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
+import { Button, Card, Label, Select, Toast } from "flowbite-react";
+import { IoMdSend } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
+import { MdLoop } from "react-icons/md";
+import { IoIosWallet } from "react-icons/io";
+import UserOperation from "./UserOperation";
 
 interface IFormInput {
   service: string;
@@ -117,20 +110,29 @@ export default function WalletManager() {
         price: Number(data.price) * 1000000,
       });
       setWalletAdded(true);
-      setOpenInfo("");
+
       setCreatingWallet(false);
       setTimeout(() => {
         setWalletAdded(false);
       }, 3000);
+
+      setOpenInfo("");
       setOpenSuccess("Successfully created wallet");
       getWallets();
     } catch {
-      setOpenInfo("");
+      setTimeout(() => {
+        setOpenInfo("");
+      }, 3000);
       setCreatingWallet(false);
       setOpenError(
         "Sorry, the blockchain network is slow right now, please try again"
       );
     }
+
+    setTimeout(() => {
+      setOpenSuccess("");
+      setOpenError("");
+    }, 5000);
   };
 
   useEffect(() => {
@@ -141,30 +143,24 @@ export default function WalletManager() {
     <>
       <div className="flex flex-col p-20 md:min-w-[640px] min-w-auto">
         <div className="w-full max-w-lg">
-          <Typography variant="h3">Wallet List</Typography>
+          <h3 className="text-3xl">Wallet List</h3>
         </div>
         <div className="mt-5">
-          <FormControl fullWidth>
-            <Select
-              size="small"
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={walletType}
-              label="Wallet Type"
-              onChange={(e) => {
-                setWalletType(e.target.value as WalletType);
-              }}
-            >
-              {walletTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Label htmlFor="wallet-type">Wallet Type</Label>
+          <Select
+            value={walletType}
+            id="wallet-type"
+            onChange={(e) => {
+              setWalletType(e.target.value as WalletType);
+            }}
+          >
+            {walletTypes.map((type) => (
+              <option key={type}>{type}</option>
+            ))}
+          </Select>
         </div>
         <div ref={walletList} className="mt-8 overflow-scroll">
-          {!wallets.length && <Typography>No wallets found</Typography>}
+          {!wallets.length && <p>No wallets found</p>}
           {wallets.map((wallet: any, index) => {
             const reservedWalletInfo = reservedWallets[walletType].find((w) => {
               return w.address === wallet.address;
@@ -173,60 +169,52 @@ export default function WalletManager() {
             return (
               <Card
                 key={index}
-                sx={{ maxWidth: 700 }}
                 className={`mb-4 ${
                   walletAdded
                     ? "first:bg-[rgb(229,246,253)]"
                     : "first:bg-[#ffffff]"
                 } transition-all`}
               >
-                <CardContent>
-                  <div className="whitespace-nowrap">
-                    <AccountBalanceWalletIcon className="mr-2" />
-                    <b>
-                      <Link
-                        href={`https://mumbai.polygonscan.com/address/${wallet.address}#tokentxns`}
-                      >
-                        {wallet.address}
-                      </Link>
-                    </b>
-                  </div>
-                  {reservedWalletInfo?.name && (
-                    <div>
-                      <b>Name: </b>
-                      {reservedWalletInfo.name}
-                    </div>
-                  )}
+                <div>
+                  <Link
+                    className=" font-bold"
+                    href={`https://mumbai.polygonscan.com/address/${wallet.address}#tokentxns`}
+                  >
+                    {wallet.address}
+                  </Link>
+                </div>
+                {reservedWalletInfo?.name && (
                   <div>
-                    <b>Network: </b>
-                    {wallet.network}
+                    <b>Name: </b>
+                    {reservedWalletInfo.name}
                   </div>
-                  <div>
-                    <b>Created At: </b>
-                    {wallet.createdAt}
-                  </div>
-                </CardContent>
-                <CardActions>
+                )}
+                <div>
+                  <b>Network: </b>
+                  {wallet.network}
+                </div>
+                <div>
+                  <b>Created At: </b>
+                  {wallet.createdAt}
+                </div>
+                <div className="flex gap-4">
                   <Button
-                    size="small"
-                    color="primary"
-                    startIcon={<SendIcon />}
+                    size="xs"
+                    className="flex items-center"
                     onClick={() => {
                       setTransferFund(wallet);
                     }}
                   >
+                    <IoMdSend className="mr-2" />
                     Transfer Fund
                   </Button>
                   {!reservedWalletInfo && (
-                    <Button
-                      size="small"
-                      color="error"
-                      startIcon={<DeleteIcon />}
-                    >
+                    <Button size="xs" color="failure">
+                      <MdDelete className="mr-2" />
                       Delete
                     </Button>
                   )}
-                </CardActions>
+                </div>
               </Card>
             );
           })}
@@ -241,61 +229,42 @@ export default function WalletManager() {
         </div>
       </div>
 
-      <div className="w-full flex flex-col justify-between h-full p-20">
-        <Snackbar
-          open={!!openInfo}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          onClose={() => setOpenInfo("")}
-        >
-          <Alert
-            onClose={() => setOpenInfo("")}
-            severity="info"
-            variant="filled"
-            sx={{ width: "100%" }}
-          >
-            <div dangerouslySetInnerHTML={{ __html: openInfo }} />
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          open={!!openSuccess}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          autoHideDuration={5000}
-          onClose={() => {
-            setOpenSuccess("");
-          }}
-        >
-          <Alert
-            onClose={() => {
-              setOpenSuccess("");
-            }}
-            severity="success"
-            variant="filled"
-            sx={{ width: "100%" }}
-          >
-            <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          open={!!openError}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          autoHideDuration={5000}
-          onClose={() => {
-            setOpenError("");
-          }}
-        >
-          <Alert
-            onClose={() => {
-              setOpenError("");
-            }}
-            severity="error"
-            variant="filled"
-            sx={{ width: "100%" }}
-          >
-            <div dangerouslySetInnerHTML={{ __html: openError }} />
-          </Alert>
-        </Snackbar>
+      <div className="w-full flex flex-col p-20">
+        {!!openInfo && (
+          <Toast className="fixed left-10 bottom-10 max-w-sm">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
+              <MdLoop className="h-5 w-5 animate-spin" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openInfo }} />
+            </div>
+            <Toast.Toggle onClick={() => setOpenInfo("")} />
+          </Toast>
+        )}
+        {!!openSuccess && (
+          <Toast className="fixed left-10 bottom-10 max-w-sm">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
+            </div>
+            <Toast.Toggle onClick={() => setOpenSuccess("")} />
+          </Toast>
+        )}
+        {!!openError && (
+          <Toast className="fixed left-10 bottom-10 max-w-sm">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiExclamation className="h-5 w-5" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openError }} />
+            </div>
+            <Toast.Toggle onClick={() => setOpenError("")} />
+          </Toast>
+        )}
         <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
-          <Typography variant="h3">Create a wallet</Typography>
+          <h3 className="text-3xl">Create a wallet</h3>
           <div className="flex flex-wrap -mx-3 mb-6 mt-4">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label
@@ -390,15 +359,12 @@ export default function WalletManager() {
               )}
             </div>
           </div>
-          <Button
-            variant="contained"
-            type="submit"
-            color="primary"
-            disabled={!!creatingWallet}
-          >
+          <Button type="submit" disabled={!!creatingWallet}>
             Publish
           </Button>
         </form>
+
+        <UserOperation />
       </div>
     </>
   );
