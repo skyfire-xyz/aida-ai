@@ -11,6 +11,7 @@
             "search": "<b>Search dataset</b>: baseball",
             "image": "<b>Random image</b>: happy baby",
             "generateImage": "<b>Generate image</b>: baby panda",
+            "websearch": "<b>WebSearch</b>: national parks",
             "other": "Other prompts"
         },
         "aiPrompt": {

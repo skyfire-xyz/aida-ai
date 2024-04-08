@@ -13,6 +13,7 @@ import { Button, Modal, TextInput } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import ChatWebSearch from "./ChatWebSearch";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
@@ -38,7 +39,7 @@ export default function ChatPane(props: any) {
   const addBotResponseMessage = (
     prompt: string,
     data?: any,
-    type?: "chat" | "dataset"
+    type?: "chat" | "dataset" | "websearch"
   ) => {
     chatMessages.current = [
       ...chatMessages.current,
@@ -159,6 +160,37 @@ export default function ChatPane(props: any) {
             response.data.datasets || [],
             "dataset"
           );
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+        } catch {
+          setBotThinking(false);
+        }
+      } else if (inputText.toLocaleLowerCase().includes("websearch")) {
+        ///////////////////////////////////////////////////////////
+        // Web Search Request
+        ///////////////////////////////////////////////////////////
+        let searchTerm = "";
+
+        const match = inputText.match(/websearch:(.+)/i);
+        if (match) {
+          searchTerm = match[1];
+        }
+
+        if (!searchTerm) {
+          addBotResponseMessage(t("aiPrompt.errorMessage"));
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          setBotThinking(false);
+          return;
+        }
+
+        // Web Search API
+        try {
+          setBotThinking(true);
+          const response = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
+            prompt: searchTerm.trim(),
+          });
+          addBotResponseMessage(searchTerm, response.data.results, "websearch");
+          processProtocolLogs(response?.data);
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
           setBotThinking(false);
         } catch {
@@ -341,6 +373,16 @@ export default function ChatPane(props: any) {
                 onDownload={handleDatasetDownload}
                 onBeforeAnalyze={handleDatasetBeforeAnalyze}
                 onAnalyze={handleDatasetAnalyze}
+              />
+            );
+          } else if (message.type === "websearch") {
+            return (
+              <ChatWebSearch
+                key={index}
+                direction={message.direction}
+                avatarUrl={message.avatarUrl}
+                textMessage={message.textMessage}
+                results={message.data}
               />
             );
           }

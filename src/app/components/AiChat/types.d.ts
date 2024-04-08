@@ -1,5 +1,5 @@
 export type ChatMessageType = {
-  type: 'chat' | 'dataset';
+  type: 'chat' | 'dataset' | 'websearch';
   direction: 'left' | 'right';
   avatarUrl: string;
   textMessage: string;
