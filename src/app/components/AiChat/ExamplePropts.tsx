@@ -30,6 +30,12 @@ export default function ExamplePrompts() {
         })}
       </li>
       <li className="mb-1">
+        <DataSource sourceName="Web" />
+        {t.rich("examplePrompts.videosearch", {
+          b: (chunks) => <b>{chunks}</b>,
+        })}
+      </li>
+      <li className="mb-1">
         <DataSource sourceName="ChatGPT" />
         {t.rich("examplePrompts.other", {
           b: (chunks) => <b>{chunks}</b>,
