@@ -127,7 +127,7 @@ export default function AiChat({ images }: AiChatProps) {
               </div>
               <p className="font-bold mt-4">
                 <Link
-                  href="https://mumbai.polygonscan.com/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns"
+                  href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer"
                   target="_blank"
                 >
                   <b>{t("page.titlePaymentLogs")}</b>

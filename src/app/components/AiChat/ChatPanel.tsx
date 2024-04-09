@@ -576,7 +576,7 @@ export default function ChatPane(props: any) {
         onClose={() => setShowMicroPayments(false)}
       >
         <Modal.Header>
-          <Link href="https://mumbai.polygonscan.com/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns">
+          <Link href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer">
             {t("page.titlePaymentLogs")}
           </Link>
         </Modal.Header>
