@@ -30,13 +30,13 @@ export default function ExamplePrompts() {
         })}
       </li>
       <li className="mb-1">
-        <DataSource sourceName="W" />
+        <DataSource sourceName="Gemini" />
         {t.rich("examplePrompts.websearch", {
           b: (chunks) => <b>{chunks}</b>,
         })}
       </li>
       <li className="mb-1">
-        <DataSource sourceName="V" />
+        <DataSource sourceName="Gemini" />
         {t.rich("examplePrompts.videosearch", {
           b: (chunks) => <b>{chunks}</b>,
         })}

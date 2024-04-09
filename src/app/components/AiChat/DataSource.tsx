@@ -10,6 +10,8 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
       return "/images/aichat/logo-kaggle.svg";
     } else if (sourceName === "ChatGPT") {
       return "/images/aichat/logo-chatgpt.svg";
+    } else if (sourceName === "Gemini") {
+      return "/images/aichat/logo-gemini.svg";
     }
   }, [sourceName]);
 
