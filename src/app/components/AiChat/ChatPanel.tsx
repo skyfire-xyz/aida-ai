@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import BouncingDotsLoader from "./BouncingLoader";
 import { getLogoAIData, scrollToBottom } from "./utils";
 import { ChatMessageType, PaymentType } from "./types";
-import ExamplePrompts from "./ExamplePropts";
+import ExamplePrompts from "./ExamplePrompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";

@@ -24,19 +24,19 @@ export default function ExamplePrompts() {
         })}
       </li>
       <li className="mb-1">
-        <DataSource sourceName="Chat" />
+        <DataSource sourceName="ChatGPT" />
         {t.rich("examplePrompts.taskList", {
           b: (chunks) => <b>{chunks}</b>,
         })}
       </li>
       <li className="mb-1">
-        <DataSource sourceName="Web" />
+        <DataSource sourceName="W" />
         {t.rich("examplePrompts.websearch", {
           b: (chunks) => <b>{chunks}</b>,
         })}
       </li>
       <li className="mb-1">
-        <DataSource sourceName="Web" />
+        <DataSource sourceName="V" />
         {t.rich("examplePrompts.videosearch", {
           b: (chunks) => <b>{chunks}</b>,
         })}

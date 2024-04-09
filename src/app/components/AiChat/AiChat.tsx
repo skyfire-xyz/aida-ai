@@ -2,7 +2,7 @@ import DataSource from "./DataSource";
 import ChatPanel from "./ChatPanel";
 import { useRef, useState } from "react";
 import { PaymentType } from "./types";
-import ExamplePrompts from "./ExamplePropts";
+import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
