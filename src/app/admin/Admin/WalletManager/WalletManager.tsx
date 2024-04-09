@@ -178,7 +178,7 @@ export default function WalletManager() {
                 <div>
                   <Link
                     className=" font-bold"
-                    href={`https://mumbai.polygonscan.com/address/${wallet.address}#tokentxns`}
+                    href={`https://www.oklink.com/amoy/address/${wallet.address}/token-transfer`}
                   >
                     {wallet.address}
                   </Link>
