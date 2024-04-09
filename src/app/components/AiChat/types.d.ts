@@ -1,5 +1,5 @@
 export type ChatMessageType = {
-  type: "chat" | "dataset" | "tasklist";
+  type: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch";
   direction: "left" | "right";
   avatarUrl: string;
   textMessage: string;

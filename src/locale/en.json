@@ -12,6 +12,8 @@
             "image": "<b>Random image</b>: happy baby",
             "generateImage": "<b>Generate image</b>: baby panda",
             "taskList": "<b>Tasklist</b>: create a fairytale book",
+            "websearch": "<b>WebSearch</b>: national parks",
+            "videosearch": "<b>VideoSearch</b>: Eclipse",
             "other": "Other prompts"
         },
         "aiPrompt": {
