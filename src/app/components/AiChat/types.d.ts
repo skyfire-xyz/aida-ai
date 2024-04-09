@@ -1,6 +1,6 @@
 export type ChatMessageType = {
-  type: 'chat' | 'dataset';
-  direction: 'left' | 'right';
+  type: "chat" | "dataset" | "tasklist";
+  direction: "left" | "right";
   avatarUrl: string;
   textMessage: string;
   data?: any;
@@ -9,7 +9,7 @@ export type ChatMessageType = {
 
 export type PaymentType = {
   userUuid: string;
-  status: 'SUCCESS' | 'DENIED';
+  status: "SUCCESS" | "DENIED";
   network: string;
   currency: string;
   destinationAddress: string;
