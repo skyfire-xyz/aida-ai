@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/src/globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Aida.AI - Powered by Supermojo Payments",
@@ -14,8 +15,10 @@ export default function RootLayout({
   params: { locale: string };
 }>) {
   return (
-    <html lang="en">
-      <body className={`h-screen bg-[#002341] font-jones`}>{children}</body>
-    </html>
+    <Providers>
+      <html lang="en">
+        <body className={`h-screen bg-[#002341] font-jones`}>{children};</body>
+      </html>
+    </Providers>
   );
 }

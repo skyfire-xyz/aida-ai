@@ -1,9 +1,10 @@
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 
-import ChatMessage from "./ChatMessage";
-import ChatDataset from "./ChatDataset";
+import ChatGeneral from "./ChatMessages/ChatGeneral";
+import ChatDataset from "./ChatMessages/ChatDataset";
 import { useEffect, useRef, useState } from "react";
 import BouncingDotsLoader from "./BouncingLoader";
 import { getLogoAIData, scrollToBottom } from "./utils";
@@ -13,15 +14,35 @@ import { Button, Modal, TextInput } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList from "./ChatTasklist";
-import ChatWebSearch from "./ChatWebSearch";
-import ChatVideoSearch from "./ChatVideoSearch";
+import ChatTaskList from "./ChatMessages/ChatTasklist";
+import ChatWebSearch from "./ChatMessages/ChatWebSearch";
+import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
+import {
+  addMessage,
+  addProtocolLog,
+  fetchAnalyzeDataset,
+  fetchChat,
+  fetchDataset,
+  fetchImageGeneration,
+  fetchLogoAgent,
+  fetchMeme,
+  fetchTasklist,
+  fetchVideoSearch,
+  fetchWebSearch,
+  setBotStatus,
+  useChatMessagesSelector,
+} from "../reducers/chatMessagesSlice";
+import { AppDispatch } from "@/src/store";
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
+  const dispatch = useDispatch<AppDispatch>();
+  const state = useSelector((state: any) => state);
+  const { messages, status } = state?.chatMessage;
+
   const t = useTranslations("ai");
   const [inputText, setInputText] = useState("");
-  const [botThinking, setBotThinking] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
   const [showMicroPayments, setShowMicroPayments] = useState(false);
 
@@ -55,96 +76,92 @@ export default function ChatPane(props: any) {
     ];
   };
 
-  const processProtocolLogs = (data: any) => {
-    const logs: PaymentType[] = data?.quote || [data?.payment];
-    if (logs) {
-      setProtocolLogs([...protocolLogs, ...logs]);
-    }
-  };
-
   useEffect(() => {
-    setBotThinking(true);
+    // TODO: Remove duplicate
+    dispatch(setBotStatus(true));
     setTimeout(() => {
-      setBotThinking(false);
-      addBotResponseMessage(t("aiPrompt.defaultGreeting"));
+      dispatch(setBotStatus(false));
+      dispatch(
+        addMessage({
+          type: "chat",
+          textMessage: t("aiPrompt.defaultGreeting"),
+        })
+      );
     }, 1000);
   }, []);
 
   // Datasets Utilities
   const handleDatasetBeforeAnalyze = async (data: any) => {
-    addBotResponseMessage(
-      t("aiPrompt.textAnalyzeDataset", { dataset: data.title })
+    // addBotResponseMessage(
+    //   t("aiPrompt.textAnalyzeDataset", { dataset: data.title })
+    // );
+    dispatch(
+      addMessage({
+        type: "chat",
+        textMessage: t("aiPrompt.textAnalyzeDataset", { dataset: data.title }),
+      })
     );
     scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
   const handleDatasetAnalyze = async (ref: string) => {
-    try {
-      setBotThinking(true);
-      const response = await axios.post(
-        `${BACKEND_API_URL}v2/dataset/analyze`,
-        {
-          dataset: ref,
-        }
-      );
-      addBotResponseMessage(response.data.body);
-      processProtocolLogs(response?.data);
-      scrollToBottom([chatPaneRef, paymentsPaneRef]);
-      setBotThinking(false);
-    } catch {
-      setBotThinking(false);
-    }
+    dispatch(fetchAnalyzeDataset({ ref }));
+    // try {
+    //   setBotThinking(true);
+    //   const response = await axios.post(
+    //     `${BACKEND_API_URL}v2/dataset/analyze`,
+    //     {
+    //       dataset: ref,
+    //     }
+    //   );
+    //   addBotResponseMessage(response.data.body);
+    //   processProtocolLogs(response?.data);
+    //   scrollToBottom([chatPaneRef, paymentsPaneRef]);
+    //   setBotThinking(false);
+    // } catch {
+    //   setBotThinking(false);
+    // }
   };
 
   const handleTasklistBeforeExecute = async (taskName: string) => {
-    addBotResponseMessage(t("aiPrompt.textExecuteTasks", { task: taskName }));
+    dispatch(
+      addMessage({
+        type: "chat",
+        textMessage: t("aiPrompt.textExecuteTasks", { task: taskName }),
+      })
+    );
     scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
-  const handleTasklistExecute = async (ref: string) => {
+  const handleTasklistExecute = async () => {
     // Recursively execute AI prompts
-    console.log("handleTasklistExecute");
-
-    try {
-      setBotThinking(true);
-      // const response = await axios.post(
-      //   `${BACKEND_API_URL}v2/`,
-      //   {
-      //     dataset: ref,
-      //   }
-      // );
-      // addBotResponseMessage(response.data.body);
-      // processProtocolLogs(response?.data);
-      scrollToBottom([chatPaneRef, paymentsPaneRef]);
-      setBotThinking(false);
-    } catch {
-      setBotThinking(false);
-    }
   };
 
   const handleDatasetBeforeDownload = async (data: any) => {
-    addBotResponseMessage(
-      t("aiPrompt.textDownloadDataset", { dataset: data.title })
+    dispatch(
+      addMessage({
+        type: "chat",
+        textMessage: t("aiPrompt.textDownloadDataset", { dataset: data.title }),
+      })
     );
     scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
   const handleDatasetDownload = async (payment: PaymentType) => {
-    setProtocolLogs([...protocolLogs, payment]);
+    dispatch(addProtocolLog({ payload: { payment } }));
   };
 
   // Process User Input
   const handleEnter = async (ev: React.KeyboardEvent<HTMLInputElement>) => {
     if (ev.key === "Enter") {
-      chatMessages.current = [
-        ...chatMessages.current,
-        {
+      dispatch(
+        addMessage({
           type: "chat",
           direction: "right",
           avatarUrl: userImageUrl,
           textMessage: inputText,
-        },
-      ];
+        })
+      );
 
       setTimeout(() => {
         chatPaneRef.current?.scrollTo({ top: 99999, behavior: "smooth" });
@@ -168,31 +185,17 @@ export default function ChatPane(props: any) {
         }
 
         if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
+          dispatch(
+            addMessage({
+              type: "chat",
+              textMessage: t("aiPrompt.errorMessage"),
+            })
+          );
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
-
-        // Dataset API
-        try {
-          setBotThinking(true);
-          const response = await axios.post(
-            `${BACKEND_API_URL}v2/dataset/search`,
-            {
-              searchTerm: searchTerm.trim(),
-            }
-          );
-          addBotResponseMessage(
-            response.data.body,
-            response.data.datasets || [],
-            "dataset"
-          );
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchDataset({ searchTerm }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("tasklist")) {
         ///////////////////////////////////////////////////////////
         // Tasklist
@@ -207,31 +210,11 @@ export default function ChatPane(props: any) {
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
 
-        // Generate Tasklist
-        try {
-          setBotThinking(true);
-          const response = await axios.post(
-            `${BACKEND_API_URL}v2/chat/tasklist`,
-            {
-              prompt: searchTerm.trim(),
-            }
-          );
-          addBotResponseMessage(
-            searchTerm.trim(),
-            response.data.tasks || [],
-            "tasklist"
-          );
-
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchTasklist({ searchTerm }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
         ///////////////////////////////////////////////////////////
         // Web Search Request
@@ -246,23 +229,11 @@ export default function ChatPane(props: any) {
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
 
-        // Web Search API
-        try {
-          setBotThinking(true);
-          const response = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
-            prompt: searchTerm.trim(),
-          });
-          addBotResponseMessage(searchTerm, response.data.results, "websearch");
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchWebSearch({ searchTerm }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
         ///////////////////////////////////////////////////////////
         // Video Search Request
@@ -277,30 +248,11 @@ export default function ChatPane(props: any) {
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
 
-        // Video Search API
-        try {
-          setBotThinking(true);
-          const response = await axios.post(
-            `${BACKEND_API_URL}v2/websearch/video`,
-            {
-              prompt: searchTerm.trim(),
-            }
-          );
-          addBotResponseMessage(
-            searchTerm,
-            response.data.results,
-            "videosearch"
-          );
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchVideoSearch({ searchTerm }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (
         inputText.toLocaleLowerCase().includes("generate gif") ||
         inputText.toLocaleLowerCase().includes("generate meme") ||
@@ -322,23 +274,12 @@ export default function ChatPane(props: any) {
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
 
         // Generate Image API
-        try {
-          setBotThinking(true);
-          const response = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
-            prompt: searchTerm.trim(),
-          });
-          addBotResponseMessage(searchTerm.trim(), response.data.body);
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchImageGeneration({ searchTerm }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (
         inputText.toLocaleLowerCase().includes("random gif") ||
         inputText.toLocaleLowerCase().includes("random meme") ||
@@ -360,47 +301,18 @@ export default function ChatPane(props: any) {
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
           return;
         }
 
-        // Meme API
-        try {
-          setBotThinking(true);
-          const response = await axios.post(`${BACKEND_API_URL}v2/joke`, {
-            meme: true,
-            searchTerm: searchTerm.trim(),
-          });
-          addBotResponseMessage(
-            response.data.body || response.data.joke,
-            response.data.memeUrl
-          );
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchMeme({ searchTerm, meme: true }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.includes("joke")) {
         ///////////////////////////////////////////////////////////
         // Joke Request
         ///////////////////////////////////////////////////////////
-        try {
-          setBotThinking(true);
-          const response = await axios.post(`${BACKEND_API_URL}v2/joke`, {
-            meme: false,
-          });
 
-          addBotResponseMessage(
-            response.data.body || response.data.joke,
-            response.data.memeUrl
-          );
-          processProtocolLogs(response?.data);
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
-          setBotThinking(false);
-        } catch {
-          setBotThinking(false);
-        }
+        dispatch(fetchMeme({ searchTerm: "", meme: false }));
+        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else {
         ///////////////////////////////////////////////////////////
         // Regular Chat Requeste
@@ -411,41 +323,24 @@ export default function ChatPane(props: any) {
           inputText.toLocaleLowerCase().includes("now")
         ) {
           // Logo request after creating a wallet on admin console
-          try {
-            setBotThinking(true);
-            const logoAIAgent = getLogoAIData();
-
-            const response = await axios.post(`${BACKEND_API_URL}v2/logo`, {
-              agent: logoAIAgent.service,
-              cost: logoAIAgent.price,
-            });
-            addBotResponseMessage(response.data.body, response.data.logoUrl);
-            processProtocolLogs(response?.data);
-            scrollToBottom([chatPaneRef, paymentsPaneRef]);
-            setBotThinking(false);
-          } catch {
-            setBotThinking(false);
-          }
+          const logoAIAgent = getLogoAIData();
+          dispatch(fetchLogoAgent({ logoAIAgent }));
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
         } else {
           // Logo request before creating a wallet
-          try {
-            setBotThinking(true);
-            const response = await axios.post(`${BACKEND_API_URL}v2/chat`, {
-              prompt: inputText,
-            });
+          dispatch(fetchChat({ prompt: inputText }));
+          scrollToBottom([chatPaneRef, paymentsPaneRef]);
 
-            addBotResponseMessage(response.data.body);
-            processProtocolLogs(response?.data);
-            scrollToBottom([chatPaneRef, paymentsPaneRef]);
-            setBotThinking(false);
-          } catch {
-            setBotThinking(false);
-          }
           if (inputText.toLocaleLowerCase().includes("logo")) {
-            setBotThinking(true);
+            dispatch(setBotStatus(true));
             setTimeout(() => {
-              addBotResponseMessage(t("aiPrompt.textVisitAdminDashboard"));
-              setBotThinking(false);
+              dispatch(setBotStatus(false));
+              dispatch(
+                addMessage({
+                  type: "chat",
+                  textMessage: t("aiPrompt.textVisitAdminDashboard"),
+                })
+              );
               scrollToBottom([chatPaneRef, paymentsPaneRef]);
             }, 1000);
           }
@@ -463,67 +358,68 @@ export default function ChatPane(props: any) {
         className="flex flex-col mt-5 overflow-scroll flex-grow px-5 "
         ref={chatPaneRef}
       >
-        {chatMessages.current.map((message, index) => {
-          if (message.type === "dataset") {
+        {messages &&
+          messages.map((message, index) => {
+            if (message.type === "dataset") {
+              return (
+                <ChatDataset
+                  avatarUrl={message.avatarUrl}
+                  key={index}
+                  textMessage=""
+                  dataset={message.data}
+                  onBeforeDownload={handleDatasetBeforeDownload}
+                  onDownload={handleDatasetDownload}
+                  onBeforeAnalyze={handleDatasetBeforeAnalyze}
+                  onAnalyze={handleDatasetAnalyze}
+                />
+              );
+            } else if (message.type === "tasklist") {
+              return (
+                <ChatTaskList
+                  avatarUrl={message.avatarUrl}
+                  key={index}
+                  textMessage=""
+                  results={message.data}
+                  onBeforeExecute={handleTasklistBeforeExecute}
+                  onExecute={handleTasklistExecute}
+                />
+              );
+            } else if (message.type === "websearch") {
+              return (
+                <ChatWebSearch
+                  key={index}
+                  direction={message.direction}
+                  avatarUrl={message.avatarUrl}
+                  textMessage={message.textMessage}
+                  results={message.data}
+                />
+              );
+            } else if (message.type === "videosearch") {
+              return (
+                <ChatVideoSearch
+                  key={index}
+                  direction={message.direction}
+                  avatarUrl={message.avatarUrl}
+                  textMessage={message.textMessage}
+                  results={message.data}
+                />
+              );
+            }
             return (
-              <ChatDataset
-                avatarUrl={message.avatarUrl}
-                key={index}
-                textMessage=""
-                dataset={message.data}
-                onBeforeDownload={handleDatasetBeforeDownload}
-                onDownload={handleDatasetDownload}
-                onBeforeAnalyze={handleDatasetBeforeAnalyze}
-                onAnalyze={handleDatasetAnalyze}
-              />
-            );
-          } else if (message.type === "tasklist") {
-            return (
-              <ChatTaskList
-                avatarUrl={message.avatarUrl}
-                key={index}
-                textMessage=""
-                results={message.data}
-                onBeforeExecute={handleTasklistBeforeExecute}
-                onExecute={handleTasklistExecute}
-              />
-            );
-          } else if (message.type === "websearch") {
-            return (
-              <ChatWebSearch
+              <ChatGeneral
                 key={index}
                 direction={message.direction}
                 avatarUrl={message.avatarUrl}
                 textMessage={message.textMessage}
-                results={message.data}
+                contentImageUrl={message.data}
               />
             );
-          } else if (message.type === "videosearch") {
-            return (
-              <ChatVideoSearch
-                key={index}
-                direction={message.direction}
-                avatarUrl={message.avatarUrl}
-                textMessage={message.textMessage}
-                results={message.data}
-              />
-            );
-          }
-          return (
-            <ChatMessage
-              key={index}
-              direction={message.direction}
-              avatarUrl={message.avatarUrl}
-              textMessage={message.textMessage}
-              contentImageUrl={message.data}
-            />
-          );
-        })}
+          })}
 
-        {botThinking && (
-          <ChatMessage direction="left" avatarUrl={robotImageUrl}>
+        {status.botThinking && (
+          <ChatGeneral direction="left" avatarUrl={robotImageUrl}>
             <BouncingDotsLoader />
-          </ChatMessage>
+          </ChatGeneral>
         )}
       </div>
       <div className="md:pt-5 py-5 px-3 flex-none pt-1">
@@ -576,7 +472,7 @@ export default function ChatPane(props: any) {
         onClose={() => setShowMicroPayments(false)}
       >
         <Modal.Header>
-          <Link href="https://mumbai.polygonscan.com/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns">
+          <Link href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns">
             {t("page.titlePaymentLogs")}
           </Link>
         </Modal.Header>

@@ -1,7 +1,7 @@
 "use client";
 
-import Header from "./components/AiChat/Header";
-import AiChat from "./components/AiChat/AiChat";
+import Header from "./components/Header";
+import AiChat from "./components/AiChat";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/src/locale/en.json";
 

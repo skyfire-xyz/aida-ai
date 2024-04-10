@@ -3,7 +3,7 @@ import { FaFileDownload } from "react-icons/fa";
 import axios from "axios";
 import fileDownload from "js-file-download";
 import { useState } from "react";
-import { PaymentType } from "./types";
+import { PaymentType } from "../types";
 import { useTranslations } from "next-intl";
 import { Button } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
