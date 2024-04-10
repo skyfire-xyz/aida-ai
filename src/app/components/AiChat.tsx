@@ -37,8 +37,6 @@ export default function AiChat({ images }: AiChatProps) {
   const botAvatarImageData = {};
   const botImageData = {};
 
-  if (!mounted) return null;
-
   const ProtocolLogs = () => {
     return (
       <div
