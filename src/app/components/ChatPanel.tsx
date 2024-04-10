@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import BouncingDotsLoader from "./BouncingLoader";
 import { getLogoAIData, scrollToBottom } from "./utils";
 import { ChatMessageType, PaymentType } from "./types";
-import ExamplePrompts from "./ExamplePropts";
+import ExamplePrompts from "./ExamplePrompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
@@ -472,7 +472,7 @@ export default function ChatPane(props: any) {
         onClose={() => setShowMicroPayments(false)}
       >
         <Modal.Header>
-          <Link href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns">
+          <Link href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer">
             {t("page.titlePaymentLogs")}
           </Link>
         </Modal.Header>

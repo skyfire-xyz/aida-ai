@@ -4,7 +4,7 @@ import DataSource from "./DataSource";
 import ChatPanel from "./ChatPanel";
 import { useRef, useState } from "react";
 import { PaymentType } from "./types";
-import ExamplePrompts from "./ExamplePropts";
+import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useSelector } from "react-redux";
@@ -131,7 +131,7 @@ export default function AiChat({ images }: AiChatProps) {
               </div>
               <p className="font-bold mt-4">
                 <Link
-                  href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns"
+                  href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer"
                   target="_blank"
                 >
                   <b>{t("page.titlePaymentLogs")}</b>

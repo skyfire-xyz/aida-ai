@@ -13,7 +13,7 @@
             "generateImage": "<b>Generate image</b>: baby panda",
             "taskList": "<b>Tasklist</b>: create a fairytale book",
             "websearch": "<b>WebSearch</b>: national parks",
-            "videosearch": "<b>VideoSearch</b>: Eclipse",
+            "videosearch": "<b>VideoSearch</b>: view the eclipse",
             "other": "Other prompts"
         },
         "aiPrompt": {
