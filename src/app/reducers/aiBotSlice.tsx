@@ -190,7 +190,7 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "dataset",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: action.payload.prompt,
           data: action.payload.datasets || [],
         });
         updateProtocolLogsState(state, action);
@@ -228,7 +228,7 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "tasklist",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: action.payload.prompt,
           data:
             action.payload.tasks.map((task: { id: number }) => task.id) || [],
         });
@@ -260,7 +260,7 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "websearch",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: action.payload.prompt,
           data: action.payload.results || [],
         });
         updateProtocolLogsState(state, action);
@@ -280,7 +280,7 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "videosearch",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: action.payload.prompt,
           data: action.payload.results || [],
         });
         updateProtocolLogsState(state, action);
@@ -300,8 +300,8 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
-          textMessage: "",
-          data: action.payload.body,
+          textMessage: action.payload.prompt,
+          data: action.payload.imageUrl,
         });
         const logs = action.payload.quote || [action.payload.payment];
         updateProtocolLogsState(state, action);
@@ -321,8 +321,8 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body || action.payload.joke,
-          data: action.payload.memeUrl || [],
+          textMessage: action.payload.prompt,
+          data: action.payload.imageUrl || [],
         });
         updateProtocolLogsState(state, action);
       })
@@ -341,7 +341,7 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: action.payload.prompt,
           data: action.payload.logoUrl || [],
         });
         updateProtocolLogsState(state, action);
