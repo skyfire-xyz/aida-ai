@@ -1,4 +1,4 @@
-export interface ChatMessagesReduxState {
+export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
   protocolLogs: PaymentType[];
   status: {

@@ -1,12 +1,12 @@
 import axios from "axios";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ChatMessagesReduxState } from "./types";
+import { AiBotSliceReduxState } from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { ReducerAction } from "react";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
-const initialState: ChatMessagesReduxState = {
+const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
   status: {
@@ -18,7 +18,7 @@ const initialState: ChatMessagesReduxState = {
 };
 
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
-  "chatMessage/fetchDataset",
+  "aiBot/fetchDataset",
   async ({ searchTerm }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
       searchTerm: searchTerm.trim(),
@@ -28,7 +28,7 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
 );
 
 export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
-  "chatMessage/fetchAnalyzeDataset",
+  "aiBot/fetchAnalyzeDataset",
   async ({ ref }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/dataset/analyze`, {
       dataset: ref,
@@ -38,7 +38,7 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
 );
 
 export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
-  "chatMessage/fetchTasklist",
+  "aiBot/fetchTasklist",
   async ({ searchTerm }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/chat/tasklist`, {
       prompt: searchTerm.trim(),
@@ -48,7 +48,7 @@ export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
 );
 
 export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "chatMessage/fetchWebSearch",
+  "aiBot/fetchWebSearch",
   async ({ searchTerm }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
       prompt: searchTerm.trim(),
@@ -58,7 +58,7 @@ export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
 );
 
 export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "chatMessage/fetchVideoSearch",
+  "aiBot/fetchVideoSearch",
   async ({ searchTerm }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
       prompt: searchTerm.trim(),
@@ -70,7 +70,7 @@ export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchImageGeneration = createAsyncThunk<
   any,
   { searchTerm: string }
->("chatMessage/fetchImageGeneration", async ({ searchTerm }) => {
+>("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
   const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
     prompt: searchTerm.trim(),
   });
@@ -80,7 +80,7 @@ export const fetchImageGeneration = createAsyncThunk<
 export const fetchMeme = createAsyncThunk<
   any,
   { searchTerm: string; meme: boolean }
->("chatMessage/fetchMeme", async ({ searchTerm, meme }) => {
+>("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
   const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
     meme,
     searchTerm: searchTerm.trim(),
@@ -91,7 +91,7 @@ export const fetchMeme = createAsyncThunk<
 export const fetchLogoAgent = createAsyncThunk<
   any,
   { logoAIAgent: { service: string; price: number } }
->("chatMessage/fetchLogoAgent", async ({ logoAIAgent }) => {
+>("aiBot/fetchLogoAgent", async ({ logoAIAgent }) => {
   const res = await axios.post(`${BACKEND_API_URL}v2/logo`, {
     agent: logoAIAgent.service,
     cost: logoAIAgent.price,
@@ -100,7 +100,7 @@ export const fetchLogoAgent = createAsyncThunk<
 });
 
 export const fetchChat = createAsyncThunk<any, { prompt: string }>(
-  "chatMessage/fetchChat",
+  "aiBot/fetchChat",
   async ({ prompt }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/chat`, {
       prompt,
@@ -109,10 +109,20 @@ export const fetchChat = createAsyncThunk<any, { prompt: string }>(
   }
 );
 
-export const chatMessageSlice = createSlice({
-  name: "chatMessage",
+export const aiBotSlice = createSlice({
+  name: "aiBot",
   initialState,
   reducers: {
+    addInitialMessage: (state, { payload }) => {
+      if (state.messages.length === 0) {
+        state.messages.push({
+          type: "chat",
+          direction: payload.direction,
+          avatarUrl: payload.avatarUrl || robotImageUrl,
+          textMessage: payload.textMessage,
+        });
+      }
+    },
     addMessage: (state, { payload }) => {
       state.messages.push({
         type: "chat",
@@ -312,7 +322,7 @@ export const chatMessageSlice = createSlice({
 });
 
 function updateProtocolLogsState(
-  state: ChatMessagesReduxState,
+  state: AiBotSliceReduxState,
   action: PayloadAction<any>
 ) {
   const logs = action.payload.quote || [action.payload.payment];
@@ -321,11 +331,15 @@ function updateProtocolLogsState(
   }
 }
 
-export const useChatMessagesSelector = (state: any) => {
-  return state && (state.chatMessage as ChatMessagesReduxState);
+export const useAiBotSelector = (state: any) => {
+  return state?.aiBot;
 };
 
-export const { addMessage, addProtocolLog, setBotStatus } =
-  chatMessageSlice.actions;
+export const useProtocolLogsSelector = (state: any) => {
+  return state?.aiBot?.protocolLogs;
+};
 
-export default chatMessageSlice.reducer;
+export const { addInitialMessage, addMessage, addProtocolLog, setBotStatus } =
+  aiBotSlice.actions;
+
+export default aiBotSlice.reducer;

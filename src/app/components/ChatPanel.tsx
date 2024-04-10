@@ -18,6 +18,7 @@ import ChatTaskList from "./ChatMessages/ChatTasklist";
 import ChatWebSearch from "./ChatMessages/ChatWebSearch";
 import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
 import {
+  addInitialMessage,
   addMessage,
   addProtocolLog,
   fetchAnalyzeDataset,
@@ -30,16 +31,15 @@ import {
   fetchVideoSearch,
   fetchWebSearch,
   setBotStatus,
-  useChatMessagesSelector,
-} from "../reducers/chatMessagesSlice";
+  useAiBotSelector,
+} from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
   const dispatch = useDispatch<AppDispatch>();
-  const state = useSelector((state: any) => state);
-  const { messages, status } = state?.chatMessage;
+  const { messages, status } = useSelector(useAiBotSelector);
 
   const t = useTranslations("ai");
   const [inputText, setInputText] = useState("");
@@ -77,13 +77,12 @@ export default function ChatPane(props: any) {
   };
 
   useEffect(() => {
-    // TODO: Remove duplicate
     dispatch(setBotStatus(true));
     setTimeout(() => {
       dispatch(setBotStatus(false));
+      // TODO: Figure out why this useEffect called twice
       dispatch(
-        addMessage({
-          type: "chat",
+        addInitialMessage({
           textMessage: t("aiPrompt.defaultGreeting"),
         })
       );
@@ -92,9 +91,6 @@ export default function ChatPane(props: any) {
 
   // Datasets Utilities
   const handleDatasetBeforeAnalyze = async (data: any) => {
-    // addBotResponseMessage(
-    //   t("aiPrompt.textAnalyzeDataset", { dataset: data.title })
-    // );
     dispatch(
       addMessage({
         type: "chat",
@@ -106,21 +102,7 @@ export default function ChatPane(props: any) {
 
   const handleDatasetAnalyze = async (ref: string) => {
     dispatch(fetchAnalyzeDataset({ ref }));
-    // try {
-    //   setBotThinking(true);
-    //   const response = await axios.post(
-    //     `${BACKEND_API_URL}v2/dataset/analyze`,
-    //     {
-    //       dataset: ref,
-    //     }
-    //   );
-    //   addBotResponseMessage(response.data.body);
-    //   processProtocolLogs(response?.data);
-    //   scrollToBottom([chatPaneRef, paymentsPaneRef]);
-    //   setBotThinking(false);
-    // } catch {
-    //   setBotThinking(false);
-    // }
+    scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
   const handleTasklistBeforeExecute = async (taskName: string) => {

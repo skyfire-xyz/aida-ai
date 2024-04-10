@@ -1,11 +1,11 @@
 "use client";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import chatMessageSlice from "./app/reducers/chatMessagesSlice";
+import aiBotSlice from "./app/reducers/aiBotSlice";
 
 export const store = configureStore({
   reducer: combineReducers({
-    chatMessage: chatMessageSlice,
+    aiBot: aiBotSlice,
   }),
 });
 

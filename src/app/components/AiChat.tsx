@@ -2,12 +2,13 @@
 
 import DataSource from "./DataSource";
 import ChatPanel from "./ChatPanel";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PaymentType } from "./types";
 import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useSelector } from "react-redux";
+import { useProtocolLogsSelector } from "../reducers/aiBotSlice";
 
 type Image = any;
 interface AiChatProps {
@@ -16,8 +17,8 @@ interface AiChatProps {
 
 export default function AiChat({ images }: AiChatProps) {
   const t = useTranslations("ai");
-  const state = useSelector((state: any) => state);
-  const { protocolLogs } = state?.chatMessage;
+  const protocolLogs = useSelector(useProtocolLogsSelector);
+  const [mounted, setMounted] = useState(false);
   const paymentsPaneRef = useRef<HTMLDivElement>(null);
   // const userAvatarImageData = getStrapiDataAttributes(
   //   images?.find((data) => data.attributes.name === "userAvatar")
@@ -29,9 +30,14 @@ export default function AiChat({ images }: AiChatProps) {
   //   images?.find((data) => data.attributes.name === "botImageWide")
   // );
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const userAvatarImageData = {};
   const botAvatarImageData = {};
   const botImageData = {};
+
+  if (!mounted) return null;
 
   const ProtocolLogs = () => {
     return (

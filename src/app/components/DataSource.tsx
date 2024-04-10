@@ -19,7 +19,7 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
     return (
       <div className="mr-2 h-4 w-4 inline text-gray-700">
         <span className="h-4 w-4 text-[12px] inline-block bg-white rounded-sm text-center">
-          {sourceName[0]}
+          {sourceName && sourceName[0]}
         </span>
       </div>
     );
