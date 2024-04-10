@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AiBotSliceReduxState } from "../../reducers/types";
 import { AppDispatch } from "@/src/store";
 import { useState } from "react";
+import BodyVideos from "./BodyVideos";
+import BodySearch from "./BodySearch";
 export interface ChatTaskListProps {
   avatarUrl?: string;
   textMessage?: string;
@@ -42,10 +44,11 @@ function ChatTaskList({
   const dispatch = useDispatch<AppDispatch>();
 
   const handleExecute = () => {
-    onBeforeExecute(textMessage as string);
+    // onBeforeExecute(textMessage as string);
     // onExecute(results);
     results?.forEach((result) => {
       const task = tasks[result];
+      if (task.status === "complete") return;
       dispatch(executeTask({ task }));
     });
   };
@@ -70,7 +73,6 @@ function ChatTaskList({
           } else if (task.status === "pending") {
             StatusIcon = ImSpinner11;
           }
-
           return (
             <Card key={index} className="mb-4">
               <div className="flex items-center">
@@ -100,7 +102,20 @@ function ChatTaskList({
                   />
                 )}
               </div>
-              {showTasks[task.id] && <div>{task.result}</div>}
+              {showTasks[task.id] && (
+                <div>
+                  {task.skill === "video_search" && (
+                    <BodyVideos results={task.result.results} />
+                  )}
+                  {task.skill === "web_search" && (
+                    <BodySearch results={task.result.results} />
+                  )}
+                  {task.skill === "image_generation" && (
+                    <img src={task.result.body} />
+                  )}
+                  {task.skill === "text_completion" && task?.result?.body}
+                </div>
+              )}
             </Card>
           );
         })}

@@ -1,8 +1,9 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
 import { Card } from "flowbite-react";
+import BodySearch from "./BodySearch";
 
-interface ChatWebSearchProps {
+export interface ChatWebSearchProps {
   direction: "left" | "right";
   avatarUrl?: string;
   textMessage?: string;
@@ -23,26 +24,6 @@ function ChatWebSearch({
 }: ChatWebSearchProps) {
   const t = useTranslations("ai");
 
-  const renderResults = () => {
-    return results?.map((result, index) => (
-      <Card
-        key={index}
-        className="max-w-lg mb-2 cursor-pointer"
-        onClick={() =>
-          window.open(result.link, "_blank", "noopener,noreferrer")
-        }
-        horizontal
-      >
-        <h5 className="font-bold tracking-tight text-gray-900 dark:text-white">
-          {result.title}
-        </h5>
-        <p className="font-normal text-gray-700 dark:text-gray-400">
-          {result.snippet}
-        </p>
-      </Card>
-    ));
-  };
-
   return (
     <div className={`flex justify-start mb-4`}>
       <img
@@ -54,7 +35,7 @@ function ChatWebSearch({
         <article className="text-white prose">
           <Markdown>{textMessage}</Markdown>
         </article>
-        {renderResults()}
+        <BodySearch results={results} />
       </div>
     </div>
   );

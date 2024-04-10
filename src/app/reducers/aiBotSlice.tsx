@@ -9,48 +9,7 @@ const robotImageUrl = "/images/aichat/ai-robot.png";
 const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
-  tasks: {
-    1: {
-      id: 1,
-      task: "Create a list of key fairytale characters, settings, and plot elements for the book using text_completion tool to brainstorm creative ideas.",
-      skill: "text_completion",
-      icon: "🤖",
-      dependent_task_ids: [],
-      status: "incomplete",
-    },
-    2: {
-      id: 2,
-      task: "Generate images of the main fairytale characters and settings to visually represent the world of the story using image_generation tool.",
-      skill: "image_generation",
-      icon: "📸",
-      dependent_task_ids: [],
-      status: "incomplete",
-    },
-    3: {
-      id: 3,
-      task: "Write a brief fairytale narrative based on the elements identified, incorporating the characters, settings, and plot points.",
-      skill: "text_completion",
-      icon: "🤖",
-      dependent_task_ids: [],
-      status: "incomplete",
-    },
-    4: {
-      id: 4,
-      task: "Search for relevant fairytale storytelling techniques on YouTube to enhance the storytelling aspect of the book using video_search tool.",
-      skill: "video_search",
-      icon: "🎥",
-      dependent_task_ids: [],
-      status: "incomplete",
-    },
-    5: {
-      id: 5,
-      task: "Illustrate the fairytale book cover design based on the generated images and narrative, bringing the elements together for a captivating visual representation.",
-      skill: "image_generation",
-      icon: "📸",
-      dependent_task_ids: [2, 3],
-      status: "incomplete",
-    },
-  },
+  tasks: {},
   status: {
     botThinking: false,
   },
@@ -94,6 +53,11 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       return { ...res.data, task };
     } else if (task.skill === "video_search") {
       const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
+        prompt: task.task,
+      });
+      return { ...res.data, task };
+    } else if (task.skill === "web_search") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
         prompt: task.task,
       });
       return { ...res.data, task };
@@ -261,14 +225,24 @@ export const aiBotSlice = createSlice({
         state.status.botThinking = true;
       })
       .addCase(fetchTasklist.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "tasklist",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.body,
-          data: action.payload.tasks || [],
+          data:
+            action.payload.tasks.map((task: { id: number }) => task.id) || [],
         });
-        state.tasks = state.tasks.concat(action.payload.tasks);
+
+        state.tasks = {
+          ...state.tasks,
+          ...action.payload.tasks.reduce(
+            (obj: object, task: { id: number }) => {
+              return { ...obj, [task.id]: task };
+            },
+            {}
+          ),
+        };
+        state.status.botThinking = false;
         updateProtocolLogsState(state, action);
       })
       .addCase(fetchTasklist.rejected, (state) => {
@@ -326,7 +300,8 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
+          textMessage: "",
+          data: action.payload.body,
         });
         const logs = action.payload.quote || [action.payload.payment];
         updateProtocolLogsState(state, action);
@@ -402,12 +377,7 @@ export const aiBotSlice = createSlice({
       })
       .addCase(executeTask.fulfilled, (state, action) => {
         state.tasks[action.payload.task.id].status = "complete";
-        state.tasks[action.payload.task.id].result = action.payload.body;
-        // state.messages.push({
-        //   type: "chat",
-        //   avatarUrl: robotImageUrl,
-        //   textMessage: action.payload.body,
-        // });
+        state.tasks[action.payload.task.id].result = action.payload;
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {

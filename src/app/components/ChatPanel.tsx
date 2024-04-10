@@ -85,16 +85,6 @@ export default function ChatPane(props: any) {
         })
       );
     }, 1000);
-    if (messages.length === 1) {
-      dispatch(
-        addMessage({
-          type: "tasklist",
-          avatarUrl: robotImageUrl,
-          textMessage: "",
-          data: [1, 2, 3, 4, 5],
-        })
-      );
-    }
   }, [messages]);
 
   // Datasets Utilities
