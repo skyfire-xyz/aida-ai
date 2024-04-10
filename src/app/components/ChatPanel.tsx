@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 import { IoIosInformationCircleOutline } from "react-icons/io";
@@ -11,10 +10,9 @@ import { getLogoAIData, scrollToBottom } from "./utils";
 import { ChatMessageType, PaymentType } from "./types";
 import ExamplePrompts from "./ExamplePrompts";
 import { Button, Modal, TextInput } from "flowbite-react";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList from "./ChatMessages/ChatTasklist";
+import ChatTaskList, { ChatTaskListProps } from "./ChatMessages/ChatTasklist";
 import ChatWebSearch from "./ChatMessages/ChatWebSearch";
 import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
 import {
@@ -87,7 +85,17 @@ export default function ChatPane(props: any) {
         })
       );
     }, 1000);
-  }, []);
+    if (messages.length === 1) {
+      dispatch(
+        addMessage({
+          type: "tasklist",
+          avatarUrl: robotImageUrl,
+          textMessage: "",
+          data: [1, 2, 3, 4, 5],
+        })
+      );
+    }
+  }, [messages]);
 
   // Datasets Utilities
   const handleDatasetBeforeAnalyze = async (data: any) => {
@@ -115,8 +123,18 @@ export default function ChatPane(props: any) {
     scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
-  const handleTasklistExecute = async () => {
+  const handleTasklistExecute = async (
+    results: ChatTaskListProps["results"]
+  ) => {
     // Recursively execute AI prompts
+    for (const result of results) {
+      if (result.skill === "text_completion") {
+        dispatch(fetchChat({ prompt: result.task }));
+      } else if (result.skill === "image_generation") {
+        dispatch(fetchChat({ prompt: `Generate image: ${result.task}` }));
+      }
+      scrollToBottom([chatPaneRef, paymentsPaneRef]);
+    }
   };
 
   const handleDatasetBeforeDownload = async (data: any) => {

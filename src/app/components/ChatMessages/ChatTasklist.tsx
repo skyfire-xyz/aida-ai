@@ -1,22 +1,32 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Button, List } from "flowbite-react";
+import { Accordion, Button, Card, List } from "flowbite-react";
 import {
   MdOutlineCheckBox,
   MdOutlineCheckBoxOutlineBlank,
 } from "react-icons/md";
-interface ChatTaskListProps {
+import { ImSpinner11 } from "react-icons/im";
+import { IoIosPlayCircle } from "react-icons/io";
+import { MdOutlineArrowDropDown } from "react-icons/md";
+
+import { executeTask, useTasklistSelector } from "../../reducers/aiBotSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AiBotSliceReduxState } from "../../reducers/types";
+import { AppDispatch } from "@/src/store";
+import { useState } from "react";
+export interface ChatTaskListProps {
   avatarUrl?: string;
   textMessage?: string;
-  results: [
-    {
-      task: string;
-      skill: string;
-      status: string;
-    }
-  ];
+  results?: number[];
+  // results: [
+  //   {
+  //     task: string;
+  //     skill: string;
+  //     status: string;
+  //   }
+  // ];
   onBeforeExecute: (taskName: string) => void;
-  onExecute: () => void;
+  onExecute: (results: ChatTaskListProps) => void;
 }
 
 function ChatTaskList({
@@ -27,10 +37,17 @@ function ChatTaskList({
   onExecute = () => {},
 }: ChatTaskListProps) {
   const t = useTranslations("ai");
+  const tasks = useSelector(useTasklistSelector);
+  const [showTasks, setShowTasks] = useState<{ [key: number]: boolean }>({});
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleExecute = () => {
     onBeforeExecute(textMessage as string);
-    onExecute();
+    // onExecute(results);
+    results?.forEach((result) => {
+      const task = tasks[result];
+      dispatch(executeTask({ task }));
+    });
   };
 
   return (
@@ -44,21 +61,49 @@ function ChatTaskList({
         <article className="text-white prose">
           <Markdown>{textMessage}</Markdown>
         </article>
-        <List>
-          {results?.map((result, index) => (
-            <List.Item
-              key={index}
-              icon={
-                result.status === "complete"
-                  ? MdOutlineCheckBox
-                  : MdOutlineCheckBoxOutlineBlank
-              }
-              className="text-white"
-            >
-              {result.task}
-            </List.Item>
-          ))}
-        </List>
+        {/* <List> */}
+        {results?.map((result, index) => {
+          const task = tasks[result];
+          let StatusIcon = MdOutlineCheckBoxOutlineBlank;
+          if (task.status === "complete") {
+            StatusIcon = MdOutlineCheckBox;
+          } else if (task.status === "pending") {
+            StatusIcon = ImSpinner11;
+          }
+
+          return (
+            <Card key={index} className="mb-4">
+              <div className="flex items-center">
+                <StatusIcon
+                  className={`w-8 h-8 mr-4 ${
+                    task.status === "pending" ? "animate-spin" : ""
+                  }`}
+                />
+                <p className="font-normal text-gray-700 dark:text-gray-400">
+                  {task.task}
+                </p>
+                {task.status === "incomplete" && (
+                  <IoIosPlayCircle
+                    className="w-8 h-8 cursor-pointer"
+                    onClick={() => dispatch(executeTask({ task }))}
+                  />
+                )}
+                {task.status === "complete" && (
+                  <MdOutlineArrowDropDown
+                    className="w-8 h-8 cursor-pointer"
+                    onClick={() => {
+                      setShowTasks({
+                        ...showTasks,
+                        [task.id]: !showTasks[task.id],
+                      });
+                    }}
+                  />
+                )}
+              </div>
+              {showTasks[task.id] && <div>{task.result}</div>}
+            </Card>
+          );
+        })}
         <Button className="mt-2" onClick={handleExecute}>
           Execute All Tasks
         </Button>

@@ -9,6 +9,48 @@ const robotImageUrl = "/images/aichat/ai-robot.png";
 const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
+  tasks: {
+    1: {
+      id: 1,
+      task: "Create a list of key fairytale characters, settings, and plot elements for the book using text_completion tool to brainstorm creative ideas.",
+      skill: "text_completion",
+      icon: "🤖",
+      dependent_task_ids: [],
+      status: "incomplete",
+    },
+    2: {
+      id: 2,
+      task: "Generate images of the main fairytale characters and settings to visually represent the world of the story using image_generation tool.",
+      skill: "image_generation",
+      icon: "📸",
+      dependent_task_ids: [],
+      status: "incomplete",
+    },
+    3: {
+      id: 3,
+      task: "Write a brief fairytale narrative based on the elements identified, incorporating the characters, settings, and plot points.",
+      skill: "text_completion",
+      icon: "🤖",
+      dependent_task_ids: [],
+      status: "incomplete",
+    },
+    4: {
+      id: 4,
+      task: "Search for relevant fairytale storytelling techniques on YouTube to enhance the storytelling aspect of the book using video_search tool.",
+      skill: "video_search",
+      icon: "🎥",
+      dependent_task_ids: [],
+      status: "incomplete",
+    },
+    5: {
+      id: 5,
+      task: "Illustrate the fairytale book cover design based on the generated images and narrative, bringing the elements together for a captivating visual representation.",
+      skill: "image_generation",
+      icon: "📸",
+      dependent_task_ids: [2, 3],
+      status: "incomplete",
+    },
+  },
   status: {
     botThinking: false,
   },
@@ -17,6 +59,16 @@ const initialState: AiBotSliceReduxState = {
   },
 };
 
+export const scrollToBottom = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchDataset",
+  async ({ searchTerm }) => {
+    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
+      searchTerm: searchTerm.trim(),
+    });
+    return res.data;
+  }
+);
+
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchDataset",
   async ({ searchTerm }) => {
@@ -24,6 +76,28 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
       searchTerm: searchTerm.trim(),
     });
     return res.data;
+  }
+);
+
+export const executeTask = createAsyncThunk<any, { task: any }>(
+  "aiBot/executeTask",
+  async ({ task }) => {
+    if (task.skill === "text_completion") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/chat`, {
+        prompt: task.task,
+      });
+      return { ...res.data, task };
+    } else if (task.skill === "image_generation") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
+        prompt: task.task,
+      });
+      return { ...res.data, task };
+    } else if (task.skill === "video_search") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
+        prompt: task.task,
+      });
+      return { ...res.data, task };
+    }
   }
 );
 
@@ -125,10 +199,11 @@ export const aiBotSlice = createSlice({
     },
     addMessage: (state, { payload }) => {
       state.messages.push({
-        type: "chat",
+        type: payload.type || "chat",
         direction: payload.direction,
         avatarUrl: payload.avatarUrl || robotImageUrl,
         textMessage: payload.textMessage,
+        data: payload.data,
       });
     },
     addProtocolLog: (state, { payload }) => {
@@ -193,6 +268,7 @@ export const aiBotSlice = createSlice({
           textMessage: action.payload.body,
           data: action.payload.tasks || [],
         });
+        state.tasks = state.tasks.concat(action.payload.tasks);
         updateProtocolLogsState(state, action);
       })
       .addCase(fetchTasklist.rejected, (state) => {
@@ -317,6 +393,26 @@ export const aiBotSlice = createSlice({
       .addCase(fetchChat.rejected, (state) => {
         state.status.botThinking = false;
         state.error.fetchAll = "Something went wrong";
+      })
+      /**
+       * Execute Tasks
+       */
+      .addCase(executeTask.pending, (state, action) => {
+        state.tasks[action.meta.arg.task.id].status = "pending";
+      })
+      .addCase(executeTask.fulfilled, (state, action) => {
+        state.tasks[action.payload.task.id].status = "complete";
+        state.tasks[action.payload.task.id].result = action.payload.body;
+        // state.messages.push({
+        //   type: "chat",
+        //   avatarUrl: robotImageUrl,
+        //   textMessage: action.payload.body,
+        // });
+        updateProtocolLogsState(state, action);
+      })
+      .addCase(executeTask.rejected, (state, action) => {
+        state.tasks[action.meta.arg.task.id].status = "error";
+        state.error.fetchAll = "Something went wrong";
       });
   },
 });
@@ -337,6 +433,10 @@ export const useAiBotSelector = (state: any) => {
 
 export const useProtocolLogsSelector = (state: any) => {
   return state?.aiBot?.protocolLogs;
+};
+
+export const useTasklistSelector = (state: any) => {
+  return state?.aiBot?.tasks;
 };
 
 export const { addInitialMessage, addMessage, addProtocolLog, setBotStatus } =

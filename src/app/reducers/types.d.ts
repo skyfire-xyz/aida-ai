@@ -1,5 +1,8 @@
 export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
+  tasks: {
+    [key: number]: any;
+  };
   protocolLogs: PaymentType[];
   status: {
     botThinking: boolean;
