@@ -13,9 +13,5 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  return (
-    <html lang="en">
-      <body className={`h-screen bg-[#002341] font-jones`}>{children}</body>
-    </html>
-  );
+  return <div>{children}</div>;
 }

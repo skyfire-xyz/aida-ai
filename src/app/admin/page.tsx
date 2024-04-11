@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/src/locale/en.json";
 import Sidebar from "@/src/common/components/Sidebar";
 import WalletManager from "./Admin/WalletManager/WalletManager";
+import { useEffect, useState } from "react";
 
 export default async function AdminPage() {
   return (

@@ -76,7 +76,7 @@ export default function Home() {
     });
 
     // Update the message based on the count of UserOps
-    const userOpMessage = `UserOp completed. <a href="https://jiffyscan.xyz/userOpHash/${userOpHash}?network=mumbai" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700">Click here to view.</a>`;
+    const userOpMessage = `UserOp completed. <a href="https://jiffyscan.xyz/userOpHash/${userOpHash}?network=amoy" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700">Click here to view.</a>`;
 
     setUserOpStatus(userOpMessage);
     setIsSpending(false);
@@ -145,7 +145,7 @@ export default function Home() {
               >
                 UserOp {userOpStatus ? "completed." : "pending."}
                 <a
-                  href={`https://jiffyscan.xyz/userOpHash/${userOpHash}?network=mumbai`}
+                  href={`https://jiffyscan.xyz/userOpHash/${userOpHash}?network=amoy`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:text-blue-700"
