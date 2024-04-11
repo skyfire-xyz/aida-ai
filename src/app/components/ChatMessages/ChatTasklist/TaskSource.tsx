@@ -26,7 +26,7 @@ export default function TaskSource({ skillName }: { skillName: string }) {
   }
 
   return (
-    <span className={`mr-2 h-6 w-6 flex-shrink-0`}>
+    <span className={`mr-4 h-6 w-6 flex-shrink-0`}>
       <img
         src={imageUrl}
         alt={skillName}

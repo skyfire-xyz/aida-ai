@@ -86,39 +86,6 @@ export default function ChatPane(props: any) {
     );
   }, [messages]);
 
-  // Datasets Utilities
-  const handleDatasetBeforeAnalyze = async (data: any) => {
-    dispatch(
-      addMessage({
-        type: "chat",
-        textMessage: t("aiPrompt.textAnalyzeDataset", { dataset: data.title }),
-      })
-    );
-  };
-
-  const handleTasklistBeforeExecute = async (taskName: string) => {
-    dispatch(
-      addMessage({
-        type: "chat",
-        textMessage: t("aiPrompt.textExecuteTasks", { task: taskName }),
-      })
-    );
-    // scrollToBottom([chatPaneRef, paymentsPaneRef]);
-  };
-
-  const handleTasklistExecute = async (
-    results: ChatTaskListProps["results"]
-  ) => {
-    // Recursively execute AI prompts
-    for (const result of results) {
-      if (result.skill === "text_completion") {
-        dispatch(fetchChat({ prompt: result.task }));
-      } else if (result.skill === "image_generation") {
-        dispatch(fetchChat({ prompt: `Generate image: ${result.task}` }));
-      }
-    }
-  };
-
   // Process User Input
   const handleEnter = async (ev: React.KeyboardEvent<HTMLInputElement>) => {
     if (ev.key === "Enter") {
@@ -328,8 +295,6 @@ export default function ChatPane(props: any) {
                   key={index}
                   textMessage=""
                   results={message.data}
-                  onBeforeExecute={handleTasklistBeforeExecute}
-                  onExecute={handleTasklistExecute}
                 />
               );
             } else if (message.type === "websearch") {

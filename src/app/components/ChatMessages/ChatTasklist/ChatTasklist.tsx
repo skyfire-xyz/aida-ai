@@ -22,33 +22,16 @@ import TaskContent from "./TaskContent";
 export interface ChatTaskListProps {
   avatarUrl?: string;
   textMessage?: string;
-  results?: number[];
-  // results: [
-  //   {
-  //     task: string;
-  //     skill: string;
-  //     status: string;
-  //   }
-  // ];
-  onBeforeExecute: (taskName: string) => void;
-  onExecute: (results: ChatTaskListProps) => void;
+  results?: string[];
 }
 
-function ChatTaskList({
-  textMessage,
-  avatarUrl,
-  results,
-  onBeforeExecute = () => {},
-  onExecute = () => {},
-}: ChatTaskListProps) {
+function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
   const t = useTranslations("ai");
   const tasks = useSelector(useTasklistSelector);
   const [showTasks, setShowTasks] = useState<{ [key: number]: boolean }>({});
   const dispatch = useDispatch<AppDispatch>();
 
   const handleExecute = () => {
-    // onBeforeExecute(textMessage as string);
-    // onExecute(results);
     results?.forEach((result) => {
       const task = tasks[result];
       if (task.status === "complete") return;
@@ -95,14 +78,25 @@ function ChatTaskList({
               }`}
             >
               <div className="flex items-center">
-                <StatusIcon
+                <TaskSource skillName={task.skill} />
+                {/* <StatusIcon
                   color=""
                   className={`w-8 h-8 mr-4 ${
                     task.status === "pending" ? "animate-spin" : ""
                   } 
                   flex-shrink-0`}
-                />
-                <p className="font-normal text-gray-700 dark:text-gray-400 flex-grow-1">
+                /> */}
+                <p
+                  className="font-normal text-gray-700 dark:text-gray-400 flex-grow-1"
+                  onClick={() => {
+                    if (task.status === "complete") {
+                      setShowTasks({
+                        ...showTasks,
+                        [task.id]: !showTasks[task.id],
+                      });
+                    }
+                  }}
+                >
                   {task.task}
                 </p>
                 <div className="flex ml-auto items-center">
@@ -113,10 +107,24 @@ function ChatTaskList({
                       onClick={() => dispatch(executeTask({ task }))}
                     >
                       <div className="flex items-center">
-                        <TaskSource skillName={task.skill} />
                         <FaPlay
                           color="#009182"
-                          className="w-3 h-3 cursor-pointer flex-shrink-0"
+                          className="w-4 h-4 cursor-pointer flex-shrink-0"
+                        />
+                      </div>
+                    </Button>
+                  )}
+                  {task.status === "pending" && (
+                    <Button
+                      color="light"
+                      className="ml-4"
+                      disabled
+                      onClick={() => dispatch(executeTask({ task }))}
+                    >
+                      <div className="flex items-center animate-spin">
+                        <ImSpinner11
+                          color="#009182"
+                          className="w-4 h-4 cursor-pointer flex-shrink-0"
                         />
                       </div>
                     </Button>
