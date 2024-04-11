@@ -7,6 +7,7 @@ export interface AiBotSliceReduxState {
   status: {
     botThinking: boolean;
   };
+  shouldScrollToBottom: boolean;
   error: {
     fetchAll: string | null;
   };

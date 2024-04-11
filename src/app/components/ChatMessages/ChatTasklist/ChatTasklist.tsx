@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 import { ImSpinner11 } from "react-icons/im";
 import { FaPlay } from "react-icons/fa";
-import { MdOutlineArrowDropDown } from "react-icons/md";
+import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import TaskSource from "./TaskSource";
 
 import { executeTask, useTasklistSelector } from "../../../reducers/aiBotSlice";
@@ -121,17 +121,28 @@ function ChatTaskList({
                       </div>
                     </Button>
                   )}
-                  {task.status === "complete" && !showTasks[task.id] && (
-                    <MdOutlineArrowDropDown
-                      className="w-8 h-8 cursor-pointer flex-shrink-0"
-                      onClick={() => {
-                        setShowTasks({
-                          ...showTasks,
-                          [task.id]: !showTasks[task.id],
-                        });
-                      }}
-                    />
-                  )}
+                  {task.status === "complete" &&
+                    (showTasks[task.id] ? (
+                      <MdOutlineArrowDropUp
+                        className="w-8 h-8 cursor-pointer flex-shrink-0"
+                        onClick={() => {
+                          setShowTasks({
+                            ...showTasks,
+                            [task.id]: !showTasks[task.id],
+                          });
+                        }}
+                      />
+                    ) : (
+                      <MdOutlineArrowDropDown
+                        className="w-8 h-8 cursor-pointer flex-shrink-0"
+                        onClick={() => {
+                          setShowTasks({
+                            ...showTasks,
+                            [task.id]: !showTasks[task.id],
+                          });
+                        }}
+                      />
+                    ))}
                 </div>
               </div>
               {showTasks[task.id] && <TaskContent task={task} />}

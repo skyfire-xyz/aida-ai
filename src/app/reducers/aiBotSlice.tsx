@@ -10,6 +10,7 @@ const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
   tasks: {},
+  shouldScrollToBottom: false,
   status: {
     botThinking: false,
   },
@@ -176,6 +177,9 @@ export const aiBotSlice = createSlice({
     setBotStatus: (state, { payload }) => {
       state.status.botThinking = payload;
     },
+    setShouldScrollToBottom: (state, { payload }) => {
+      state.shouldScrollToBottom = payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -184,6 +188,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchDataset.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchDataset.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -194,6 +199,7 @@ export const aiBotSlice = createSlice({
           data: action.payload.datasets || [],
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchDataset.rejected, (state) => {
         state.status.botThinking = false;
@@ -204,6 +210,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchAnalyzeDataset.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchAnalyzeDataset.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -213,6 +220,7 @@ export const aiBotSlice = createSlice({
           textMessage: action.payload.body,
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchAnalyzeDataset.rejected, (state) => {
         state.status.botThinking = false;
@@ -223,8 +231,10 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchTasklist.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchTasklist.fulfilled, (state, action) => {
+        state.status.botThinking = false;
         state.messages.push({
           type: "tasklist",
           avatarUrl: robotImageUrl,
@@ -243,8 +253,8 @@ export const aiBotSlice = createSlice({
             {}
           ),
         };
-        state.status.botThinking = false;
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchTasklist.rejected, (state) => {
         state.status.botThinking = false;
@@ -255,6 +265,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchWebSearch.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchWebSearch.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -265,6 +276,7 @@ export const aiBotSlice = createSlice({
           data: action.payload.results || [],
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchWebSearch.rejected, (state) => {
         state.status.botThinking = false;
@@ -275,6 +287,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchVideoSearch.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchVideoSearch.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -285,6 +298,7 @@ export const aiBotSlice = createSlice({
           data: action.payload.results || [],
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchVideoSearch.rejected, (state) => {
         state.status.botThinking = false;
@@ -295,6 +309,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchImageGeneration.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchImageGeneration.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -306,6 +321,7 @@ export const aiBotSlice = createSlice({
         });
         const logs = action.payload.quote || [action.payload.payment];
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchImageGeneration.rejected, (state) => {
         state.status.botThinking = false;
@@ -316,6 +332,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchMeme.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchMeme.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -326,6 +343,7 @@ export const aiBotSlice = createSlice({
           data: action.payload.imageUrl,
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchMeme.rejected, (state) => {
         state.status.botThinking = false;
@@ -336,6 +354,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchLogoAgent.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchLogoAgent.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -346,6 +365,7 @@ export const aiBotSlice = createSlice({
           data: action.payload.logoUrl || [],
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchLogoAgent.rejected, (state) => {
         state.status.botThinking = false;
@@ -356,6 +376,7 @@ export const aiBotSlice = createSlice({
        */
       .addCase(fetchChat.pending, (state) => {
         state.status.botThinking = true;
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchChat.fulfilled, (state, action) => {
         state.status.botThinking = false;
@@ -365,6 +386,7 @@ export const aiBotSlice = createSlice({
           textMessage: action.payload.body,
         });
         updateProtocolLogsState(state, action);
+        state.shouldScrollToBottom = true;
       })
       .addCase(fetchChat.rejected, (state) => {
         state.status.botThinking = false;
@@ -410,7 +432,12 @@ export const useTasklistSelector = (state: any) => {
   return state?.aiBot?.tasks;
 };
 
-export const { addInitialMessage, addMessage, addProtocolLog, setBotStatus } =
-  aiBotSlice.actions;
+export const {
+  addInitialMessage,
+  addMessage,
+  addProtocolLog,
+  setBotStatus,
+  setShouldScrollToBottom,
+} = aiBotSlice.actions;
 
 export default aiBotSlice.reducer;

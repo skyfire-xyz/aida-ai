@@ -12,7 +12,9 @@ import ExamplePrompts from "./ExamplePrompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList, { ChatTaskListProps } from "./ChatMessages/ChatTasklist";
+import ChatTaskList, {
+  ChatTaskListProps,
+} from "./ChatMessages/ChatTasklist/ChatTasklist";
 import ChatWebSearch from "./ChatMessages/ChatWebSearch";
 import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
 import {
@@ -29,6 +31,7 @@ import {
   fetchVideoSearch,
   fetchWebSearch,
   setBotStatus,
+  setShouldScrollToBottom,
   useAiBotSelector,
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
@@ -37,7 +40,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, status } = useSelector(useAiBotSelector);
+  const { messages, status, shouldScrollToBottom } =
+    useSelector(useAiBotSelector);
 
   const t = useTranslations("ai");
   const [inputText, setInputText] = useState("");
@@ -47,14 +51,8 @@ export default function ChatPane(props: any) {
   const chatMessages = useRef<ChatMessageType[]>([]);
   const chatPaneRef = useRef<HTMLDivElement>(null);
 
-  const {
-    protocolLogs,
-    setProtocolLogs,
-    paymentsPaneRef,
-    ProtocolLogsComp,
-    robotImageUrl,
-    userImageUrl,
-  } = props;
+  const { paymentsPaneRef, ProtocolLogsComp, robotImageUrl, userImageUrl } =
+    props;
 
   // Common Utilities
   const addBotResponseMessage = (
@@ -75,16 +73,17 @@ export default function ChatPane(props: any) {
   };
 
   useEffect(() => {
-    dispatch(setBotStatus(true));
-    setTimeout(() => {
-      dispatch(setBotStatus(false));
-      // TODO: Figure out why this useEffect called twice
-      dispatch(
-        addInitialMessage({
-          textMessage: t("aiPrompt.defaultGreeting"),
-        })
-      );
-    }, 1000);
+    scrollToBottom([chatPaneRef, paymentsPaneRef], () => {
+      dispatch(setShouldScrollToBottom(false));
+    });
+  }, [shouldScrollToBottom]);
+
+  useEffect(() => {
+    dispatch(
+      addInitialMessage({
+        textMessage: t("aiPrompt.defaultGreeting"),
+      })
+    );
   }, [messages]);
 
   // Datasets Utilities
@@ -95,7 +94,7 @@ export default function ChatPane(props: any) {
         textMessage: t("aiPrompt.textAnalyzeDataset", { dataset: data.title }),
       })
     );
-    scrollToBottom([chatPaneRef, paymentsPaneRef]);
+    // scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
   // const handleDatasetAnalyze = async (ref: string) => {
@@ -110,7 +109,7 @@ export default function ChatPane(props: any) {
         textMessage: t("aiPrompt.textExecuteTasks", { task: taskName }),
       })
     );
-    scrollToBottom([chatPaneRef, paymentsPaneRef]);
+    // scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
   const handleTasklistExecute = async (
@@ -123,7 +122,7 @@ export default function ChatPane(props: any) {
       } else if (result.skill === "image_generation") {
         dispatch(fetchChat({ prompt: `Generate image: ${result.task}` }));
       }
-      scrollToBottom([chatPaneRef, paymentsPaneRef]);
+      // scrollToBottom([chatPaneRef, paymentsPaneRef]);
     }
   };
 
@@ -167,11 +166,11 @@ export default function ChatPane(props: any) {
               textMessage: t("aiPrompt.errorMessage"),
             })
           );
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
         dispatch(fetchDataset({ searchTerm }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("tasklist")) {
         ///////////////////////////////////////////////////////////
         // Tasklist
@@ -185,12 +184,12 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchTasklist({ searchTerm }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
         ///////////////////////////////////////////////////////////
         // Web Search Request
@@ -204,12 +203,12 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchWebSearch({ searchTerm }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
         ///////////////////////////////////////////////////////////
         // Video Search Request
@@ -223,7 +222,7 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
@@ -249,13 +248,13 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         // Generate Image API
         dispatch(fetchImageGeneration({ searchTerm }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (
         inputText.toLocaleLowerCase().includes("random gif") ||
         inputText.toLocaleLowerCase().includes("random meme") ||
@@ -276,19 +275,19 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchMeme({ searchTerm, meme: true }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.includes("joke")) {
         ///////////////////////////////////////////////////////////
         // Joke Request
         ///////////////////////////////////////////////////////////
 
         dispatch(fetchMeme({ searchTerm: "", meme: false }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
+        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else {
         ///////////////////////////////////////////////////////////
         // Regular Chat Request
@@ -301,11 +300,11 @@ export default function ChatPane(props: any) {
           // Logo request after creating a wallet on admin console
           const logoAIAgent = getLogoAIData();
           dispatch(fetchLogoAgent({ logoAIAgent }));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
         } else {
           // Logo request before creating a wallet
           dispatch(fetchChat({ prompt: inputText }));
-          scrollToBottom([chatPaneRef, paymentsPaneRef]);
+          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
 
           if (inputText.toLocaleLowerCase().includes("logo")) {
             dispatch(setBotStatus(true));
@@ -317,7 +316,7 @@ export default function ChatPane(props: any) {
                   textMessage: t("aiPrompt.textVisitAdminDashboard"),
                 })
               );
-              scrollToBottom([chatPaneRef, paymentsPaneRef]);
+              // scrollToBottom([chatPaneRef, paymentsPaneRef]);
             }, 1000);
           }
         }

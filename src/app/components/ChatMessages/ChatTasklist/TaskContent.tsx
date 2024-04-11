@@ -4,7 +4,6 @@ import BodySearch from "../BodySearch";
 import BodyDataset from "../BodyDataset";
 
 export default function TaskContent({ task }: { task: any }) {
-  console.log(task, "task");
   return (
     <div>
       {task.skill === "video_search" && (
