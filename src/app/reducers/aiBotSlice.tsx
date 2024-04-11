@@ -329,7 +329,7 @@ export const aiBotSlice = createSlice({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
-          data: action.payload.logoUrl || [],
+          data: action.payload.imageUrl || [],
         });
         processFulfilled(state, action);
       })
