@@ -94,13 +94,7 @@ export default function ChatPane(props: any) {
         textMessage: t("aiPrompt.textAnalyzeDataset", { dataset: data.title }),
       })
     );
-    // scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
-
-  // const handleDatasetAnalyze = async (ref: string) => {
-  //   dispatch(fetchAnalyzeDataset({ ref }));
-  //   scrollToBottom([chatPaneRef, paymentsPaneRef]);
-  // };
 
   const handleTasklistBeforeExecute = async (taskName: string) => {
     dispatch(
@@ -122,7 +116,6 @@ export default function ChatPane(props: any) {
       } else if (result.skill === "image_generation") {
         dispatch(fetchChat({ prompt: `Generate image: ${result.task}` }));
       }
-      // scrollToBottom([chatPaneRef, paymentsPaneRef]);
     }
   };
 
@@ -166,11 +159,9 @@ export default function ChatPane(props: any) {
               textMessage: t("aiPrompt.errorMessage"),
             })
           );
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
         dispatch(fetchDataset({ searchTerm }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("tasklist")) {
         ///////////////////////////////////////////////////////////
         // Tasklist
@@ -184,12 +175,10 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchTasklist({ searchTerm }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
         ///////////////////////////////////////////////////////////
         // Web Search Request
@@ -203,12 +192,10 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchWebSearch({ searchTerm }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
         ///////////////////////////////////////////////////////////
         // Video Search Request
@@ -222,12 +209,9 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
-
         dispatch(fetchVideoSearch({ searchTerm }));
-        scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (
         inputText.toLocaleLowerCase().includes("generate gif") ||
         inputText.toLocaleLowerCase().includes("generate meme") ||
@@ -248,13 +232,11 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         // Generate Image API
         dispatch(fetchImageGeneration({ searchTerm }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (
         inputText.toLocaleLowerCase().includes("random gif") ||
         inputText.toLocaleLowerCase().includes("random meme") ||
@@ -275,12 +257,10 @@ export default function ChatPane(props: any) {
 
         if (!searchTerm) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
           return;
         }
 
         dispatch(fetchMeme({ searchTerm, meme: true }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else if (inputText.includes("joke")) {
         ///////////////////////////////////////////////////////////
         // Joke Request
@@ -300,11 +280,9 @@ export default function ChatPane(props: any) {
           // Logo request after creating a wallet on admin console
           const logoAIAgent = getLogoAIData();
           dispatch(fetchLogoAgent({ logoAIAgent }));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
         } else {
           // Logo request before creating a wallet
           dispatch(fetchChat({ prompt: inputText }));
-          // scrollToBottom([chatPaneRef, paymentsPaneRef]);
 
           if (inputText.toLocaleLowerCase().includes("logo")) {
             dispatch(setBotStatus(true));
@@ -316,7 +294,6 @@ export default function ChatPane(props: any) {
                   textMessage: t("aiPrompt.textVisitAdminDashboard"),
                 })
               );
-              // scrollToBottom([chatPaneRef, paymentsPaneRef]);
             }, 1000);
           }
         }

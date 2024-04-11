@@ -148,6 +148,33 @@ export const fetchChat = createAsyncThunk<any, { prompt: string }>(
   }
 );
 
+function updateProtocolLogsState(
+  state: AiBotSliceReduxState,
+  action: PayloadAction<any>
+) {
+  const logs = action.payload.quote || [action.payload.payment];
+  if (logs) {
+    state.protocolLogs = [...state.protocolLogs, ...logs];
+  }
+}
+
+const processPending = (state: AiBotSliceReduxState) => {
+  state.status.botThinking = true;
+  state.shouldScrollToBottom = true;
+};
+const processError = (state: AiBotSliceReduxState) => {
+  state.status.botThinking = false;
+  state.error.fetchAll = "Something went wrong";
+};
+const processFulfilled = (
+  state: AiBotSliceReduxState,
+  action: PayloadAction
+) => {
+  updateProtocolLogsState(state, action);
+  state.status.botThinking = false;
+  state.shouldScrollToBottom = true;
+};
+
 export const aiBotSlice = createSlice({
   name: "aiBot",
   initialState,
@@ -170,6 +197,7 @@ export const aiBotSlice = createSlice({
         textMessage: payload.textMessage,
         data: payload.data,
       });
+      state.shouldScrollToBottom = true;
     },
     addProtocolLog: (state, { payload }) => {
       updateProtocolLogsState(state, payload);
@@ -186,55 +214,35 @@ export const aiBotSlice = createSlice({
       /**
        * Dataset
        */
-      .addCase(fetchDataset.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchDataset.pending, processPending)
       .addCase(fetchDataset.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "dataset",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data: action.payload.datasets || [],
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchDataset.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchDataset.rejected, processError)
       /**
        * Dataset Analysis
        */
-      .addCase(fetchAnalyzeDataset.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchAnalyzeDataset.pending, processPending)
       .addCase(fetchAnalyzeDataset.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.body,
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchAnalyzeDataset.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchAnalyzeDataset.rejected, processError)
       /**
        * Tasklist
        */
-      .addCase(fetchTasklist.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchTasklist.pending, processPending)
       .addCase(fetchTasklist.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "tasklist",
           avatarUrl: robotImageUrl,
@@ -253,145 +261,92 @@ export const aiBotSlice = createSlice({
             {}
           ),
         };
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchTasklist.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchTasklist.rejected, processError)
       /**
        * WebSearch
        */
-      .addCase(fetchWebSearch.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchWebSearch.pending, processPending)
       .addCase(fetchWebSearch.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "websearch",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data: action.payload.results || [],
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchWebSearch.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchWebSearch.rejected, processError)
       /**
        * VideoSearch
        */
-      .addCase(fetchVideoSearch.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchVideoSearch.pending, processPending)
       .addCase(fetchVideoSearch.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "videosearch",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data: action.payload.results || [],
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchVideoSearch.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchVideoSearch.rejected, processError)
       /**
        * Generate Image
        */
-      .addCase(fetchImageGeneration.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchImageGeneration.pending, processPending)
       .addCase(fetchImageGeneration.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data: action.payload.imageUrl,
         });
-        const logs = action.payload.quote || [action.payload.payment];
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchImageGeneration.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchImageGeneration.rejected, processError)
       /**
        * Meme
        */
-      .addCase(fetchMeme.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchMeme.pending, processPending)
       .addCase(fetchMeme.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.joke,
           data: action.payload.imageUrl,
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchMeme.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchMeme.rejected, processError)
       /**
        * Logo
        */
-      .addCase(fetchLogoAgent.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchLogoAgent.pending, processPending)
       .addCase(fetchLogoAgent.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data: action.payload.logoUrl || [],
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchLogoAgent.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchLogoAgent.rejected, processError)
       /**
        * Chat
        */
-      .addCase(fetchChat.pending, (state) => {
-        state.status.botThinking = true;
-        state.shouldScrollToBottom = true;
-      })
+      .addCase(fetchChat.pending, processPending)
       .addCase(fetchChat.fulfilled, (state, action) => {
-        state.status.botThinking = false;
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.body,
         });
-        updateProtocolLogsState(state, action);
-        state.shouldScrollToBottom = true;
+        processFulfilled(state, action);
       })
-      .addCase(fetchChat.rejected, (state) => {
-        state.status.botThinking = false;
-        state.error.fetchAll = "Something went wrong";
-      })
+      .addCase(fetchChat.rejected, processError)
       /**
        * Execute Tasks
        */
@@ -409,16 +364,6 @@ export const aiBotSlice = createSlice({
       });
   },
 });
-
-function updateProtocolLogsState(
-  state: AiBotSliceReduxState,
-  action: PayloadAction<any>
-) {
-  const logs = action.payload.quote || [action.payload.payment];
-  if (logs) {
-    state.protocolLogs = [...state.protocolLogs, ...logs];
-  }
-}
 
 export const useAiBotSelector = (state: any) => {
   return state?.aiBot;
