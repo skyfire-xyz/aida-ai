@@ -98,10 +98,10 @@ export default function ChatPane(props: any) {
     scrollToBottom([chatPaneRef, paymentsPaneRef]);
   };
 
-  const handleDatasetAnalyze = async (ref: string) => {
-    dispatch(fetchAnalyzeDataset({ ref }));
-    scrollToBottom([chatPaneRef, paymentsPaneRef]);
-  };
+  // const handleDatasetAnalyze = async (ref: string) => {
+  //   dispatch(fetchAnalyzeDataset({ ref }));
+  //   scrollToBottom([chatPaneRef, paymentsPaneRef]);
+  // };
 
   const handleTasklistBeforeExecute = async (taskName: string) => {
     dispatch(
@@ -125,20 +125,6 @@ export default function ChatPane(props: any) {
       }
       scrollToBottom([chatPaneRef, paymentsPaneRef]);
     }
-  };
-
-  const handleDatasetBeforeDownload = async (data: any) => {
-    dispatch(
-      addMessage({
-        type: "chat",
-        textMessage: t("aiPrompt.textDownloadDataset", { dataset: data.title }),
-      })
-    );
-    scrollToBottom([chatPaneRef, paymentsPaneRef]);
-  };
-
-  const handleDatasetDownload = async (payment: PaymentType) => {
-    dispatch(addProtocolLog({ payload: { payment } }));
   };
 
   // Process User Input
@@ -356,11 +342,7 @@ export default function ChatPane(props: any) {
                   avatarUrl={message.avatarUrl}
                   key={index}
                   textMessage=""
-                  dataset={message.data}
-                  onBeforeDownload={handleDatasetBeforeDownload}
-                  onDownload={handleDatasetDownload}
-                  onBeforeAnalyze={handleDatasetBeforeAnalyze}
-                  onAnalyze={handleDatasetAnalyze}
+                  datasets={message.data}
                 />
               );
             } else if (message.type === "tasklist") {

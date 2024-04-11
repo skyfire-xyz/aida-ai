@@ -1,12 +1,6 @@
 import { useMemo } from "react";
 
-export default function SourceLogo({
-  sourceName,
-  className,
-}: {
-  sourceName: string;
-  className: string;
-}) {
+export default function SourceLogo({ sourceName }: { sourceName: string }) {
   const imageUrl = useMemo(() => {
     if (sourceName === "Perplexity") {
       return "/images/aichat/logo-perplexity.svg";
@@ -32,13 +26,13 @@ export default function SourceLogo({
   }
 
   return (
-    <span className={`mr-2 h-4 w-4 flex-shrink-0 ${className}`}>
+    <span className={`mr-2 h-4 w-4 flex-shrink-0`}>
       <img
         src={imageUrl}
         alt={sourceName}
         className={`h-4 w-4 inline-block rounded-sm ${
           sourceName === "Perplexity" ? "bg-white" : ""
-        } ${className}`}
+        }`}
       />
     </span>
   );

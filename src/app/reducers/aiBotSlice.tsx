@@ -18,32 +18,17 @@ const initialState: AiBotSliceReduxState = {
   },
 };
 
-export const scrollToBottom = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchDataset",
-  async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-      searchTerm: searchTerm.trim(),
-    });
-    return res.data;
-  }
-);
-
-export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchDataset",
-  async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-      searchTerm: searchTerm.trim(),
-    });
-    return res.data;
-  }
-);
-
 export const executeTask = createAsyncThunk<any, { task: any }>(
   "aiBot/executeTask",
   async ({ task }) => {
     if (task.skill === "text_completion") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/chat`, {
+      const res = await axios.post(`${BACKEND_API_URL}v2/chat/perplexity`, {
         prompt: task.task,
+      });
+      return { ...res.data, task };
+    } else if (task.skill === "random_joke") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
+        searchTerm: task.task,
       });
       return { ...res.data, task };
     } else if (task.skill === "image_generation") {
@@ -61,7 +46,22 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
         prompt: task.task,
       });
       return { ...res.data, task };
+    } else if (task.skill === "dataset_search") {
+      const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
+        searchTerm: task.task,
+      });
+      return { ...res.data, task };
     }
+  }
+);
+
+export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchDataset",
+  async ({ searchTerm }) => {
+    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
+      searchTerm: searchTerm.trim(),
+    });
+    return res.data;
   }
 );
 
@@ -230,14 +230,15 @@ export const aiBotSlice = createSlice({
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data:
-            action.payload.tasks.map((task: { id: number }) => task.id) || [],
+            action.payload.tasks.map((task: { task: string }) => task.task) ||
+            [],
         });
 
         state.tasks = {
           ...state.tasks,
           ...action.payload.tasks.reduce(
-            (obj: object, task: { id: number }) => {
-              return { ...obj, [task.id]: task };
+            (obj: object, task: { task: string }) => {
+              return { ...obj, [task.task]: task };
             },
             {}
           ),
@@ -373,15 +374,15 @@ export const aiBotSlice = createSlice({
        * Execute Tasks
        */
       .addCase(executeTask.pending, (state, action) => {
-        state.tasks[action.meta.arg.task.id].status = "pending";
+        state.tasks[action.meta.arg.task.task].status = "pending";
       })
       .addCase(executeTask.fulfilled, (state, action) => {
-        state.tasks[action.payload.task.id].status = "complete";
-        state.tasks[action.payload.task.id].result = action.payload;
+        state.tasks[action.payload.task.task].status = "complete";
+        state.tasks[action.payload.task.task].result = action.payload;
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
-        state.tasks[action.meta.arg.task.id].status = "error";
+        state.tasks[action.meta.arg.task.task].status = "error";
         state.error.fetchAll = "Something went wrong";
       });
   },
