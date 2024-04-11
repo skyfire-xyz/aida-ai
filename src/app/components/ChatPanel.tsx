@@ -291,7 +291,7 @@ export default function ChatPane(props: any) {
         scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else {
         ///////////////////////////////////////////////////////////
-        // Regular Chat Requeste
+        // Regular Chat Request
         ///////////////////////////////////////////////////////////
 
         if (

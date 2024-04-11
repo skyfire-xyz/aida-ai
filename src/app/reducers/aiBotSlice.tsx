@@ -322,8 +322,8 @@ export const aiBotSlice = createSlice({
         state.messages.push({
           type: "chat",
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data: action.payload.imageUrl || [],
+          textMessage: action.payload.joke,
+          data: action.payload.imageUrl,
         });
         updateProtocolLogsState(state, action);
       })
