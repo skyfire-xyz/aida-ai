@@ -33,9 +33,9 @@ export default function AiChat({ images }: AiChatProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
-  const userAvatarImageData = {};
-  const botAvatarImageData = {};
-  const botImageData = {};
+  const userAvatarImageData = { url: "" };
+  const botAvatarImageData = { url: "" };
+  const botImageData = { url: "" };
 
   const ProtocolLogs = () => {
     return (

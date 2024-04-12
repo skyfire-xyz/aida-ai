@@ -278,7 +278,7 @@ export default function ChatPane(props: any) {
         ref={chatPaneRef}
       >
         {messages &&
-          messages.map((message, index) => {
+          messages.map((message: ChatMessageType, index: number) => {
             if (message.type === "dataset") {
               return (
                 <ChatDataset

@@ -3,7 +3,7 @@ import fileDownload from "js-file-download";
 
 import { Button, Card } from "flowbite-react";
 import { ChatVideoSearchProps } from "./ChatVideoSearch";
-import { use, useState } from "react";
+import { MouseEvent, MouseEventHandler, use, useState } from "react";
 import { FaFileDownload } from "react-icons/fa";
 import { TiZoom } from "react-icons/ti";
 import { useTranslations } from "next-intl";
@@ -74,7 +74,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
               <Button
                 color="light"
                 className="h-6 w-6 flex items-center"
-                onClick={async (e) => {
+                onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
                   dispatch(fetchAnalyzeDataset({ ref: data.ref }));
                 }}
@@ -84,7 +84,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
               <Button
                 color="light"
                 className="h-6 w-6 flex items-center"
-                onClick={async (e) => {
+                onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
                   const filename = await getDataset(data);
                   const res = await downloadDataset(filename);

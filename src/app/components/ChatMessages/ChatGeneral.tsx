@@ -1,6 +1,6 @@
 // import DownloadIcon from '@mui/icons-material/Download';
 import Markdown from "react-markdown";
-import ShareOnSocials from "../ShareOnSocials";
+// import ShareOnSocials from "../ShareOnSocials";
 // import { Button } from '@mui/material';
 import fileDownload from "js-file-download";
 import { Button } from "flowbite-react";
