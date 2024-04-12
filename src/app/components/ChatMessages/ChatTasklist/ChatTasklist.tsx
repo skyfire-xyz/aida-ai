@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Accordion, Button, Card, List } from "flowbite-react";
+import { Accordion, Badge, Button, Card, List } from "flowbite-react";
 import {
   MdOutlineCheckBox,
   MdOutlineCheckBoxOutlineBlank,
@@ -15,8 +15,6 @@ import { executeTask, useTasklistSelector } from "../../../reducers/aiBotSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
 
-import BodyVideos from "../BodyVideos";
-import BodySearch from "../BodySearch";
 import TaskContent from "./TaskContent";
 
 export interface ChatTaskListProps {
@@ -30,14 +28,30 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
   const tasks = useSelector(useTasklistSelector);
   const [showTasks, setShowTasks] = useState<{ [key: number]: boolean }>({});
   const dispatch = useDispatch<AppDispatch>();
+  const [executeAll, setExecuteAll] = useState(false);
 
-  const handleExecute = () => {
-    results?.forEach((result) => {
-      const task = tasks[result];
-      if (task.status === "complete") return;
-      dispatch(executeTask({ task }));
-    });
-  };
+  useEffect(() => {
+    if (executeAll) {
+      const isAllExecuted = results?.every((result) => {
+        const task = tasks[result];
+        return task.status === "complete" || task.status === "pending";
+      });
+      if (!isAllExecuted) {
+        results?.forEach((result) => {
+          const task = tasks[result];
+          if (
+            task.status === "complete" ||
+            task.status === "pending" ||
+            !task.isDependentTasksComplete
+          )
+            return;
+          dispatch(executeTask({ task }));
+        });
+      } else {
+        setExecuteAll(false);
+      }
+    }
+  }, [executeAll, tasks]);
 
   return (
     <div className={`flex justify-start mb-4`}>
@@ -50,7 +64,6 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
         <article className="text-white prose">
           <Markdown>{textMessage}</Markdown>
         </article>
-        {/* <List> */}
         {results?.map((result, index) => {
           const task = tasks[result];
           let StatusIcon = MdOutlineCheckBoxOutlineBlank;
@@ -63,14 +76,6 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
           return (
             <Card
               key={index}
-              // onClick={() => {
-              //   if (task.status === "complete") {
-              //     setShowTasks({
-              //       ...showTasks,
-              //       [task.id]: !showTasks[task.id],
-              //     });
-              //   }
-              // }}
               className={`mb-4 ${
                 task.status === "complete"
                   ? "bg-green-100 cursor-pointer"
@@ -78,42 +83,59 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
               }`}
             >
               <div className="flex items-center">
+                <Badge color="gray" className="mr-2">
+                  {task.id}
+                </Badge>
                 <TaskSource skillName={task.skill} />
-                {/* <StatusIcon
-                  color=""
-                  className={`w-8 h-8 mr-4 ${
-                    task.status === "pending" ? "animate-spin" : ""
-                  } 
-                  flex-shrink-0`}
-                /> */}
-                <p
-                  className="font-normal text-gray-700 dark:text-gray-400 flex-grow-1"
-                  onClick={() => {
-                    if (task.status === "complete") {
-                      setShowTasks({
-                        ...showTasks,
-                        [task.id]: !showTasks[task.id],
-                      });
-                    }
-                  }}
-                >
-                  {task.task}
-                </p>
-                <div className="flex ml-auto items-center">
-                  {task.status === "incomplete" && (
-                    <Button
-                      color="light"
-                      className="ml-4"
-                      onClick={() => dispatch(executeTask({ task }))}
-                    >
-                      <div className="flex items-center">
-                        <FaPlay
-                          color="#009182"
-                          className="w-4 h-4 cursor-pointer flex-shrink-0"
-                        />
-                      </div>
-                    </Button>
+                <div>
+                  <p
+                    className="font-normal text-gray-700 dark:text-gray-400 flex-grow-1"
+                    onClick={() => {
+                      if (task.status === "complete") {
+                        setShowTasks({
+                          ...showTasks,
+                          [task.id]: !showTasks[task.id],
+                        });
+                      }
+                    }}
+                  >
+                    {task.task}
+                  </p>
+                  {task.dependent_task_ids.length > 0 && (
+                    <div className="mt-2">
+                      <span className="text-gray-400 text-sm mr-2">
+                        Dependent Tasks:
+                      </span>
+                      {task.dependent_task_ids.map(
+                        (id: number, index: number) => (
+                          <Badge
+                            key={index}
+                            color="gray"
+                            className="mr-2 inline-block"
+                          >
+                            {id}
+                          </Badge>
+                        )
+                      )}
+                    </div>
                   )}
+                </div>
+                <div className="flex ml-auto items-center">
+                  {task.status === "incomplete" &&
+                    task.isDependentTasksComplete && (
+                      <Button
+                        color="light"
+                        className="ml-4"
+                        onClick={() => dispatch(executeTask({ task }))}
+                      >
+                        <div className="flex items-center">
+                          <FaPlay
+                            color="#009182"
+                            className="w-4 h-4 cursor-pointer flex-shrink-0"
+                          />
+                        </div>
+                      </Button>
+                    )}
                   {task.status === "pending" && (
                     <Button
                       color="light"
@@ -157,8 +179,13 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
             </Card>
           );
         })}
-        <Button className="mt-2" onClick={handleExecute}>
-          Execute All Tasks
+        <Button
+          className="mt-2"
+          onClick={() => {
+            setExecuteAll(true);
+          }}
+        >
+          Execute Tasks
         </Button>
       </div>
     </div>

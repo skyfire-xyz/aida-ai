@@ -1,8 +1,20 @@
+export interface Task {
+  id: number;
+  skill: string;
+  status: "complete" | "pending" | "error";
+  result: any;
+  dependent_task_ids: number[];
+  parentId: number;
+  referenceId: number;
+  isDependentTasksComplete?: boolean;
+}
+
 export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
   tasks: {
-    [key: number]: any;
+    [key: number]: Task;
   };
+  taskGroupIndex: number;
   protocolLogs: PaymentType[];
   status: {
     botThinking: boolean;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AiBotSliceReduxState } from "./types";
+import { AiBotSliceReduxState, Task } from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { ReducerAction } from "react";
 
@@ -10,6 +10,7 @@ const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
   tasks: {},
+  taskGroupIndex: 1,
   shouldScrollToBottom: false,
   status: {
     botThinking: false,
@@ -248,19 +249,29 @@ export const aiBotSlice = createSlice({
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data:
-            action.payload.tasks.map((task: { task: string }) => task.task) ||
-            [],
+            action.payload.tasks.map(
+              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`
+            ) || [],
         });
-
         state.tasks = {
           ...state.tasks,
           ...action.payload.tasks.reduce(
-            (obj: object, task: { task: string }) => {
-              return { ...obj, [task.task]: task };
+            (obj: object, task: { id: number }) => {
+              const parentId = state.taskGroupIndex;
+              const referenceId = `${parentId}-${task.id}`;
+              return {
+                ...obj,
+                [referenceId]: {
+                  ...task,
+                  referenceId,
+                  parentId,
+                },
+              };
             },
             {}
           ),
         };
+        state.taskGroupIndex++;
         processFulfilled(state, action);
       })
       .addCase(fetchTasklist.rejected, processError)
@@ -351,15 +362,15 @@ export const aiBotSlice = createSlice({
        * Execute Tasks
        */
       .addCase(executeTask.pending, (state, action) => {
-        state.tasks[action.meta.arg.task.task].status = "pending";
+        state.tasks[action.meta.arg.task.referenceId].status = "pending";
       })
       .addCase(executeTask.fulfilled, (state, action) => {
-        state.tasks[action.payload.task.task].status = "complete";
-        state.tasks[action.payload.task.task].result = action.payload;
+        state.tasks[action.payload.task.referenceId].status = "complete";
+        state.tasks[action.payload.task.referenceId].result = action.payload;
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
-        state.tasks[action.meta.arg.task.task].status = "error";
+        state.tasks[action.meta.arg.task.referenceId].status = "error";
         state.error.fetchAll = "Something went wrong";
       });
   },
@@ -374,7 +385,27 @@ export const useProtocolLogsSelector = (state: any) => {
 };
 
 export const useTasklistSelector = (state: any) => {
-  return state?.aiBot?.tasks;
+  // preprocess tasks
+  const tasks = Object.assign({ ...state?.aiBot?.tasks });
+  if (tasks && Object.keys(tasks).length > 0) {
+    Object.values(state?.aiBot?.tasks).map((value) => {
+      const task = value as Task;
+      const dependentTasks = task.dependent_task_ids.map((id: number) => {
+        const referenceId = `${task.parentId}-${id}`;
+        return tasks[referenceId];
+      });
+      const isDependentTasksComplete = dependentTasks.every((task: any) => {
+        return task.status === "complete";
+      });
+
+      tasks[task.referenceId] = {
+        ...tasks[task.referenceId],
+        isDependentTasksComplete,
+      };
+    });
+  }
+
+  return tasks;
 };
 
 export const {
