@@ -37,8 +37,10 @@ const initialState: DashboardReduxState = {
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/transactions`);
-    return res.data;
+    // const res = await axios.post(`${BACKEND_API_URL}v2/transactions`);
+    // return res.data;
+
+    return demoTransactions;
   }
 );
 
@@ -103,7 +105,7 @@ export const dashboardSlice = createSlice({
         state.status["fetchAllTransactions"] = "pending";
       })
       .addCase(fetchAllTransactions.fulfilled, (state, action) => {
-        state.transactions = demoTransactions as CommonTransaction[];
+        state.transactions = action.payload;
       })
       .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.status["fetchAllTransactions"] = "failed";
