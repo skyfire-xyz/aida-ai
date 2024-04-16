@@ -10,6 +10,8 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
       return "/images/aichat/logo-kaggle.svg";
     } else if (sourceName === "ChatGPT") {
       return "/images/aichat/logo-chatgpt.svg";
+    } else if (sourceName === "Gemini") {
+      return "/images/aichat/logo-gemini.svg";
     }
   }, [sourceName]);
 
@@ -17,14 +19,14 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
     return (
       <div className="mr-2 h-4 w-4 inline text-gray-700">
         <span className="h-4 w-4 text-[12px] inline-block bg-white rounded-sm text-center">
-          {sourceName[0]}
+          {sourceName && sourceName[0]}
         </span>
       </div>
     );
   }
 
   return (
-    <span className="mr-2 h-4 w-4">
+    <span className={`mr-2 h-4 w-4 flex-shrink-0`}>
       <img
         src={imageUrl}
         alt={sourceName}

@@ -1,12 +1,12 @@
 // import DownloadIcon from '@mui/icons-material/Download';
 import Markdown from "react-markdown";
-import ShareOnSocials from "./ShareOnSocials";
+// import ShareOnSocials from "../ShareOnSocials";
 // import { Button } from '@mui/material';
 import fileDownload from "js-file-download";
 import { Button } from "flowbite-react";
 import { useTranslations } from "next-intl";
 
-interface ChatMessageProps {
+interface ChatGeneralProps {
   direction: "left" | "right";
   avatarUrl?: string;
   textMessage?: string;
@@ -14,13 +14,13 @@ interface ChatMessageProps {
   children?: React.ReactNode;
 }
 
-function ChatMessage({
+function ChatGeneral({
   direction,
   textMessage,
   avatarUrl,
   contentImageUrl,
   children,
-}: ChatMessageProps) {
+}: ChatGeneralProps) {
   const t = useTranslations("ai");
   if (direction === "right") {
     return (
@@ -75,4 +75,4 @@ function ChatMessage({
   );
 }
 
-export default ChatMessage;
+export default ChatGeneral;

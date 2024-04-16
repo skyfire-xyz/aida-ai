@@ -242,7 +242,7 @@ export default function Home() {
                 {step === 1 && (
                   <>
                     <div className="mb-2">
-                      <p className="my-2">Your Address (Polygon Mumbai)</p>
+                      <p className="my-2">Your Address (Polygon Amoy)</p>
                       <div className="flex items-center">
                         <Kbd
                           className="cursor-pointer"

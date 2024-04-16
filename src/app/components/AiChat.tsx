@@ -1,10 +1,14 @@
+"use client";
+
 import DataSource from "./DataSource";
 import ChatPanel from "./ChatPanel";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PaymentType } from "./types";
-import ExamplePrompts from "./ExamplePropts";
+import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useSelector } from "react-redux";
+import { useProtocolLogsSelector } from "../reducers/aiBotSlice";
 
 type Image = any;
 interface AiChatProps {
@@ -13,7 +17,8 @@ interface AiChatProps {
 
 export default function AiChat({ images }: AiChatProps) {
   const t = useTranslations("ai");
-  const [protocolLogs, setProtocolLogs] = useState<PaymentType[]>([]);
+  const protocolLogs = useSelector(useProtocolLogsSelector);
+  const [mounted, setMounted] = useState(false);
   const paymentsPaneRef = useRef<HTMLDivElement>(null);
   // const userAvatarImageData = getStrapiDataAttributes(
   //   images?.find((data) => data.attributes.name === "userAvatar")
@@ -25,9 +30,12 @@ export default function AiChat({ images }: AiChatProps) {
   //   images?.find((data) => data.attributes.name === "botImageWide")
   // );
 
-  const userAvatarImageData = {};
-  const botAvatarImageData = {};
-  const botImageData = {};
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const userAvatarImageData = { url: "" };
+  const botAvatarImageData = { url: "" };
+  const botImageData = { url: "" };
 
   const ProtocolLogs = () => {
     return (
@@ -101,8 +109,8 @@ export default function AiChat({ images }: AiChatProps) {
         <div className="md:flex md:flex-row sm:flex-col justify-between bg-white h-full rounded-lg">
           <ChatPanel
             paymentsPaneRef={paymentsPaneRef}
-            protocolLogs={protocolLogs}
-            setProtocolLogs={setProtocolLogs}
+            // protocolLogs={protocolLogs}
+            // setProtocolLogs={setProtocolLogs}
             ProtocolLogsComp={ProtocolLogs}
             userImageUrl={
               userAvatarImageData?.url ||
@@ -127,7 +135,7 @@ export default function AiChat({ images }: AiChatProps) {
               </div>
               <p className="font-bold mt-4">
                 <Link
-                  href="https://mumbai.polygonscan.com/address/0x45c83889BD84D5FB77039B67C30695878f506313#tokentxns"
+                  href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer"
                   target="_blank"
                 >
                   <b>{t("page.titlePaymentLogs")}</b>
