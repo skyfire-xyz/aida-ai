@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import DialogFundTransfer from "./DialogFundTransfer";
@@ -14,6 +14,16 @@ import { MdLoop } from "react-icons/md";
 import { IoIosWallet } from "react-icons/io";
 import UserOperation from "./UserOperation";
 import PaymentTransactions from "./PaymentTransactions";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/src/store";
+import {
+  createWallet,
+  fetchWallets,
+  resetStatus,
+  useDashboardSelector,
+} from "@/src/app/reducers/dashboardSlice";
+import { Wallet } from "@/src/app/reducers/types";
+import { create } from "domain";
 
 interface IFormInput {
   service: string;
@@ -21,20 +31,6 @@ interface IFormInput {
   website: string;
   price: number;
 }
-
-const reservedWallets = {
-  Sender: [{ name: "", address: "0x45c83889BD84D5FB77039B67C30695878f506313" }],
-  Receiver: [
-    { name: "", address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51" },
-    { name: "Joke", address: "0xB94dD221ef1302576E2785dAFB4Bad28cbBeA540" },
-    { name: "ChatGPT", address: "0x7aA161F8B72eDd5e474943c922D1e479475B9D30" },
-    { name: "Dataset", address: "0xB23338A0F7999e322a504915590ca6A2f0fB2d90" },
-    {
-      name: "Perplexity",
-      address: "0x4E3E0feD99e56d29492e44C176faB18B20aCCC57",
-    },
-  ],
-};
 
 const walletTypes = [
   // 'Minting',
@@ -53,14 +49,18 @@ const walletTypes = [
 export type WalletType = (typeof walletTypes)[number];
 
 export default function WalletManager() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { status, transactions, wallets, reservedWallets } =
+    useSelector(useDashboardSelector);
+
   const [walletType, setWalletType] = useState<WalletType>("Receiver");
-  const [wallets, setWallets] = useState([]);
+  // const [wallets, setWallets] = useState([]);
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");
+
   const [walletAdded, setWalletAdded] = useState(false);
   const [transferFund, setTransferFund] = useState<any>(null);
-  const [creatingWallet, setCreatingWallet] = useState(false);
 
   const walletList = useRef<HTMLDivElement>(null);
 
@@ -71,80 +71,40 @@ export default function WalletManager() {
   } = useForm<IFormInput>();
 
   const getWallets = async () => {
-    try {
-      const response = await axios.get(
-        `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`
-      );
-      setWallets(response.data.reverse());
-      walletList?.current?.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setOpenError("Sorry, the blockchain network is slow right now");
-    }
+    dispatch(fetchWallets({ walletType }));
+    walletList?.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const redeemClaims = async () => {
-    try {
-      const response = await axios.get(
-        `${BACKEND_API_URL}v2/transactions/redeem`
-      );
-      console.log(response.data);
-    } catch {
-      setOpenError("Sorry, the blockchain network is slow right now");
-    }
-  };
-
-  function setLocalStorage(value: any) {
-    try {
-      const key = "__storage__ai-demo";
-      if (window) {
-        window["localStorage"].setItem(key, JSON.stringify(value));
-        return true;
-      } else {
-        return false;
-      }
-    } catch {
-      return false;
-    }
-  }
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setOpenInfo("Creating wallet...");
-    setCreatingWallet(true);
-    try {
-      const response = await axios.post(`${BACKEND_API_URL}v2/wallet`, {
-        price: Number(data.price) * 1000000,
-        serviceName: data.service,
-        description: data.description,
-        website: data.website,
-      });
-      setLocalStorage({
-        ...data,
-        price: Number(data.price) * 1000000,
-      });
+  useEffect(() => {
+    if (status.createWallet === "succeeded") {
+      getWallets();
       setWalletAdded(true);
-
-      setCreatingWallet(false);
-      setTimeout(() => {
-        setWalletAdded(false);
-      }, 3000);
-
       setOpenInfo("");
       setOpenSuccess("Successfully created wallet");
-      getWallets();
-    } catch {
-      setTimeout(() => {
-        setOpenInfo("");
-      }, 3000);
-      setCreatingWallet(false);
-      setOpenError(
-        "Sorry, the blockchain network is slow right now, please try again"
-      );
-    }
 
-    setTimeout(() => {
+      // Reset
+      setTimeout(() => {
+        setWalletAdded(false);
+        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
+      }, 3000);
+    } else if (status.createWallet === "pending") {
+      setOpenInfo("Creating wallet...");
+    } else if (status.createWallet === "failed") {
+      setOpenError("Sorry, the blockchain network is slow right now");
+
+      // Reset
+      setTimeout(() => {
+        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
+      }, 3000);
+    } else if (status.createWallet === "idle") {
+      setOpenInfo("");
       setOpenSuccess("");
       setOpenError("");
-    }, 5000);
+    }
+  }, [status]);
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    dispatch(createWallet({ data }));
   };
 
   useEffect(() => {
@@ -173,8 +133,8 @@ export default function WalletManager() {
             </Select>
           </div>
           <div ref={walletList} className="mt-8 overflow-scroll">
-            {!wallets.length && <p>No wallets found</p>}
-            {wallets.map((wallet: any, index) => {
+            {!wallets[walletType].length && <p>No wallets found</p>}
+            {wallets[walletType].map((wallet: Wallet, index: number) => {
               const reservedWalletInfo = reservedWallets[walletType].find(
                 (w) => {
                   return w.address === wallet.address;
@@ -374,11 +334,16 @@ export default function WalletManager() {
                 )}
               </div>
             </div>
-            <Button type="submit" disabled={!!creatingWallet}>
+            <Button
+              type="submit"
+              disabled={
+                status["createWallet"] && status["createWallet"] !== "idle"
+              }
+            >
               Publish
             </Button>
           </form>
-          <UserOperation />
+          {/* <UserOperation /> */}
         </div>
       </div>
       <PaymentTransactions />

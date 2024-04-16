@@ -1,33 +1,21 @@
 import { Table } from "flowbite-react";
-import demoTranasctions from "./test.json";
 import axios from "axios";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useEffect } from "react";
+import {
+  fetchAllTransactions,
+  useDashboardSelector,
+} from "@/src/app/reducers/dashboardSlice";
+import { AppDispatch } from "@/src/store";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function PaymentTransactions() {
-  const getAllTransactions = async () => {
-    try {
-      const response = await axios.get(`${BACKEND_API_URL}v2/transactions`);
-      console.log(response.data);
-    } catch {
-      //   setOpenError("Sorry, the blockchain network is slow right now");
-    }
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions } = useSelector(useDashboardSelector);
 
-  const getAddressTransactions = async (address: string) => {
-    try {
-      const response = await axios.get(
-        `${BACKEND_API_URL}v2/transactions/${address}`
-      );
-    } catch {
-      //   setOpenError("Sorry, the blockchain network is slow right now");
-    }
-  };
   useEffect(() => {
-    getAllTransactions();
+    dispatch(fetchAllTransactions());
   }, []);
-
-  console.log(demoTranasctions);
 
   return (
     <div className="mt-20">
@@ -46,7 +34,7 @@ export default function PaymentTransactions() {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {demoTranasctions
+            {transactions
               .filter((tx) => {
                 return tx.type === "PAYMENT";
               })
