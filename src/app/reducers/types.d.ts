@@ -16,6 +16,13 @@ export interface AiBotSliceReduxState {
   };
   taskGroupIndex: number;
   protocolLogs: PaymentType[];
+  protocolLogsV2: any;
+  // | [
+  //     {
+  //       [x: number]: PaymentType;
+  //     }
+  //   ]
+  // | null;
   status: {
     botThinking: boolean;
   };
@@ -26,12 +33,19 @@ export interface AiBotSliceReduxState {
 }
 
 export type ChatMessageType = {
+  uuid?: string;
   type: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch";
   direction?: "left" | "right";
   avatarUrl: string;
   textMessage: string;
   data?: any;
   contentImageUrl?: string;
+};
+
+export type Prompt = {
+  userUuid: string;
+  promptType: "chat" | "tasklist" | "dataset";
+  logs: PaymentType[];
 };
 
 export type PaymentType = {

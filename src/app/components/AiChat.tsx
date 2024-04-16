@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useSelector } from "react-redux";
 import { useProtocolLogsSelector } from "../reducers/aiBotSlice";
+import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
+// import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 
 type Image = any;
 interface AiChatProps {
@@ -17,9 +19,7 @@ interface AiChatProps {
 
 export default function AiChat({ images }: AiChatProps) {
   const t = useTranslations("ai");
-  const protocolLogs = useSelector(useProtocolLogsSelector);
   const [mounted, setMounted] = useState(false);
-  const paymentsPaneRef = useRef<HTMLDivElement>(null);
   // const userAvatarImageData = getStrapiDataAttributes(
   //   images?.find((data) => data.attributes.name === "userAvatar")
   // );
@@ -37,81 +37,11 @@ export default function AiChat({ images }: AiChatProps) {
   const botAvatarImageData = { url: "" };
   const botImageData = { url: "" };
 
-  const ProtocolLogs = () => {
-    return (
-      <div
-        className="flex-grow items-start mb-4 overflow-scroll bg-gray-900 rounded-md"
-        ref={paymentsPaneRef}
-      >
-        <div className="relative max-w-2xl mx-auto p-4">
-          {/* <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-400">Logs:</span>
-          </div> */}
-          <div className="h-full text-gray-300" id="code">
-            <ul>
-              {protocolLogs.map((payment: PaymentType, index: number) => {
-                if (!payment) return;
-                return (
-                  <>
-                    <li key={index} className="last:font-semibold mb-2 flex">
-                      <DataSource sourceName={payment.destinationName} />
-                      <div className="">
-                        <span className="block">
-                          {t("paymentLogs.textQuote", {
-                            destination: `${payment.destinationName} 
-                            ${
-                              payment.destinationName === "KaggleAI"
-                                ? "data"
-                                : "service"
-                            }`,
-                            amount: Number(payment.amount) / 1000000,
-                          })}
-                        </span>
-                        {payment.status === "SUCCESS" && (
-                          <span className="block text-teal-500">
-                            {t("paymentLogs.textQuotePaidTo", {
-                              amount: Number(payment.amount) / 1000000,
-                              currency: payment.currency,
-                              destination: payment.destinationName,
-                            })}
-                          </span>
-                        )}
-                        {payment.status === "DENIED" && (
-                          <span className="block text-rose-500">
-                            {t("paymentLogs.textQuoteRejected", {
-                              errorMessage: payment.message,
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </li>
-                  </>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="0 flex-grow h-full">
       <div className="container mx-auto shadow-lg rounded-lg h-full">
-        {/* <div className="px-5 py-5 flex justify-between items-center bg-white border-b-2">
-          <div className="font-semibold text-2xl">
-          <div>
-            <div className="h-12 w-12 p-2 bg-[#FA722A] rounded-full text-white font-semibold flex items-center justify-center">
-              KOJI
-            </div>
-          </div>
-        </div> */}
         <div className="md:flex md:flex-row sm:flex-col justify-between bg-white h-full rounded-lg">
           <ChatPanel
-            paymentsPaneRef={paymentsPaneRef}
-            // protocolLogs={protocolLogs}
-            // setProtocolLogs={setProtocolLogs}
-            ProtocolLogsComp={ProtocolLogs}
             userImageUrl={
               userAvatarImageData?.url ||
               "https://avatars.githubusercontent.com/u/5210813?v=4"
@@ -141,6 +71,7 @@ export default function AiChat({ images }: AiChatProps) {
                   <b>{t("page.titlePaymentLogs")}</b>
                 </Link>
               </p>
+              {/* <ProtocolLogsV2 /> */}
               <ProtocolLogs />
             </div>
           </div>
