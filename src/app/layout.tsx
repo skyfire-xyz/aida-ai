@@ -3,7 +3,7 @@ import "@/src/globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Aida.AI - Powered by Supermojo Payments",
+  title: "Aida.AI - Powered by Skyfire Payments",
   description: "",
 };
 
