@@ -54,7 +54,6 @@ export default function WalletManager() {
     useSelector(useDashboardSelector);
 
   const [walletType, setWalletType] = useState<WalletType>("Receiver");
-  // const [wallets, setWallets] = useState([]);
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");

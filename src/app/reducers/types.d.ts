@@ -14,6 +14,8 @@ export interface Wallet {
   address: string;
   balance?: string;
   transactions?: PaymentType[];
+  network?: string;
+  createdAt?: string;
 }
 
 export type WalletType = "Sender" | "Receiver";

@@ -37,9 +37,8 @@ const initialState: DashboardReduxState = {
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
-    // const res = await axios.post(`${BACKEND_API_URL}v2/transactions`);
+    const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
     // return res.data;
-
     return demoTransactions;
   }
 );
@@ -57,7 +56,7 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
 export const redeemClaims = createAsyncThunk<any>(
   "dashboard/redeemClaims",
   async () => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/transactions`);
+    const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
     return res.data;
   }
 );

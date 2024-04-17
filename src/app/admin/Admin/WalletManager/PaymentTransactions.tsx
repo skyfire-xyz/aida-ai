@@ -1,9 +1,10 @@
-import { Table } from "flowbite-react";
+import { Button, Table } from "flowbite-react";
 import axios from "axios";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { useEffect } from "react";
 import {
   fetchAllTransactions,
+  redeemClaims,
   useDashboardSelector,
 } from "@/src/app/reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
@@ -54,6 +55,9 @@ export default function PaymentTransactions() {
               ))}
           </Table.Body>
         </Table>
+        <Button className="mt-10" onClick={() => dispatch(redeemClaims())}>
+          Redeem Payments
+        </Button>
       </div>
     </div>
   );
