@@ -3,6 +3,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AiBotSliceReduxState, Task } from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { ReducerAction } from "react";
+import { anyPaymaster } from "@zerodev/session-key";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -22,35 +23,69 @@ const initialState: AiBotSliceReduxState = {
 
 export const executeTask = createAsyncThunk<any, { task: any }>(
   "aiBot/executeTask",
-  async ({ task }) => {
+  async ({ task }, thunkAPI) => {
+    const state: any = thunkAPI.getState();
+    const { tasks } = state.aiBot;
+
+    const dependentTasksResults = task.dependent_task_ids.reduce(
+      (allResults: [], id: number) => {
+        const dependentTask = tasks[`${task.parentId}-${id}`];
+        if (dependentTask.status === "complete") {
+          // TODO: This is only supporting websearch results for now.
+          const results = dependentTask.result?.results;
+
+          if (!results) return allResults;
+          return [
+            ...allResults,
+            ...results.map((result: any) => {
+              const { title, description, snippet } = result;
+              return { title, description: description || snippet }; // Result doesn't have "description", so use snippet for now
+            }),
+          ];
+        }
+      },
+      []
+    );
+
     if (task.skill === "text_completion") {
       const res = await axios.post(`${BACKEND_API_URL}v2/chat/perplexity`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "random_joke") {
       const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
         searchTerm: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "image_generation") {
       const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
         prompt: task.task,
+        objective: task.objective,
       });
       return { ...res.data, task };
     } else if (task.skill === "video_search") {
       const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "web_search") {
       const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "dataset_search") {
       const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-        searchTerm: task.task,
+        prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     }
@@ -61,7 +96,7 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchDataset",
   async ({ searchTerm }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-      searchTerm: searchTerm.trim(),
+      prompt: searchTerm.trim(),
     });
     return res.data;
   }
@@ -265,6 +300,7 @@ export const aiBotSlice = createSlice({
                   ...task,
                   referenceId,
                   parentId,
+                  objective: action.payload.prompt,
                 },
               };
             },
@@ -370,6 +406,7 @@ export const aiBotSlice = createSlice({
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
+        // TODO: Handle error cases
         state.tasks[action.meta.arg.task.referenceId].status = "error";
         state.error.fetchAll = "Something went wrong";
       });

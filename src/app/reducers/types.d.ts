@@ -6,6 +6,7 @@ export interface Task {
   dependent_task_ids: number[];
   parentId: number;
   referenceId: number;
+  objective: string;
   isDependentTasksComplete?: boolean;
 }
 
