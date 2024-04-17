@@ -15,14 +15,13 @@ export default function Sidebar() {
     <aside className="bg-sidebar relative hidden h-screen w-80 shadow-xl sm:block">
       <nav className="pt-3 text-base font-semibold text-white">
         <div className="m-6 mb-10 flex justify-center">
-          {/* <Image
-            src="/images/logo_white.svg"
+          <Image
+            src="/images/logo-white.png"
             loading="lazy"
-            alt="Supermojo"
+            alt="Skyfire"
             width="160"
             height="40"
-          /> */}
-          {/* Skyfire */}
+          />
         </div>
         <Link
           href="/admin"

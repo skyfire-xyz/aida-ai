@@ -53,24 +53,19 @@ const Header: React.FC = () => {
             > */}
             <h2 className="text-4xl text-white">{t("page.title")}</h2>
             {/* </Typography> */}
-            <div className="flex">
-              {/* <Typography
-                variant="h6"
-                sx={{ fontSize: "16px", fontWeight: "1000" }}
-              > */}
-              <h3 className="mdL:text-xl mr-2 text-white">
+            <div className="flex items-center">
+              <h3 className="mdL:text-xl mr-1 text-white">
                 <i>{t("page.poweredBy")}</i>
               </h3>
-              {/* </Typography> */}
               <div>
-                {/* <Image
+                <Image
                   src="/images/logo-only.png"
                   loading="lazy"
-                  alt="Supermojo"
-                  width="42"
-                  height="26"
+                  alt="Skyfire"
+                  width="36"
+                  height="24"
                   loader={defaultImageLoader}
-                /> */}
+                />
               </div>
             </div>
           </Link>
