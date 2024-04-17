@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         data-duration="400"
       >
         <div
-          className="md:px-40 px-10 py-10"
+          className="px-10 py-10 md:px-40"
           // className={`container-medium navbar_container w-container ${
           //   open ? styles.navbar_container_open : ""
           // } !pt-[34px]`}
@@ -58,19 +58,19 @@ const Header: React.FC = () => {
                 variant="h6"
                 sx={{ fontSize: "16px", fontWeight: "1000" }}
               > */}
-              <h3 className="mdL:text-xl text-white mr-2">
+              <h3 className="mdL:text-xl mr-2 text-white">
                 <i>{t("page.poweredBy")}</i>
               </h3>
               {/* </Typography> */}
               <div>
-                <Image
+                {/* <Image
                   src="/images/logo-only.png"
                   loading="lazy"
                   alt="Supermojo"
                   width="42"
                   height="26"
                   loader={defaultImageLoader}
-                />
+                /> */}
               </div>
             </div>
           </Link>

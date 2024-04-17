@@ -6,7 +6,7 @@ import Sidebar from "@/src/common/components/Sidebar";
 import WalletManager from "./Admin/WalletManager/WalletManager";
 import { useEffect, useState } from "react";
 
-export default async function AdminPage() {
+export default function AdminPage() {
   return (
     <NextIntlClientProvider
       timeZone={"America/New_York"}
@@ -15,8 +15,8 @@ export default async function AdminPage() {
     >
       <div className="flex h-full p-1">
         <Sidebar />
-        <div className="shadow-lg h-full w-screen rounded-lg bg-white max-w-[none] mt-6 mb-6">
-          <div className="flex h-full w-full rounded-lg my-10 p-20">
+        <div className="mb-6 mt-6 h-full w-screen max-w-[none] rounded-lg bg-white shadow-lg">
+          <div className="my-10 flex h-full w-full rounded-lg p-20">
             <WalletManager />
           </div>
         </div>

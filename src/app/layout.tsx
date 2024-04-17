@@ -3,7 +3,7 @@ import "@/src/globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Aida.AI - Powered by Supermojo Payments",
+  title: "Aida.AI - Powered by Skyfire Payments",
   description: "",
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="en">
-        <body className={`h-screen bg-[#002341] font-jones`}>{children};</body>
+        <body className={`font-jones h-screen bg-[#002341]`}>{children};</body>
       </html>
     </Providers>
   );

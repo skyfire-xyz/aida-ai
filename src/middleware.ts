@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
 // RegExp for public files
 const PUBLIC_FILE = /\.(.*)$/; // Files
 
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   // Skip public files
