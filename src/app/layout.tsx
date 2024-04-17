@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="en">
-        <body className={`h-screen bg-[#002341] font-jones`}>{children};</body>
+        <body className={`font-jones h-screen bg-[#002341]`}>{children};</body>
       </html>
     </Providers>
   );
