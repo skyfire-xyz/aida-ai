@@ -1,19 +1,11 @@
 "use client";
 
-import axios from "axios";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Link from "next/link";
-import DialogFundTransfer from "./DialogFundTransfer";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import { Button, Card, Label, Select, Toast } from "flowbite-react";
-import { IoMdSend } from "react-icons/io";
+import { Button, Card, Toast } from "flowbite-react";
 import { MdDelete } from "react-icons/md";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { MdLoop } from "react-icons/md";
-import { IoIosWallet } from "react-icons/io";
-import UserOperation from "./UserOperation";
-import PaymentTransactions from "./PaymentTransactions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
 import {
@@ -32,15 +24,7 @@ interface IFormInput {
   price: number;
 }
 
-const walletTypes = [
-  // 'Minting',
-  // 'Acquisition',
-  // 'Funding',
-  // 'Payment',
-  "Sender",
-  "Receiver",
-  // 'Deployment',
-] as const;
+const walletTypes = ["Sender", "Receiver"] as const;
 
 /**
  * @pattern ^[a-zA-Z0-9_]+$
@@ -48,7 +32,7 @@ const walletTypes = [
  */
 export type WalletType = (typeof walletTypes)[number];
 
-export default function WalletManager() {
+export default function ServiceManager() {
   const dispatch = useDispatch<AppDispatch>();
   const { status, transactions, wallets, reservedWallets } =
     useSelector(useDashboardSelector);
@@ -111,28 +95,14 @@ export default function WalletManager() {
   }, [walletType]);
 
   return (
-    <div className="my-10 h-full w-full rounded-lg p-20">
+    <div className="h-full w-full rounded-lg">
       <div className="flex w-full gap-10">
         <div className="min-w-auto flex flex-col md:min-w-[640px]">
           <div className="w-full max-w-lg">
-            <h3 className="text-3xl">Wallet List</h3>
-          </div>
-          <div className="mt-5">
-            <Label htmlFor="wallet-type">Wallet Type</Label>
-            <Select
-              value={walletType}
-              id="wallet-type"
-              onChange={(e) => {
-                setWalletType(e.target.value as WalletType);
-              }}
-            >
-              {walletTypes.map((type) => (
-                <option key={type}>{type}</option>
-              ))}
-            </Select>
+            <h3 className="text-3xl dark:text-white">Service List</h3>
           </div>
           <div ref={walletList} className="mt-8 overflow-scroll">
-            {!wallets[walletType].length && <p>No wallets found</p>}
+            {!wallets[walletType].length && <p>No service found</p>}
             {wallets[walletType].map((wallet: Wallet, index: number) => {
               const reservedWalletInfo = reservedWallets[walletType].find(
                 (w) => {
@@ -147,41 +117,16 @@ export default function WalletManager() {
                     walletAdded
                       ? "first:bg-[rgb(229,246,253)]"
                       : "first:bg-[#ffffff]"
-                  } transition-all`}
+                  } transition-all dark:text-white`}
                 >
-                  <div>
-                    <Link
-                      className=" font-bold"
-                      href={`https://www.oklink.com/amoy/address/${wallet.address}/token-transfer`}
-                    >
-                      {wallet.address}
-                    </Link>
-                  </div>
-                  {reservedWalletInfo?.name && (
-                    <div>
-                      <b>Name: </b>
-                      {reservedWalletInfo.name}
-                    </div>
-                  )}
-                  <div>
-                    <b>Network: </b>
-                    {wallet.network}
-                  </div>
+                  <h4 className="text-xl font-bold">
+                    {reservedWalletInfo?.name || "No Name"}
+                  </h4>
                   <div>
                     <b>Created At: </b>
                     {wallet.createdAt}
                   </div>
-                  <div className="flex gap-4">
-                    <Button
-                      size="xs"
-                      className="flex items-center"
-                      onClick={() => {
-                        setTransferFund(wallet);
-                      }}
-                    >
-                      <IoMdSend className="mr-2" />
-                      Transfer Fund
-                    </Button>
+                  <div className="flex">
                     {!reservedWalletInfo && (
                       <Button size="xs" color="failure">
                         <MdDelete className="mr-2" />
@@ -192,14 +137,6 @@ export default function WalletManager() {
                 </Card>
               );
             })}
-
-            <DialogFundTransfer
-              transferFund={transferFund}
-              onClose={() => setTransferFund(null)}
-              setOpenError={setOpenError}
-              setOpenSuccess={setOpenSuccess}
-              setOpenInfo={setOpenInfo}
-            />
           </div>
         </div>
 
@@ -238,11 +175,11 @@ export default function WalletManager() {
             </Toast>
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
-            <h3 className="text-3xl">Create a wallet</h3>
+            <h3 className="text-3xl dark:text-white">Add Service</h3>
             <div className="-mx-3 mb-6 mt-4 flex flex-wrap">
               <div className="mb-6 w-full px-3 md:mb-0 md:w-1/2">
                 <label
-                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-white"
                   htmlFor="service"
                 >
                   Service Name
@@ -266,7 +203,7 @@ export default function WalletManager() {
               </div>
               <div className="w-full px-3 md:w-1/2">
                 <label
-                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-white"
                   htmlFor="website"
                 >
                   Website
@@ -289,7 +226,7 @@ export default function WalletManager() {
             <div className="-mx-3 mb-6 flex flex-wrap">
               <div className="w-full px-3">
                 <label
-                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-white"
                   htmlFor="description"
                 >
                   Description
@@ -312,7 +249,7 @@ export default function WalletManager() {
             <div className="-mx-3 mb-10 flex flex-wrap">
               <div className="mb-6 w-full px-3 md:mb-0 md:w-1/3">
                 <label
-                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700 dark:text-white"
                   htmlFor="price"
                 >
                   Price
@@ -345,7 +282,6 @@ export default function WalletManager() {
           {/* <UserOperation /> */}
         </div>
       </div>
-      <PaymentTransactions />
     </div>
   );
 }

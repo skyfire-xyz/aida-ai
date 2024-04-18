@@ -19,11 +19,11 @@ export default function PaymentTransactions() {
   }, []);
 
   return (
-    <div className="mt-20">
+    <div>
       <div className="w-full">
-        <h3 className="text-3xl">Payment Transactions</h3>
+        <h3 className="text-3xl dark:text-white">Payment Transactions</h3>
       </div>
-      <div className="w-full mt-10">
+      <div className="mt-10 w-full">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Tx ID</Table.HeadCell>

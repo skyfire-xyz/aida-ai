@@ -1,3 +1,7 @@
+"use client";
+
+import PaymentTransactions from "./components/PaymentTransactions";
+
 export default function Page() {
-  return <div>Not Available</div>;
+  return <PaymentTransactions />;
 }

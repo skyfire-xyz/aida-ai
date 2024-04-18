@@ -1,3 +1,7 @@
+"use client";
+
+import ServiceManager from "./components/ServiceManager";
+
 export default function Page() {
-  return <div>Not Available</div>;
+  return <ServiceManager />;
 }
