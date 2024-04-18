@@ -8,5 +8,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  return <div className={`font-jones h-screen bg-[#002341]`}>{children}</div>;
 }

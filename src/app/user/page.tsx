@@ -17,7 +17,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import Image from "next/image";
 
 import { Button, Card, Kbd } from "flowbite-react";
-import Sidebar from "@/src/common/components/Sidebar";
+import Sidebar from "@/src/common/components/OldSidebar";
 import { AiOutlineLoading } from "react-icons/ai";
 import { HiMiniArrowRightOnRectangle, HiMiniUserPlus } from "react-icons/hi2";
 import { HiExternalLink, HiOutlinePlus } from "react-icons/hi";
@@ -77,7 +77,7 @@ export default function Home() {
             },
           ],
         },
-      }
+      },
     );
 
     // Create a Kernel Account with the session key validator
@@ -91,7 +91,7 @@ export default function Home() {
     // Serialize the session key and save it to the local storage for future use
     const serializedSessionKey = await serializeSessionKeyAccount(
       sessionKeyAccount,
-      sessionPrivateKey
+      sessionPrivateKey,
     );
     setSessionData("sessionKey", serializedSessionKey);
 
@@ -134,9 +134,9 @@ export default function Home() {
   // Sign Up
   if (!accountAddress) {
     return (
-      <main className="flex items-center justify-center min-h-screen px-4 py-24">
-        <div className="w-full max-w-xl mx-auto">
-          <h2 className="text-4xl font-semibold text-center mb-12">
+      <main className="flex min-h-screen items-center justify-center px-4 py-24">
+        <div className="mx-auto w-full max-w-xl">
+          <h2 className="mb-12 text-center text-4xl font-semibold">
             <Image
               src="/images/logo_white.svg"
               loading="lazy"
@@ -147,7 +147,7 @@ export default function Home() {
           </h2>
 
           <div className="flex gap-6">
-            <div className="w-1/2 flex flex-col gap-2">
+            <div className="flex w-1/2 flex-col gap-2">
               <h2 className="text-white">Register</h2>
               {/* Input Box */}
               <input
@@ -155,7 +155,7 @@ export default function Home() {
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="p-2 text-black border border-gray-300 rounded-lg w-full"
+                className="w-full rounded-lg border border-gray-300 p-2 text-black"
               />
               {/* Register Button */}
               <Button
@@ -163,14 +163,14 @@ export default function Home() {
                 disabled={isLoggingIn || isRegistering}
               >
                 {isRegistering ? (
-                  <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
+                  <AiOutlineLoading className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
-                  <HiMiniUserPlus className="h-5 w-5 mr-2" />
+                  <HiMiniUserPlus className="mr-2 h-5 w-5" />
                 )}
                 Sign Up
               </Button>
             </div>
-            <div className="w-1/2 flex flex-col gap-2">
+            <div className="flex w-1/2 flex-col gap-2">
               <h2 className="text-white">Do you already have account?</h2>
               {/* Login Button */}
               <Button
@@ -178,9 +178,9 @@ export default function Home() {
                 disabled={isLoggingIn || isRegistering}
               >
                 {isLoggingIn ? (
-                  <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
+                  <AiOutlineLoading className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
-                  <HiMiniArrowRightOnRectangle className="h-5 w-5 mr-2" />
+                  <HiMiniArrowRightOnRectangle className="mr-2 h-5 w-5" />
                 )}
                 Login
               </Button>
@@ -197,14 +197,14 @@ export default function Home() {
       <div className="flex h-full p-1">
         <Sidebar />
 
-        <div className="shadow-lg h-full w-screen rounded-lg bg-white max-w-[none] mt-6 mb-6">
-          <div className="h-full w-full rounded-lg my-10 p-20">
+        <div className="mb-6 mt-6 h-full w-screen max-w-[none] rounded-lg bg-white shadow-lg">
+          <div className="my-10 h-full w-full rounded-lg p-20">
             <div>
               <Card>
                 <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   Onboarding
                 </h5>
-                <ol className="mb-4 items-center w-full space-y-4 sm:flex sm:space-x-8 sm:space-y-0 rtl:space-x-reverse">
+                <ol className="mb-4 w-full items-center space-y-4 sm:flex sm:space-x-8 sm:space-y-0 rtl:space-x-reverse">
                   <OnboardingStep
                     title="Fund your wallet with USDC"
                     description="Transfer your USDC to your wallet"
@@ -228,9 +228,9 @@ export default function Home() {
                   <div>
                     <Button onClick={createSessionKey} disabled={isCreatingKey}>
                       {isCreatingKey ? (
-                        <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
+                        <AiOutlineLoading className="mr-2 h-5 w-5 animate-spin" />
                       ) : (
-                        <HiOutlinePlus className="h-5 w-5 mr-2" />
+                        <HiOutlinePlus className="mr-2 h-5 w-5" />
                       )}
                       Create a session key
                     </Button>
@@ -256,11 +256,11 @@ export default function Home() {
                           onClick={() => {
                             window.open(
                               `https://jiffyscan.xyz/account/${accountAddress}`,
-                              "_blank"
+                              "_blank",
                             );
                           }}
                         >
-                          <HiExternalLink className="ml-2 w-5 h-5" />
+                          <HiExternalLink className="ml-2 h-5 w-5" />
                         </button>
                       </div>
                       <Button className="mt-4" onClick={() => setStep(2)}>
