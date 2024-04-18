@@ -1,0 +1,573 @@
+[
+    {
+        "id": "58269721-135a-4373-9728-9dccafc05849",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA493CED0400000073"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "F933B6A7FE950236972044126A2F94E76B85760CA599F9DD285F0C38C0274335",
+        "amount": 2,
+        "status": "SUCCESS",
+        "createdAt": "2024-01-29T21:30:15.563Z"
+    },
+    {
+        "id": "1d2212ff-15c9-4e57-a369-d35c5f272e56",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAEDA5A9000000006F"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "B2CB2CF3F3FE7BC0CB04AEC9EECCDF9302B127C80B2FE12E9C7BF4C237E64AA7",
+        "status": "SUCCESS",
+        "createdAt": "2024-01-29T19:49:31.932Z"
+    },
+    {
+        "id": "4703e973-b861-46b4-a4ba-ac93ec452e21",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAEDA5A9000000006F"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "01202070E725EEF618EEB20946808C5826625223DB23073696D81B97D99A1D18",
+        "amount": 2,
+        "status": "SUCCESS",
+        "createdAt": "2024-01-29T19:47:02.336Z"
+    },
+    {
+        "id": "a891c5c1-5459-4ffa-98ef-def234cf9e87",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rDTCDUZbnWsZ9ZSaiBWhdDLg3y2smVrCeS",
+            "tokenId": "0009271088AC3885D25E80EB12BB1EA74FD3B239D0E8BC39B7A4719E04EDF503"
+        },
+        "txHash": "45A028A8280C733CE9F906223D76755660D5EA7FC02F2E7A9C70B4D45A041DB5",
+        "status": "SUCCESS",
+        "createdAt": "2024-01-29T19:41:29.812Z"
+    },
+    {
+        "id": "28f849b6-f146-4088-99b6-ebafcbf78623",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CE23A911D500000C3C"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "19EB9CD1C5BAEF768FC747A144D7EE3A196BAF48B663C1E4234C0A0598256B33",
+        "status": "EXPIRED",
+        "createdAt": "2024-01-29T18:48:01.937Z"
+    },
+    {
+        "id": "095ac5e4-7519-417e-b6c2-c2df9e21c8aa",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rabftuwSB5BaPXTgL6sPFCby4y7Y8KEdo5",
+            "tokenId": "000927103D4C86F183127AE810C7DCB531C859CECB2305FDEA49A39D0505F802"
+        },
+        "txHash": "2EB5092804CE525D45EFD46036B01E36772609057957E905AD1A9C60151C3C55",
+        "status": "SUCCESS",
+        "createdAt": "2023-12-15T01:39:29.709Z"
+    },
+    {
+        "id": "20909e74-7342-4fff-a6b8-7de19e2e8d55",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rfwR9jMdgAWX9ib2A2pyP817kqDVWbhtiG",
+            "tokenId": "000927104398A87FBE8E70DDA81390A76F76A5237E65C65D8134813B050AD7A0"
+        },
+        "txHash": "F6D929A3834ABD5D934A0B8207B36EE28D564CB0687CD2E72D7F6FAD3B87E115",
+        "status": "SUCCESS",
+        "createdAt": "2023-12-15T01:33:18.475Z"
+    },
+    {
+        "id": "f5c1f87d-abfd-4d57-9f27-0ad44049bc0c",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "r4eZJcHJRYQzofuYNkgqdPceUojFBQh3ZS",
+            "tokenId": "00092710ED74FF6AF0FB698A49534027C7DE1C2FF289BD409C3A5731050AD796"
+        },
+        "txHash": "FE0FCF7CC33A8EF3886C6CD24D88DFDC253A48F8D3FCE18F89A5910C10C24E66",
+        "status": "SUCCESS",
+        "createdAt": "2023-12-15T01:30:49.374Z"
+    },
+    {
+        "id": "734a548c-a947-47d0-b938-5754883e42c0",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAC5D458B00000001F"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "37F1E86562A5F4D3CDE3D333605C8609D415D7003D743A7B337E321870539164",
+        "amount": 2,
+        "status": "SUCCESS",
+        "createdAt": "2023-10-30T19:51:17.504Z"
+    },
+    {
+        "id": "8b46f77d-b58a-407a-8748-7594b1ec9808",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CE23A911D500000C3C"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "C59470AC3EA9A6ED58E08EFFC83998694F9BC42EE7DB77251C6513E934D57AA3",
+        "amount": 19,
+        "status": "SUCCESS",
+        "createdAt": "2023-10-26T18:14:24.713Z"
+    },
+    {
+        "id": "db80ee94-8f95-4c61-8b97-2c304f37420b",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rDTCDUZbnWsZ9ZSaiBWhdDLg3y2smVrCeS",
+            "tokenId": "0009271088AC3885D25E80EB12BB1EA74FD3B239D0E8BC398542EAAC00000011"
+        },
+        "txHash": "DD5548FE570F1114033D93F959B6EEF397383B631B2A004FEF3CFC3642019B5D",
+        "status": "SUCCESS",
+        "createdAt": "2023-09-25T22:30:07.721Z"
+    },
+    {
+        "id": "b76bc811-59ce-4683-a87c-30fce192b4e4",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rDTCDUZbnWsZ9ZSaiBWhdDLg3y2smVrCeS",
+            "tokenId": "0009271088AC3885D25E80EB12BB1EA74FD3B239D0E8BC39E4FA33A50000000A"
+        },
+        "txHash": "E9870C036B7E28DE45B77D1BF556BCB189CBE652DF17D2E2E1F6DCB3C4AD1121",
+        "status": "SUCCESS",
+        "createdAt": "2023-09-25T21:14:00.829Z"
+    },
+    {
+        "id": "39f50cb3-3564-42bb-8237-9c38a13f052e",
+        "type": "MINT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rDTCDUZbnWsZ9ZSaiBWhdDLg3y2smVrCeS",
+            "tokenId": "0009271088AC3885D25E80EB12BB1EA74FD3B239D0E8BC39727D1EA000000005"
+        },
+        "txHash": "C299161479CBCAA2B107138ED5BCD4BC50AADC9B8E1BE2625E379D6F6DCA1BDD",
+        "status": "SUCCESS",
+        "createdAt": "2023-09-22T12:36:34.341Z"
+    },
+    {
+        "id": "a3e7d47c-ca94-4e75-8871-ae43aa9d8a3b",
+        "type": "ADJUSTMENT",
+        "token": {
+            "network": "eth_mainnet",
+            "tokenAddress": "0xd4416b13d2b3a9abae7acd5d6c2bbdbe25686401",
+            "tokenId": "koshihikari.eth"
+        },
+        "clientId": "102b1fa7-145a-4889-ad5c-583375f2d7d2",
+        "txHash": "0xd5f64601c7244e11df382720e194e057734194e51783e2cffb457e97454ddf3e",
+        "amount": 15.22,
+        "status": "SUCCESS",
+        "createdAt": "2023-08-23T21:27:17.271Z"
+    },
+    {
+        "id": "bc12ceb1-7522-45e2-897c-600cd9f6b7b3",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "eth_mainnet",
+            "tokenAddress": "0xd4416b13d2b3a9abae7acd5d6c2bbdbe25686401",
+            "tokenId": "koshihikari.eth"
+        },
+        "clientId": "102b1fa7-145a-4889-ad5c-583375f2d7d2",
+        "txHash": "0xdc331cb824aa2147002a0c4e4107d2efc8b955fa2b960bc799e62e457537afbd",
+        "amount": 35.72,
+        "status": "SUCCESS",
+        "createdAt": "2023-08-23T20:39:34.715Z"
+    },
+    {
+        "id": "ea6c5fe0-94cb-4176-9165-aac0457c0d37",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA8122E5BD0000001C"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "BD4481FD7207DA27762AAD59E637EF5D855928D2D6A41DCF4BD49C66CCE4F366",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-08-23T19:45:30.367Z"
+    },
+    {
+        "id": "c718a12b-dedf-4b12-9740-9c57d40dbdcd",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAB9DFB55C000000BB"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "064C790B5E53C0F533106EDA101EF27B6DBAE5BD53A21C46542FA6B1FDF38D09",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-08-23T19:27:56.920Z"
+    },
+    {
+        "id": "bc2da2fc-cd99-460d-b8bf-77b2de3a6bb9",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGkmHgLKmZgN3G7u9RAj8nqQbGo1QbdEiK",
+            "tokenId": "000909C4ACD0BE14A1523922C0DE046DEE4A538785D5F8B316E5DA9600000001"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "0924FB0DF3D3475BD28D0E0F9F948E1B76A2D2795C09E254AB07E856B3258D2E",
+        "amount": 99,
+        "status": "SUCCESS",
+        "createdAt": "2023-08-15T19:58:26.028Z"
+    },
+    {
+        "id": "4331db79-7cf8-4313-b583-e2a9e1c4bbae",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEDA6C2E6600000BC9"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "977CF2031D29C08371B622B9A8D77D999A85924A0D4A8BBB704D9DE7BF626BDB",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-07-11T21:20:56.526Z"
+    },
+    {
+        "id": "1821a924-6ab7-4d45-998e-68b76099db46",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEDA6C2E6600000BC9"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "47744D9C5416EF4E5E716725572C1AEDC8CE07E82825518BDC3D939FB9C8F1F2",
+        "status": "EXPIRED",
+        "createdAt": "2023-07-11T21:19:41.930Z"
+    },
+    {
+        "id": "c05c5892-8303-4514-a7b1-6a4bc45081ff",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEDA6C2E6600000BC9"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "E92098B98E1706A6AB35A99559D32F8CD7973EEA0FEACB6B3B51930A657AD3C9",
+        "amount": 19,
+        "status": "SUCCESS",
+        "createdAt": "2023-07-11T21:16:52.336Z"
+    },
+    {
+        "id": "748b701e-3ff5-44e0-a44c-e9e841823ba9",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEFC168E3300000E96"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "B8FFE5F98895043EB6147D895E205345028180A7C99E33BC494F83D4D50F2C92",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-07-11T21:07:12.065Z"
+    },
+    {
+        "id": "86d1f5f1-8f36-4a72-b1a3-4d63263f9587",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEFC168E3300000E96"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "3F2CBD3C4256D8C4F735773D46B14BAF5ED246998467253CD41F8CE4F3D314FC",
+        "amount": 19,
+        "status": "SUCCESS",
+        "createdAt": "2023-07-11T21:02:15.548Z"
+    },
+    {
+        "id": "dd2d866d-4ba6-4f6d-ac94-02b07a07cad8",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEB0FF5E0300000E66"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "106BE9F912D6C468CB1CB141F290F68196F99D6BCB48701358EE210B545A8FA1",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-07-06T13:55:31.544Z"
+    },
+    {
+        "id": "62ae6db7-053f-48d6-b048-6dbd42b67f70",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rLAgJLoJYQwVtgbonKoLibdckUtwJqAuwY",
+            "tokenId": "00082328DAC1A82F54512774EC060AD0ECF45432E84509CEB0FF5E0300000E66"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "64C9B17B6A8ADA3A362FB789EF14DF62724897DE440E9375B688BFB558C078DB",
+        "amount": 29,
+        "status": "SUCCESS",
+        "createdAt": "2023-06-20T21:59:30.796Z"
+    },
+    {
+        "id": "2864f4c3-ab1e-4ea0-8f20-dc38cf3337d0",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA43429B56000000C1"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "F8F3F7AAC41188EF00F46E8F0D6DA7241F7564F1BBA6B2CCEC2756CD4BCEC2B2",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-29T01:51:52.759Z"
+    },
+    {
+        "id": "27d14bc7-4f1c-44ef-ba1a-f7231e2814a0",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA7B28940F0000006A"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "03F0E116FDD8239C125CCC604398614CEAF5C21F2301D48337E7B83FEB851B73",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-29T01:50:22.517Z"
+    },
+    {
+        "id": "4ed1d1aa-df81-48f1-85da-96546ce634e8",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAB9DFB55C000000BB"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "842C982460A402DC258F3D285A41F5F2B2CCE1A9D911E7142031E398B6F43846",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-16T19:00:11.743Z"
+    },
+    {
+        "id": "157efbf2-99b7-44f3-898b-1b729dfe792e",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rUL4X4nLfarG9jEnsvpvoNgMcrYDaE2XHK",
+            "tokenId": "000927107C5340F9EEB03B685664F2A614F959CC655FFC815079813B00000196"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "58A18794099082D6A70412F079C780491D3A052C6F772D7DF85DB956F6A97279",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-03-14T23:03:09.107Z"
+    },
+    {
+        "id": "955d5bff-655b-4af8-80cb-53901dc40dbe",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rUL4X4nLfarG9jEnsvpvoNgMcrYDaE2XHK",
+            "tokenId": "000927107C5340F9EEB03B685664F2A614F959CC655FFC815079813B00000196"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "F1B26E1BDDF469C45C3CA1ED9F7FCE1A6318B42B78F3869DD2EDD2FAE9774B3D",
+        "status": "EXPIRED",
+        "createdAt": "2023-03-14T23:01:04.306Z"
+    },
+    {
+        "id": "51553986-244b-4be2-9fbe-a62fd76990e0",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rUL4X4nLfarG9jEnsvpvoNgMcrYDaE2XHK",
+            "tokenId": "000927107C5340F9EEB03B685664F2A614F959CC655FFC815079813B00000196"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "10CF1C2096164AAE6BEB27D5D504326DCD7088227A8BAD95F59FC45192289F73",
+        "status": "EXPIRED",
+        "createdAt": "2023-03-14T20:57:37.031Z"
+    },
+    {
+        "id": "33cbd429-6c17-4070-8588-047adb8f6289",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rUL4X4nLfarG9jEnsvpvoNgMcrYDaE2XHK",
+            "tokenId": "000927107C5340F9EEB03B685664F2A614F959CC655FFC815079813B00000196"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "428A9380D2698037A98AAF161574D6F0BF7682E559A9F0987E6864FCF3DA54F6",
+        "amount": 105,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-14T15:00:17.357Z"
+    },
+    {
+        "id": "82a30b52-2a78-4048-9f7c-59b7681e7c3e",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA6268764D000000AC"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "4161DA8319F0D7E646880651A502FAC8252D5F31DAAEBD0D2ACCB06DBCC7D6A3",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-03-14T02:18:53.034Z"
+    },
+    {
+        "id": "39e866b8-71e1-45bd-aa3b-c34f449d41a5",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA6268764D000000AC"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "7F5507F1271C2A0147F67A2D2473FB56674A3610769457A7FEE521E6829821C5",
+        "status": "EXPIRED",
+        "createdAt": "2023-03-14T02:16:01.041Z"
+    },
+    {
+        "id": "bcb5b10a-e72d-4176-9793-6ef70d1ae8a4",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA6268764D000000AC"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "8DDAC7ABCB9EBDD7C2A8F057D6ADF3BCC785CBF43FC19293A4F92E1BA4D723A6",
+        "status": "EXPIRED",
+        "createdAt": "2023-03-14T01:56:04.193Z"
+    },
+    {
+        "id": "cb80336b-2246-44a6-a010-54e8357e7507",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA6268764D000000AC"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "D40246421C4974E8E32E43DF9B9F8E54BAAC00304C4D8FF7959EF1B08C673BE8",
+        "status": "EXPIRED",
+        "createdAt": "2023-03-14T01:53:20.123Z"
+    },
+    {
+        "id": "22f93905-4844-4614-bae6-1193145981be",
+        "type": "ACQUISITION",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA6268764D000000AC"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "FC471AF532577456C78489052DF27D271FAFE151320DE0CD657A75D004BB2D29",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-14T01:52:49.501Z"
+    },
+    {
+        "id": "8de53c5b-f8a3-4bc5-8e40-f4e3ea9c1461",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA0A85CBB700000022"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "B256B305C8B3E4D04DBDE6806488B172D4864C7E563615A4970193B6D26ADF72",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-03-09T20:28:49.044Z"
+    },
+    {
+        "id": "b53cf648-c602-4831-834b-1310d1a7e1d4",
+        "type": "PAYMENT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA0A85CBB700000022"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "5C20095AD05EA81B4094C075302A0CADE8A253C50827DFCBC08330208CB57176",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-09T20:27:32.464Z"
+    },
+    {
+        "id": "fef8261c-5f08-4211-bce3-d1809ac29e79",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAE0DA2EBA00000015"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "4C2DE3472646E443DCB41A4D754D3EA34ED674EE07E2DC091194FADA9F444128",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-03-09T20:13:46.636Z"
+    },
+    {
+        "id": "1f99be0f-592d-4b6a-a997-43f6af68d19b",
+        "type": "PAYMENT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAAE0DA2EBA00000015"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "B312557B1464AF8C9B731BFE0E745FE8D4279A65C4A5E90E275E1B1A9A26089B",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-09T20:10:16.852Z"
+    },
+    {
+        "id": "20c6d1ea-9f0a-46a5-b961-8cb0e377bcfc",
+        "type": "WITHDRAWAL",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA577748A00000000F"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "B10F6EDE4FB777D7E85C8313D6FF60D96C568709DBD73C41AD51FE09A6A7184F",
+        "status": "WAITING_CONFIRMATION",
+        "createdAt": "2023-03-08T20:41:01.040Z"
+    },
+    {
+        "id": "2d42790a-4d1b-4592-b668-2a484b46868b",
+        "type": "PAYMENT",
+        "token": {
+            "network": "xrpl_mainnet",
+            "tokenAddress": "rGJheK965Vf2jwEKiBM9gp8eEjVTt48PEk",
+            "tokenId": "00092710A7C3FFD8DCC86BC853381F0EFD3ADC8B676FDCAA577748A00000000F"
+        },
+        "clientId": "9673864a-6e56-40f2-bb30-64d6fe87cf5f",
+        "txHash": "132F3AEFE2327FEA8C58C1D69C02B4E1B31FF59A0765F1B469DB937A2AF26641",
+        "amount": 6,
+        "status": "SUCCESS",
+        "createdAt": "2023-03-08T20:28:31.391Z"
+    }
+]

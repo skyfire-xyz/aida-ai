@@ -9,7 +9,7 @@ import { deserializeSessionKeyAccount } from "@zerodev/session-key";
 import { bundlerActions } from "permissionless";
 import React, { useEffect, useState } from "react";
 import { createPublicClient, http, encodeFunctionData } from "viem";
-import { Alert, Button, Kbd } from "flowbite-react";
+import { Alert, Button, Kbd, Textarea } from "flowbite-react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { HiExternalLink, HiOutlineCurrencyDollar } from "react-icons/hi";
 import {
@@ -101,14 +101,20 @@ export default function Home() {
 
   return (
     <div className="mt-20">
-      <div className="w-full max-w-lg">
+      <div className="w-full ">
         <h3 className="text-3xl">Test User Operation</h3>
       </div>
       {!sessionKeyAccount && "No Session Key Found"}
       {sessionKeyAccount && (
         <div className="mt-5">
           <h5 className="font-bold text-lg">Session Key Found</h5>
-          <div className="text-sm">{JSON.stringify(sessionKeyAccount)}</div>
+          <Textarea
+            className="text-sm"
+            value={JSON.stringify(sessionKeyAccount)}
+            required
+            rows={4}
+            disabled
+          />
           <div className="flex items-center mt-5">
             <Kbd
               className="cursor-pointer"

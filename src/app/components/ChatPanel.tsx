@@ -35,6 +35,7 @@ import {
   useAiBotSelector,
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
+import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -51,8 +52,7 @@ export default function ChatPane(props: any) {
   const chatMessages = useRef<ChatMessageType[]>([]);
   const chatPaneRef = useRef<HTMLDivElement>(null);
 
-  const { paymentsPaneRef, ProtocolLogsComp, robotImageUrl, userImageUrl } =
-    props;
+  const { robotImageUrl, userImageUrl } = props;
 
   // Common Utilities
   const addBotResponseMessage = (
@@ -73,7 +73,7 @@ export default function ChatPane(props: any) {
   };
 
   useEffect(() => {
-    scrollToBottom([chatPaneRef, paymentsPaneRef], () => {
+    scrollToBottom([chatPaneRef], () => {
       dispatch(setShouldScrollToBottom(false));
     });
   }, [shouldScrollToBottom]);
@@ -234,7 +234,6 @@ export default function ChatPane(props: any) {
         ///////////////////////////////////////////////////////////
 
         dispatch(fetchMeme({ searchTerm: "", meme: false }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else {
         ///////////////////////////////////////////////////////////
         // Regular Chat Request
@@ -390,7 +389,7 @@ export default function ChatPane(props: any) {
           </Link>
         </Modal.Header>
         <Modal.Body>
-          <ProtocolLogsComp />
+          <ProtocolLogs />
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowMicroPayments(false)}>Close</Button>

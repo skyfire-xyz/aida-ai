@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import DialogFundTransfer from "./DialogFundTransfer";
@@ -13,6 +13,17 @@ import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { MdLoop } from "react-icons/md";
 import { IoIosWallet } from "react-icons/io";
 import UserOperation from "./UserOperation";
+import PaymentTransactions from "./PaymentTransactions";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "@/src/store";
+import {
+  createWallet,
+  fetchWallets,
+  resetStatus,
+  useDashboardSelector,
+} from "@/src/app/reducers/dashboardSlice";
+import { Wallet } from "@/src/app/reducers/types";
+import { create } from "domain";
 
 interface IFormInput {
   service: string;
@@ -20,20 +31,6 @@ interface IFormInput {
   website: string;
   price: number;
 }
-
-const reservedWallets = {
-  Sender: [{ name: "", address: "0x45c83889BD84D5FB77039B67C30695878f506313" }],
-  Receiver: [
-    { name: "", address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51" },
-    { name: "Joke", address: "0xB94dD221ef1302576E2785dAFB4Bad28cbBeA540" },
-    { name: "ChatGPT", address: "0x7aA161F8B72eDd5e474943c922D1e479475B9D30" },
-    { name: "Dataset", address: "0xB23338A0F7999e322a504915590ca6A2f0fB2d90" },
-    {
-      name: "Perplexity",
-      address: "0x4E3E0feD99e56d29492e44C176faB18B20aCCC57",
-    },
-  ],
-};
 
 const walletTypes = [
   // 'Minting',
@@ -52,14 +49,17 @@ const walletTypes = [
 export type WalletType = (typeof walletTypes)[number];
 
 export default function WalletManager() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { status, transactions, wallets, reservedWallets } =
+    useSelector(useDashboardSelector);
+
   const [walletType, setWalletType] = useState<WalletType>("Receiver");
-  const [wallets, setWallets] = useState([]);
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");
+
   const [walletAdded, setWalletAdded] = useState(false);
   const [transferFund, setTransferFund] = useState<any>(null);
-  const [creatingWallet, setCreatingWallet] = useState(false);
 
   const walletList = useRef<HTMLDivElement>(null);
 
@@ -70,69 +70,40 @@ export default function WalletManager() {
   } = useForm<IFormInput>();
 
   const getWallets = async () => {
-    try {
-      const response = await axios.get(
-        `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`
-      );
-      setWallets(response.data.reverse());
-      walletList?.current?.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setOpenError("Sorry, the blockchain network is slow right now");
-    }
+    dispatch(fetchWallets({ walletType }));
+    walletList?.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  function setLocalStorage(value: any) {
-    try {
-      const key = "__storage__ai-demo";
-      if (window) {
-        window["localStorage"].setItem(key, JSON.stringify(value));
-        return true;
-      } else {
-        return false;
-      }
-    } catch {
-      return false;
-    }
-  }
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setOpenInfo("Creating wallet...");
-    setCreatingWallet(true);
-    try {
-      const response = await axios.post(`${BACKEND_API_URL}v2/wallet`, {
-        price: Number(data.price) * 1000000,
-        serviceName: data.service,
-        description: data.description,
-        website: data.website,
-      });
-      setLocalStorage({
-        ...data,
-        price: Number(data.price) * 1000000,
-      });
+  useEffect(() => {
+    if (status.createWallet === "succeeded") {
+      getWallets();
       setWalletAdded(true);
-
-      setCreatingWallet(false);
-      setTimeout(() => {
-        setWalletAdded(false);
-      }, 3000);
-
       setOpenInfo("");
       setOpenSuccess("Successfully created wallet");
-      getWallets();
-    } catch {
-      setTimeout(() => {
-        setOpenInfo("");
-      }, 3000);
-      setCreatingWallet(false);
-      setOpenError(
-        "Sorry, the blockchain network is slow right now, please try again"
-      );
-    }
 
-    setTimeout(() => {
+      // Reset
+      setTimeout(() => {
+        setWalletAdded(false);
+        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
+      }, 3000);
+    } else if (status.createWallet === "pending") {
+      setOpenInfo("Creating wallet...");
+    } else if (status.createWallet === "failed") {
+      setOpenError("Sorry, the blockchain network is slow right now");
+
+      // Reset
+      setTimeout(() => {
+        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
+      }, 3000);
+    } else if (status.createWallet === "idle") {
+      setOpenInfo("");
       setOpenSuccess("");
       setOpenError("");
-    }, 5000);
+    }
+  }, [status]);
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    dispatch(createWallet({ data }));
   };
 
   useEffect(() => {
@@ -140,232 +111,241 @@ export default function WalletManager() {
   }, [walletType]);
 
   return (
-    <>
-      <div className="flex flex-col p-20 md:min-w-[640px] min-w-auto">
-        <div className="w-full max-w-lg">
-          <h3 className="text-3xl">Wallet List</h3>
-        </div>
-        <div className="mt-5">
-          <Label htmlFor="wallet-type">Wallet Type</Label>
-          <Select
-            value={walletType}
-            id="wallet-type"
-            onChange={(e) => {
-              setWalletType(e.target.value as WalletType);
-            }}
-          >
-            {walletTypes.map((type) => (
-              <option key={type}>{type}</option>
-            ))}
-          </Select>
-        </div>
-        <div ref={walletList} className="mt-8 overflow-scroll">
-          {!wallets.length && <p>No wallets found</p>}
-          {wallets.map((wallet: any, index) => {
-            const reservedWalletInfo = reservedWallets[walletType].find((w) => {
-              return w.address === wallet.address;
-            });
+    <div className="my-10 h-full w-full rounded-lg p-20">
+      <div className="flex w-full gap-10">
+        <div className="min-w-auto flex flex-col md:min-w-[640px]">
+          <div className="w-full max-w-lg">
+            <h3 className="text-3xl">Wallet List</h3>
+          </div>
+          <div className="mt-5">
+            <Label htmlFor="wallet-type">Wallet Type</Label>
+            <Select
+              value={walletType}
+              id="wallet-type"
+              onChange={(e) => {
+                setWalletType(e.target.value as WalletType);
+              }}
+            >
+              {walletTypes.map((type) => (
+                <option key={type}>{type}</option>
+              ))}
+            </Select>
+          </div>
+          <div ref={walletList} className="mt-8 overflow-scroll">
+            {!wallets[walletType].length && <p>No wallets found</p>}
+            {wallets[walletType].map((wallet: Wallet, index: number) => {
+              const reservedWalletInfo = reservedWallets[walletType].find(
+                (w) => {
+                  return w.address === wallet.address;
+                },
+              );
 
-            return (
-              <Card
-                key={index}
-                className={`mb-4 ${
-                  walletAdded
-                    ? "first:bg-[rgb(229,246,253)]"
-                    : "first:bg-[#ffffff]"
-                } transition-all`}
-              >
-                <div>
-                  <Link
-                    className=" font-bold"
-                    href={`https://www.oklink.com/amoy/address/${wallet.address}/token-transfer`}
-                  >
-                    {wallet.address}
-                  </Link>
-                </div>
-                {reservedWalletInfo?.name && (
+              return (
+                <Card
+                  key={index}
+                  className={`mb-4 ${
+                    walletAdded
+                      ? "first:bg-[rgb(229,246,253)]"
+                      : "first:bg-[#ffffff]"
+                  } transition-all`}
+                >
                   <div>
-                    <b>Name: </b>
-                    {reservedWalletInfo.name}
+                    <Link
+                      className=" font-bold"
+                      href={`https://www.oklink.com/amoy/address/${wallet.address}/token-transfer`}
+                    >
+                      {wallet.address}
+                    </Link>
                   </div>
-                )}
-                <div>
-                  <b>Network: </b>
-                  {wallet.network}
-                </div>
-                <div>
-                  <b>Created At: </b>
-                  {wallet.createdAt}
-                </div>
-                <div className="flex gap-4">
-                  <Button
-                    size="xs"
-                    className="flex items-center"
-                    onClick={() => {
-                      setTransferFund(wallet);
-                    }}
-                  >
-                    <IoMdSend className="mr-2" />
-                    Transfer Fund
-                  </Button>
-                  {!reservedWalletInfo && (
-                    <Button size="xs" color="failure">
-                      <MdDelete className="mr-2" />
-                      Delete
-                    </Button>
+                  {reservedWalletInfo?.name && (
+                    <div>
+                      <b>Name: </b>
+                      {reservedWalletInfo.name}
+                    </div>
                   )}
-                </div>
-              </Card>
-            );
-          })}
+                  <div>
+                    <b>Network: </b>
+                    {wallet.network}
+                  </div>
+                  <div>
+                    <b>Created At: </b>
+                    {wallet.createdAt}
+                  </div>
+                  <div className="flex gap-4">
+                    <Button
+                      size="xs"
+                      className="flex items-center"
+                      onClick={() => {
+                        setTransferFund(wallet);
+                      }}
+                    >
+                      <IoMdSend className="mr-2" />
+                      Transfer Fund
+                    </Button>
+                    {!reservedWalletInfo && (
+                      <Button size="xs" color="failure">
+                        <MdDelete className="mr-2" />
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
 
-          <DialogFundTransfer
-            transferFund={transferFund}
-            onClose={() => setTransferFund(null)}
-            setOpenError={setOpenError}
-            setOpenSuccess={setOpenSuccess}
-            setOpenInfo={setOpenInfo}
-          />
+            <DialogFundTransfer
+              transferFund={transferFund}
+              onClose={() => setTransferFund(null)}
+              setOpenError={setOpenError}
+              setOpenSuccess={setOpenSuccess}
+              setOpenInfo={setOpenInfo}
+            />
+          </div>
+        </div>
+
+        <div className="flex w-full flex-col">
+          {!!openInfo && (
+            <Toast className="fixed bottom-10 left-10 max-w-sm">
+              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
+                <MdLoop className="h-5 w-5 animate-spin" />
+              </div>
+              <div className="pl-4 text-sm font-normal">
+                <div dangerouslySetInnerHTML={{ __html: openInfo }} />
+              </div>
+              <Toast.Toggle onClick={() => setOpenInfo("")} />
+            </Toast>
+          )}
+          {!!openSuccess && (
+            <Toast className="fixed bottom-10 left-10 max-w-sm">
+              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                <HiCheck className="h-5 w-5" />
+              </div>
+              <div className="pl-4 text-sm font-normal">
+                <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
+              </div>
+              <Toast.Toggle onClick={() => setOpenSuccess("")} />
+            </Toast>
+          )}
+          {!!openError && (
+            <Toast className="fixed bottom-10 left-10 max-w-sm">
+              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+                <HiExclamation className="h-5 w-5" />
+              </div>
+              <div className="pl-4 text-sm font-normal">
+                <div dangerouslySetInnerHTML={{ __html: openError }} />
+              </div>
+              <Toast.Toggle onClick={() => setOpenError("")} />
+            </Toast>
+          )}
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
+            <h3 className="text-3xl">Create a wallet</h3>
+            <div className="-mx-3 mb-6 mt-4 flex flex-wrap">
+              <div className="mb-6 w-full px-3 md:mb-0 md:w-1/2">
+                <label
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  htmlFor="service"
+                >
+                  Service Name
+                </label>
+                <input
+                  className={`block w-full appearance-none border bg-gray-200 text-gray-700 ${
+                    errors.service ? "border-red-500" : ""
+                  } rounded px-4 py-3 leading-tight focus:bg-white focus:outline-none`}
+                  type="text"
+                  placeholder="Enter name of serive"
+                  {...register("service", {
+                    required: true,
+                  })}
+                />
+                {errors.service && (
+                  <p className="mt-2 text-xs italic text-red-500">
+                    {errors.service?.type === "required" &&
+                      "Service Name is required"}
+                  </p>
+                )}
+              </div>
+              <div className="w-full px-3 md:w-1/2">
+                <label
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  htmlFor="website"
+                >
+                  Website
+                </label>
+                <input
+                  className={`block w-full appearance-none border bg-gray-200 text-gray-700  ${
+                    errors.website ? "border-red-500" : ""
+                  } rounded border-gray-200 px-4 py-3 leading-tight focus:border-gray-500 focus:bg-white focus:outline-none`}
+                  type="text"
+                  placeholder="Website URL"
+                  {...register("website")}
+                />
+                {errors.website && (
+                  <p className="mt-2 text-xs italic text-red-500">
+                    {errors.website?.type === "required" && "Field is required"}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="-mx-3 mb-6 flex flex-wrap">
+              <div className="w-full px-3">
+                <label
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  htmlFor="description"
+                >
+                  Description
+                </label>
+                <textarea
+                  className={`block w-full appearance-none border bg-gray-200 text-gray-700  ${
+                    errors.description ? "border-red-500" : ""
+                  } rounded border-gray-200 px-4 py-3 leading-tight focus:border-gray-500 focus:bg-white focus:outline-none`}
+                  placeholder="Description"
+                  {...register("description")}
+                />
+                {errors.description && (
+                  <p className="mt-2 text-xs italic text-red-500">
+                    {errors.description?.type === "required" &&
+                      "Field is required"}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="-mx-3 mb-10 flex flex-wrap">
+              <div className="mb-6 w-full px-3 md:mb-0 md:w-1/3">
+                <label
+                  className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
+                  htmlFor="price"
+                >
+                  Price
+                </label>
+                <input
+                  className={`block w-full appearance-none border bg-gray-200 text-gray-700  ${
+                    errors.description ? "border-red-500" : ""
+                  } rounded border-gray-200 px-4 py-3 leading-tight focus:border-gray-500 focus:bg-white focus:outline-none`}
+                  type="number"
+                  placeholder="Price in USDC"
+                  step="any"
+                  {...register("price", { required: true })}
+                />
+                {errors.price && (
+                  <p className="mt-2 text-xs italic text-red-500">
+                    {errors.price?.type === "required" && "Price is required"}
+                  </p>
+                )}
+              </div>
+            </div>
+            <Button
+              type="submit"
+              disabled={
+                status["createWallet"] && status["createWallet"] !== "idle"
+              }
+            >
+              Publish
+            </Button>
+          </form>
+          {/* <UserOperation /> */}
         </div>
       </div>
-
-      <div className="w-full flex flex-col p-20">
-        {!!openInfo && (
-          <Toast className="fixed left-10 bottom-10 max-w-sm">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
-              <MdLoop className="h-5 w-5 animate-spin" />
-            </div>
-            <div className="pl-4 text-sm font-normal">
-              <div dangerouslySetInnerHTML={{ __html: openInfo }} />
-            </div>
-            <Toast.Toggle onClick={() => setOpenInfo("")} />
-          </Toast>
-        )}
-        {!!openSuccess && (
-          <Toast className="fixed left-10 bottom-10 max-w-sm">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-              <HiCheck className="h-5 w-5" />
-            </div>
-            <div className="pl-4 text-sm font-normal">
-              <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
-            </div>
-            <Toast.Toggle onClick={() => setOpenSuccess("")} />
-          </Toast>
-        )}
-        {!!openError && (
-          <Toast className="fixed left-10 bottom-10 max-w-sm">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
-              <HiExclamation className="h-5 w-5" />
-            </div>
-            <div className="pl-4 text-sm font-normal">
-              <div dangerouslySetInnerHTML={{ __html: openError }} />
-            </div>
-            <Toast.Toggle onClick={() => setOpenError("")} />
-          </Toast>
-        )}
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
-          <h3 className="text-3xl">Create a wallet</h3>
-          <div className="flex flex-wrap -mx-3 mb-6 mt-4">
-            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="service"
-              >
-                Service Name
-              </label>
-              <input
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border ${
-                  errors.service ? "border-red-500" : ""
-                } rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white`}
-                type="text"
-                placeholder="Enter name of serive"
-                {...register("service", {
-                  required: true,
-                })}
-              />
-              {errors.service && (
-                <p className="text-red-500 text-xs italic mt-2">
-                  {errors.service?.type === "required" &&
-                    "Service Name is required"}
-                </p>
-              )}
-            </div>
-            <div className="w-full md:w-1/2 px-3">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="website"
-              >
-                Website
-              </label>
-              <input
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border  ${
-                  errors.website ? "border-red-500" : ""
-                } border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
-                type="text"
-                placeholder="Website URL"
-                {...register("website")}
-              />
-              {errors.website && (
-                <p className="text-red-500 text-xs italic mt-2">
-                  {errors.website?.type === "required" && "Field is required"}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full px-3">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <textarea
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border  ${
-                  errors.description ? "border-red-500" : ""
-                } border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
-                placeholder="Description"
-                {...register("description")}
-              />
-              {errors.description && (
-                <p className="text-red-500 text-xs italic mt-2">
-                  {errors.description?.type === "required" &&
-                    "Field is required"}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-wrap -mx-3 mb-10">
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="price"
-              >
-                Price
-              </label>
-              <input
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border  ${
-                  errors.description ? "border-red-500" : ""
-                } border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
-                type="number"
-                placeholder="Price in USDC"
-                step="any"
-                {...register("price", { required: true })}
-              />
-              {errors.price && (
-                <p className="text-red-500 text-xs italic mt-2">
-                  {errors.price?.type === "required" && "Price is required"}
-                </p>
-              )}
-            </div>
-          </div>
-          <Button type="submit" disabled={!!creatingWallet}>
-            Publish
-          </Button>
-        </form>
-
-        {/* <UserOperation /> */}
-      </div>
-    </>
+      <PaymentTransactions />
+    </div>
   );
 }
