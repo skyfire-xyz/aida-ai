@@ -1,16 +1,21 @@
 "use client";
-import { FC } from "react";
+
+import { FC, useEffect } from "react";
 import { Card, Dropdown, Tooltip, useThemeMode } from "flowbite-react";
 import Chart from "react-apexcharts";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
 export default function AdminPage() {
+  if (typeof window === "undefined") {
+    return null;
+  }
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
       <SalesThisWeek />
     </div>
   );
 }
+
 const SalesChart: FC = function () {
   const { mode } = useThemeMode();
   const isDarkTheme = mode === "dark";
@@ -168,29 +173,23 @@ const Datepicker: FC = function () {
 
 const SalesThisWeek: FC = function () {
   return (
-    <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
+    <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 dark:text-white sm:p-6 xl:p-8">
       <div className="mb-4 flex h-[180px] items-center gap-4">
         <Card className="h-full max-w-lg">
           <div className="flex flex-col">
             <div className="mb-4">
               Received
-              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                $xx.xx
-              </h5>
+              <h5 className="tracking-tigh text-2xl font-bold">$xx.xx</h5>
             </div>
             <div>
               Paid
-              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                $xx.xx
-              </h5>
+              <h5 className="text-2xl font-bold tracking-tight">$xx.xx</h5>
             </div>
           </div>
         </Card>
         <Card className="h-full max-w-lg">
-          <h4 className="text-2xl font-bold text-gray-700 dark:text-gray-400">
-            Balance
-          </h4>
-          <div className="flex gap-10">
+          <h4 className="text-2xl font-bold ">Balance</h4>
+          <div className="flex gap-10 dark:text-white">
             <div>
               <b className="flex items-center">
                 Cash
@@ -201,13 +200,11 @@ const SalesThisWeek: FC = function () {
                   <HiOutlineInformationCircle className="h-5 w-5" />
                 </Tooltip>
               </b>
-              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                $5,385
-              </h5>
+              <h5 className="text-2xl font-bold tracking-tight">$5,385</h5>
             </div>
             <div>
               <b>Escrowed</b>
-              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
                 $xx.xx
               </h5>
             </div>

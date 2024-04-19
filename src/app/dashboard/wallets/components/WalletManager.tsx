@@ -147,7 +147,7 @@ export default function WalletManager() {
                 <Table.Body className="divide-y">
                   {wallets[walletType].map((wallet: Wallet, index: number) => {
                     const reservedWalletInfo = reservedWallets[walletType].find(
-                      (w) => {
+                      (w: Wallet) => {
                         return w.address === wallet.address;
                       },
                     );
