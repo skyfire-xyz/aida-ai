@@ -24,6 +24,8 @@ import {
 } from "@/src/app/reducers/dashboardSlice";
 import { Wallet } from "@/src/app/reducers/types";
 import { create } from "domain";
+import { useRouter } from "next/navigation";
+import { FiDownload, FiUpload } from "react-icons/fi";
 
 interface IFormInput {
   service: string;
@@ -49,6 +51,7 @@ const walletTypes = [
 export type WalletType = (typeof walletTypes)[number];
 
 export default function WalletManager() {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { status, transactions, wallets, reservedWallets } =
     useSelector(useDashboardSelector);
@@ -182,11 +185,36 @@ export default function WalletManager() {
                               size="xs"
                               className="flex items-center whitespace-nowrap"
                               onClick={() => {
+                                router.push(
+                                  `/dashboard/wallets/fund/${wallet.address}`,
+                                );
+                              }}
+                            >
+                              <FiDownload className="mr-2" />
+                              Fund
+                            </Button>
+                            <Button
+                              size="xs"
+                              className="flex items-center whitespace-nowrap"
+                              disabled
+                              onClick={() => {
+                                // router.push(
+                                //   `/dashboard/wallets/fund/${wallet.address}`,
+                                // );
+                              }}
+                            >
+                              <FiUpload className="mr-2" />
+                              Widthdraw
+                            </Button>
+                            <Button
+                              size="xs"
+                              className="flex items-center whitespace-nowrap"
+                              onClick={() => {
                                 setTransferFund(wallet);
                               }}
                             >
                               <IoMdSend className="mr-2" />
-                              Transfer Fund
+                              Transfer
                             </Button>
                             {!reservedWalletInfo && (
                               <Button size="xs" color="failure">
