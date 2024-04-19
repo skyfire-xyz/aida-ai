@@ -1,6 +1,23 @@
 "use client";
 
-import { Button, Card, Modal, Progress, TextInput } from "flowbite-react";
+import {
+  http,
+  createWalletClient,
+  createPublicClient,
+  custom,
+  parseEther,
+} from "viem";
+import { polygonAmoy } from "viem/chains";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Modal,
+  Progress,
+  Tabs,
+  TextInput,
+} from "flowbite-react";
+import QRCode from "react-qr-code";
 import { usePathname } from "next/navigation";
 import { AiFillBank } from "react-icons/ai";
 import { BsCreditCard2Back } from "react-icons/bs";
@@ -9,94 +26,215 @@ import { BiTransferAlt } from "react-icons/bi";
 import Image from "next/image";
 import { defaultImageLoader } from "@/src/common/lib/imageLoaders";
 import { IoLogoUsd } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { HiHome } from "react-icons/hi2";
 
-export default function Wallets(props: { params: { address: string } }) {
-  const address = props.params.address;
-  const [usd, setUsd] = useState(0);
+export default function Wallets(props: { params: { address: `0x${string}` } }) {
+  const address: `0x${string}` = props.params.address;
+  const [usdc, setUsdc] = useState(0);
   const [openModal, setOpenModal] = useState(false);
+
+  // Viem
+  async function connectWallet() {
+    const [account] = await window.ethereum?.request({
+      method: "eth_requestAccounts",
+    });
+
+    const walletClient = createWalletClient({
+      chain: polygonAmoy,
+      transport: custom(window.ethereum!),
+    });
+
+    const hash = await walletClient.sendTransaction({
+      account: account,
+      to: address,
+      value: parseEther("0.1"),
+    });
+  }
 
   return (
     <div>
+      <Breadcrumb aria-label="Default breadcrumb example">
+        <Breadcrumb.Item href="/dashboard" icon={HiHome}>
+          Dashboard
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="/dashboard/wallets">
+          Fund & Withdraw
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Fund Wallet - [{address}]</Breadcrumb.Item>
+      </Breadcrumb>
+      <div className="mt-20 w-full max-w-lg">
+        <h3 className="mb-4 text-3xl dark:text-white">Fund Wallet</h3>
+      </div>
       <Card className={`mb-4 max-w-md transition-all dark:text-white`}>
         <h3 className="text-sm">Payment method</h3>
 
-        <div className="flex gap-2">
-          <Button color="info" aria-selected>
-            <div className="flex w-14 flex-col items-center justify-center">
-              <AiFillBank className="h-6 w-6" />
-              <span>Bank</span>
-            </div>
-          </Button>
-
-          <Button color="info" disabled>
-            <div className="flex w-14 flex-col items-center justify-center">
-              <BsCreditCard2Back className="h-6 w-6" />
-              <span className="mt-1 whitespace-nowrap text-xs">
-                Credit Card
+        <Tabs aria-label="Default tabs" style="default">
+          <Tabs.Item active title="Bank" icon={AiFillBank}>
+            <div className="mt-6">
+              <h3 className="mb-2 text-sm">Amount</h3>
+              <span className="mb-1 flex items-center justify-between text-sm">
+                <div className="flex items-center gap-1">
+                  <AiFillBank /> Daily Limit
+                </div>
+                <div>$8,642 remaining</div>
               </span>
+              <Progress size={"sm"} progress={12} />
             </div>
-          </Button>
-          <Button color="info" disabled>
-            <div className="flex w-14 flex-col items-center justify-center">
-              <GrBitcoin className="h-6 w-6" />
-              <span>Crypto</span>
-            </div>
-          </Button>
-        </div>
 
-        <div className="mt-6">
-          <h3 className="mb-2 text-sm">Amount</h3>
-          <span className="mb-1 flex items-center justify-between text-sm">
-            <div className="flex items-center gap-1">
-              <AiFillBank /> Daily Limit
+            <div className="mt-6 flex items-center justify-between gap-2">
+              <TextInput
+                id="USD"
+                step=".01"
+                type="number"
+                placeholder="USD"
+                icon={IoLogoUsd}
+                onChange={(e: any) => {
+                  const num = Number(e.target.value).toFixed(2);
+                  setUsds(Number(Math.round(num * 0.999)));
+                }}
+              />
+              <BiTransferAlt className="h-4 w-4" />
+              <TextInput
+                type="number"
+                step=".01"
+                icon={() => (
+                  <Image
+                    alt="usdc"
+                    width="20"
+                    height="20"
+                    src="/images/usdc.svg"
+                  />
+                )}
+                disabled
+                value={usdc === 0 ? "" : usdc}
+                id="usdc"
+                placeholder="USDC"
+              />
             </div>
-            <div>$8,642 remaining</div>
-          </span>
-          <Progress size={"sm"} progress={12} />
-        </div>
 
-        <div className="flex items-center justify-between gap-2">
-          <TextInput
-            id="USD"
-            step=".01"
-            type="number"
-            placeholder="USD"
-            icon={IoLogoUsd}
-            onChange={(e: any) => {
-              const num = Number(e.target.value).toFixed(2);
-              setUsd(Number(num));
-            }}
-          />
-          <BiTransferAlt className="h-4 w-4" />
-          <TextInput
-            type="number"
-            step=".01"
+            <Button
+              disabled={!usdc}
+              className="mt-10 w-full"
+              onClick={() => setOpenModal(true)}
+            >
+              <span>BUY - {usdc ? usdc : ""}</span>
+              <Image
+                alt="usdc"
+                width="20"
+                height="20"
+                src="/images/usdc.svg"
+                className="ml-2 mr-1"
+              />
+              <span>USDC</span>
+            </Button>
+          </Tabs.Item>
+          <Tabs.Item
+            title="USDC"
             icon={() => (
-              <Image alt="usdc" width="20" height="20" src="/images/usdc.svg" />
+              <Image
+                className="mr-2"
+                alt="usdc"
+                width="20"
+                height="20"
+                src="/images/usdc.svg"
+              />
             )}
-            disabled
-            value={usd === 0 ? "" : Math.round(usd * 0.999)}
-            id="usdc"
-            placeholder="USDC"
-          />
-        </div>
+          >
+            <div className="mt-6">
+              <h3 className="text-bold mb-2 text-sm">Deposit with USDC</h3>
+              <span className="mb-1 flex items-center justify-between text-sm">
+                To finish this deposit, please go to your destination wallet and
+                complete the prompts there. Copy your USDC wallet address to
+                your external wallet
+              </span>
 
-        <Button
-          disabled={!usd}
-          className="mt-6"
-          onClick={() => setOpenModal(true)}
-        >
-          <span>BUY - {usd ? Math.round(usd * 0.999) : ""}</span>
-          <Image
-            alt="usdc"
-            width="20"
-            height="20"
-            src="/images/usdc.svg"
-            className="ml-2 mr-1"
-          />
-          <span>USDC</span>
-        </Button>
+              <h3 className="text-bold mt-10 text-sm">Amount</h3>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <TextInput
+                  id="USD"
+                  step=".01"
+                  type="number"
+                  placeholder="USD"
+                  icon={() => (
+                    <Image
+                      alt="usdc"
+                      width="20"
+                      height="20"
+                      src="/images/usdc.svg"
+                    />
+                  )}
+                  onChange={(e: any) => {
+                    const num = Number(e.target.value).toFixed(2);
+                    setUsdc(Number(num));
+                  }}
+                />
+              </div>
+            </div>
+
+            <Card className="mt-6 p-2">
+              <div className="flex items-center gap-2">
+                <div>
+                  <h3 className="text-lg">USDC Wallet Address</h3>
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-4">
+                <span>Scan QR code or share the address</span>
+                <div className="w-[160px] rounded bg-white p-4">
+                  <QRCode
+                    className="rounded"
+                    size={200}
+                    style={{
+                      height: "auto",
+                      maxWidth: "100%",
+                      width: "100%",
+                    }}
+                    value={address}
+                    viewBox={`0 0 256 256`}
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <span>Wallet Address</span>
+                  <span className="text-xs">{address}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span>Amount</span>
+                  <div className="flex items-center">
+                    <img
+                      src="/images/usdc.svg"
+                      alt="usdc"
+                      className="h-6 w-6"
+                    />
+                    <span className="mx-1 text-2xl font-bold">
+                      {usdc ? usdc : ""}
+                    </span>
+                    <span>USDC</span>
+                  </div>
+                </div>
+                <Button
+                  disabled={!usdc}
+                  className="mt-10"
+                  onClick={() => connectWallet()}
+                >
+                  <span>Send with wallet </span>
+                  <Image
+                    alt="usdc"
+                    width="20"
+                    height="20"
+                    src="/images/usdc.svg"
+                    className="ml-2 mr-1"
+                  />
+                  <span>USDC</span>
+                </Button>
+              </div>
+            </Card>
+          </Tabs.Item>
+          <Tabs.Item
+            title="Credit Card"
+            icon={BsCreditCard2Back}
+            disabled
+          ></Tabs.Item>
+        </Tabs>
       </Card>
 
       <Modal show={openModal} onClose={() => setOpenModal(false)}>

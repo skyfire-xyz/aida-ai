@@ -6,7 +6,15 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
 import DialogFundTransfer from "./DialogFundTransfer";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import { Button, Card, Label, Select, Table, Toast } from "flowbite-react";
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Label,
+  Select,
+  Table,
+  Toast,
+} from "flowbite-react";
 import { IoMdSend } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
@@ -26,6 +34,7 @@ import { Wallet } from "@/src/app/reducers/types";
 import { create } from "domain";
 import { useRouter } from "next/navigation";
 import { FiDownload, FiUpload } from "react-icons/fi";
+import { HiHome } from "react-icons/hi2";
 
 interface IFormInput {
   service: string;
@@ -115,6 +124,12 @@ export default function WalletManager() {
 
   return (
     <div className="h-full w-full rounded-lg">
+      <Breadcrumb aria-label="Default breadcrumb example mb-20">
+        <Breadcrumb.Item href="/dashboard" icon={HiHome}>
+          Dashboard
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Fund & Withdraw</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="flex w-full gap-10">
         <div className="min-w-auto flex flex-col">
           <div className="w-full max-w-lg">
@@ -135,7 +150,9 @@ export default function WalletManager() {
             </Select>
           </div>
           <div ref={walletList} className="mt-8 overflow-scroll">
-            {!wallets[walletType].length && <p>No wallets found</p>}
+            {!wallets[walletType].length && (
+              <p className="dark:text-white">No wallets found</p>
+            )}
             {wallets[walletType].length > 0 && (
               <Table>
                 <Table.Head>
@@ -214,7 +231,7 @@ export default function WalletManager() {
                               }}
                             >
                               <IoMdSend className="mr-2" />
-                              Transfer
+                              Send
                             </Button>
                             {!reservedWalletInfo && (
                               <Button size="xs" color="failure">
