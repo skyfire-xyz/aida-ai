@@ -237,7 +237,7 @@ const SalesThisWeek: FC = function () {
       <SalesChart />
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
         <Datepicker />
-        <div className="shrink-0">
+        {/* <div className="shrink-0">
           <a
             href="#"
             className="text-primary-700 dark:text-primary-500 inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase hover:bg-gray-100 dark:hover:bg-gray-700 sm:text-sm"
@@ -258,7 +258,7 @@ const SalesThisWeek: FC = function () {
               />
             </svg>
           </a>
-        </div>
+        </div> */}
       </div>
     </div>
   );

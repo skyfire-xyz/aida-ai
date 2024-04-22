@@ -90,8 +90,8 @@ export default function Wallets(props: { params: { address: `0x${string}` } }) {
                 placeholder="USD"
                 icon={IoLogoUsd}
                 onChange={(e: any) => {
-                  const num = Number(e.target.value).toFixed(2);
-                  setUsds(Number(Math.round(num * 0.999)));
+                  const num: number = Number(e.target.value);
+                  setUsdc(Number(Math.round(num * 0.999)));
                 }}
               />
               <BiTransferAlt className="h-4 w-4" />
@@ -141,92 +141,81 @@ export default function Wallets(props: { params: { address: `0x${string}` } }) {
               />
             )}
           >
-            <div className="mt-6">
-              <h3 className="text-bold mb-2 text-sm">Deposit with USDC</h3>
-              <span className="mb-1 flex items-center justify-between text-sm">
-                To finish this deposit, please go to your destination wallet and
-                complete the prompts there. Copy your USDC wallet address to
-                your external wallet
-              </span>
-
-              <h3 className="text-bold mt-10 text-sm">Amount</h3>
-              <div className="mt-2 flex items-center justify-between gap-2">
-                <TextInput
-                  id="USD"
-                  step=".01"
-                  type="number"
-                  placeholder="USD"
-                  icon={() => (
-                    <Image
-                      alt="usdc"
-                      width="20"
-                      height="20"
-                      src="/images/usdc.svg"
-                    />
-                  )}
-                  onChange={(e: any) => {
-                    const num = Number(e.target.value).toFixed(2);
-                    setUsdc(Number(num));
-                  }}
-                />
-              </div>
-            </div>
-
             <Card className="mt-6 p-2">
-              <div className="flex items-center gap-2">
-                <div>
-                  <h3 className="text-lg">USDC Wallet Address</h3>
-                </div>
-              </div>
-              <div className="flex flex-col items-center justify-center gap-4">
-                <span>Scan QR code or share the address</span>
-                <div className="w-[160px] rounded bg-white p-4">
-                  <QRCode
-                    className="rounded"
-                    size={200}
-                    style={{
-                      height: "auto",
-                      maxWidth: "100%",
-                      width: "100%",
-                    }}
-                    value={address}
-                    viewBox={`0 0 256 256`}
-                  />
-                </div>
-                <div className="flex flex-col items-center">
-                  <span>Wallet Address</span>
-                  <span className="text-xs">{address}</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span>Amount</span>
-                  <div className="flex items-center">
-                    <img
-                      src="/images/usdc.svg"
-                      alt="usdc"
-                      className="h-6 w-6"
-                    />
-                    <span className="mx-1 text-2xl font-bold">
-                      {usdc ? usdc : ""}
+              <Tabs aria-label="Pills" style="pills">
+                <Tabs.Item active title="Use QR Code">
+                  <p className="pb-4 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="mb-1 flex items-center justify-between text-sm">
+                      To finish this deposit, please go to your destination
+                      wallet and complete the prompts there. Copy your USDC
+                      wallet address to your external wallet
                     </span>
-                    <span>USDC</span>
+                  </p>
+
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <span>Scan QR code or share the address</span>
+                    <div className="w-[160px] rounded bg-white p-4">
+                      <QRCode
+                        className="rounded"
+                        size={200}
+                        style={{
+                          height: "auto",
+                          maxWidth: "100%",
+                          width: "100%",
+                        }}
+                        value={address}
+                        viewBox={`0 0 256 256`}
+                      />
+                    </div>
+
+                    <div className="text-center">
+                      Wallet Address
+                      <p className="text-sm">{address}</p>
+                    </div>
                   </div>
-                </div>
-                <Button
-                  disabled={!usdc}
-                  className="mt-10"
-                  onClick={() => connectWallet()}
-                >
-                  <span>Send with wallet </span>
-                  <Image
-                    alt="usdc"
-                    width="20"
-                    height="20"
-                    src="/images/usdc.svg"
-                    className="ml-2 mr-1"
-                  />
-                  <span>USDC</span>
-                </Button>
-              </div>
+                </Tabs.Item>
+                <Tabs.Item title="Use Wallet">
+                  <p className="pb-4 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="mb-1 flex items-center justify-between text-sm">
+                      To finish this deposit, please enter the amount you want
+                      to transfer and click send button.
+                    </span>
+                  </p>
+                  <div className="mt-6">
+                    <h3 className="text-bold mt-10 text-sm">Amount</h3>
+                    <div className="mb-2 flex w-full items-center justify-between gap-2">
+                      <TextInput
+                        className="w-full"
+                        id="USD"
+                        step=".01"
+                        type="number"
+                        placeholder="USD"
+                        icon={() => (
+                          <Image
+                            alt="usdc"
+                            width="20"
+                            height="20"
+                            src="/images/usdc.svg"
+                          />
+                        )}
+                        onChange={(e: any) => {
+                          const num = Number(e.target.value).toFixed(2);
+                          setUsdc(Number(num));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <Button
+                      disabled={!usdc}
+                      className="mt-4 w-full"
+                      onClick={() => connectWallet()}
+                    >
+                      <span>Send</span>
+                    </Button>
+                  </p>
+                </Tabs.Item>
+              </Tabs>
             </Card>
           </Tabs.Item>
           <Tabs.Item

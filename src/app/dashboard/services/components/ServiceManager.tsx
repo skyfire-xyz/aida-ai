@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Card, Toast } from "flowbite-react";
 import { MdDelete } from "react-icons/md";
@@ -31,6 +31,36 @@ const walletTypes = ["Sender", "Receiver"] as const;
  * @format network
  */
 export type WalletType = (typeof walletTypes)[number];
+
+export function ServiceImage({ service }: { service: string }) {
+  const imageUrl = useMemo(() => {
+    if (service === "Perplexity") {
+      return "/images/aichat/logo-perplexity.svg";
+    } else if (service === "Joke") {
+      return "/images/aichat/logo-humorapi.svg";
+    } else if (service === "Dataset") {
+      return "/images/aichat/logo-kaggle.svg";
+    } else if (service === "ChatGPT") {
+      return "/images/aichat/logo-chatgpt.svg";
+    } else if (service === "Gemini") {
+      return "/images/aichat/logo-gemini.svg";
+    }
+  }, [service]);
+
+  if (!imageUrl) {
+    return (
+      <div className="rounded-ful flex h-12 w-12 items-center justify-center rounded-lg bg-gray-500">
+        {service[0]}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-12 w-12 items-center justify-center">
+      <img src={imageUrl} width="50" height="50" />
+    </div>
+  );
+}
 
 export default function ServiceManager() {
   const dispatch = useDispatch<AppDispatch>();
@@ -119,20 +149,27 @@ export default function ServiceManager() {
                       : "first:bg-[#ffffff]"
                   } transition-all dark:text-white`}
                 >
-                  <h4 className="text-xl font-bold">
-                    {reservedWalletInfo?.name || "No Name"}
-                  </h4>
-                  <div>
-                    <b>Created At: </b>
-                    {wallet.createdAt}
-                  </div>
-                  <div className="flex">
-                    {!reservedWalletInfo && (
-                      <Button size="xs" color="failure">
-                        <MdDelete className="mr-2" />
-                        Delete
-                      </Button>
-                    )}
+                  <div className="flex gap-4">
+                    <div>
+                      <ServiceImage service={reservedWalletInfo?.name} />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold">
+                        {reservedWalletInfo?.name || "No Name"}
+                      </h4>
+                      <div>
+                        <b>Created At: </b>
+                        {wallet.createdAt}
+                      </div>
+                      <div className="flex">
+                        {!reservedWalletInfo && (
+                          <Button size="xs" color="failure">
+                            <MdDelete className="mr-2" />
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </Card>
               );
