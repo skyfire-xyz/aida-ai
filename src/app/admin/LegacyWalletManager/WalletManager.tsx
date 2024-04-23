@@ -135,7 +135,7 @@ export default function WalletManager() {
             {!wallets[walletType].length && <p>No wallets found</p>}
             {wallets[walletType].map((wallet: Wallet, index: number) => {
               const reservedWalletInfo = reservedWallets[walletType].find(
-                (w) => {
+                (w: Wallet) => {
                   return w.address === wallet.address;
                 },
               );
