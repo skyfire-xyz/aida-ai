@@ -40,17 +40,17 @@ export const fetchAllTransactions = createAsyncThunk<any>(
     const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
     // return res.data;
     return demoTransactions;
-  }
+  },
 );
 
 export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   "dashboard/fetchWallets",
   async ({ walletType }) => {
     const res = await axios.get(
-      `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`
+      `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`,
     );
     return { wallets: res.data, walletType };
-  }
+  },
 );
 
 export const redeemClaims = createAsyncThunk<any>(
@@ -58,20 +58,22 @@ export const redeemClaims = createAsyncThunk<any>(
   async () => {
     const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
     return res.data;
-  }
+  },
 );
 
 export const createWallet = createAsyncThunk<any, { data: any }>(
   "dashboard/createWallet",
   async ({ data }, thunkAPI) => {
+    const price = Number(data.price) * 1000000;
+    const service = data.service;
     const res = await axios.post(`${BACKEND_API_URL}v2/wallet`, {
-      price: Number(data.price) * 1000000,
-      serviceName: data.service,
+      price,
+      serviceName: service,
       description: data.description,
       website: data.website,
     });
-    return res;
-  }
+    return { ...res, service, price };
+  },
 );
 
 export const dashboardSlice = createSlice({

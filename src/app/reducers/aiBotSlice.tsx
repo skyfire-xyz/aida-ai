@@ -55,7 +55,7 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       });
       return { ...res.data, task };
     }
-  }
+  },
 );
 
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
@@ -65,7 +65,7 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
       searchTerm: searchTerm.trim(),
     });
     return { ...res.data, type: "dataset", uuid: new Date().getTime() };
-  }
+  },
 );
 
 export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
@@ -75,7 +75,7 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
       dataset: ref,
     });
     return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
-  }
+  },
 );
 
 export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
@@ -85,7 +85,7 @@ export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
-  }
+  },
 );
 
 export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
@@ -95,7 +95,7 @@ export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "web_search", uuid: new Date().getTime() };
-  }
+  },
 );
 
 export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
@@ -105,7 +105,7 @@ export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "video_search", uuid: new Date().getTime() };
-  }
+  },
 );
 
 export const fetchImageGeneration = createAsyncThunk<
@@ -147,12 +147,12 @@ export const fetchChat = createAsyncThunk<any, { prompt: string }>(
       prompt,
     });
     return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
-  }
+  },
 );
 
 function updateProtocolLogsState(
   state: AiBotSliceReduxState,
-  action: PayloadAction<any>
+  action: PayloadAction<any>,
 ) {
   const logs = action.payload.quote || [action.payload.payment];
   if (logs) {
@@ -185,7 +185,7 @@ const processError = (state: AiBotSliceReduxState) => {
 };
 const processFulfilled = (
   state: AiBotSliceReduxState,
-  action: PayloadAction
+  action: PayloadAction,
 ) => {
   updateProtocolLogsState(state, action);
   state.status.botThinking = false;
@@ -269,7 +269,7 @@ export const aiBotSlice = createSlice({
           textMessage: action.payload.prompt,
           data:
             action.payload.tasks.map(
-              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`
+              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`,
             ) || [],
         });
         state.tasks = {
@@ -287,7 +287,7 @@ export const aiBotSlice = createSlice({
                 },
               };
             },
-            {}
+            {},
           ),
         };
         state.taskGroupIndex++;
