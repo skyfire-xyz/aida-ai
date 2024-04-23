@@ -1,6 +1,6 @@
 import axios from "axios";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AiBotSliceReduxState, Task } from "./types";
+import { AiBotSliceReduxState, PaymentType, Task } from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { ReducerAction } from "react";
 
@@ -9,6 +9,7 @@ const robotImageUrl = "/images/aichat/ai-robot.png";
 const initialState: AiBotSliceReduxState = {
   messages: [],
   protocolLogs: [],
+  protocolLogsV2: null,
   tasks: {},
   taskGroupIndex: 1,
   shouldScrollToBottom: false,
@@ -54,7 +55,7 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       });
       return { ...res.data, task };
     }
-  }
+  },
 );
 
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
@@ -63,8 +64,8 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
       searchTerm: searchTerm.trim(),
     });
-    return res.data;
-  }
+    return { ...res.data, type: "dataset", uuid: new Date().getTime() };
+  },
 );
 
 export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
@@ -73,8 +74,8 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/dataset/analyze`, {
       dataset: ref,
     });
-    return res.data;
-  }
+    return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
+  },
 );
 
 export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
@@ -83,8 +84,8 @@ export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/chat/tasklist`, {
       prompt: searchTerm.trim(),
     });
-    return res.data;
-  }
+    return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
+  },
 );
 
 export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
@@ -93,8 +94,8 @@ export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
       prompt: searchTerm.trim(),
     });
-    return res.data;
-  }
+    return { ...res.data, type: "web_search", uuid: new Date().getTime() };
+  },
 );
 
 export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
@@ -103,8 +104,8 @@ export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
       prompt: searchTerm.trim(),
     });
-    return res.data;
-  }
+    return { ...res.data, type: "video_search", uuid: new Date().getTime() };
+  },
 );
 
 export const fetchImageGeneration = createAsyncThunk<
@@ -114,7 +115,7 @@ export const fetchImageGeneration = createAsyncThunk<
   const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
     prompt: searchTerm.trim(),
   });
-  return res.data;
+  return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
 });
 
 export const fetchMeme = createAsyncThunk<
@@ -125,7 +126,7 @@ export const fetchMeme = createAsyncThunk<
     meme,
     searchTerm: searchTerm.trim(),
   });
-  return res.data;
+  return { ...res.data, type: "meme", uuid: new Date().getTime() };
 });
 
 export const fetchLogoAgent = createAsyncThunk<
@@ -136,7 +137,7 @@ export const fetchLogoAgent = createAsyncThunk<
     agent: logoAIAgent.service,
     cost: logoAIAgent.price,
   });
-  return res.data;
+  return { ...res.data, type: "logo", uuid: new Date().getTime() };
 });
 
 export const fetchChat = createAsyncThunk<any, { prompt: string }>(
@@ -145,17 +146,32 @@ export const fetchChat = createAsyncThunk<any, { prompt: string }>(
     const res = await axios.post(`${BACKEND_API_URL}v2/chat`, {
       prompt,
     });
-    return { ...res.data, prompt };
-  }
+    return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
+  },
 );
 
 function updateProtocolLogsState(
   state: AiBotSliceReduxState,
-  action: PayloadAction<any>
+  action: PayloadAction<any>,
 ) {
   const logs = action.payload.quote || [action.payload.payment];
   if (logs) {
     state.protocolLogs = [...state.protocolLogs, ...logs];
+  }
+
+  // Prototyping V2
+  const logsV2 = action.payload.quote || [action.payload.payment];
+  const log = {
+    [action.payload.uuid as number]: action.payload.quote
+      ? (action.payload.quote[0] as PaymentType)
+      : (action.payload.payment as PaymentType),
+  };
+  if (logsV2) {
+    if (state.protocolLogsV2 === null) {
+      state.protocolLogsV2 = [log];
+    } else {
+      state.protocolLogsV2 = [...state.protocolLogsV2, log];
+    }
   }
 }
 
@@ -169,7 +185,7 @@ const processError = (state: AiBotSliceReduxState) => {
 };
 const processFulfilled = (
   state: AiBotSliceReduxState,
-  action: PayloadAction
+  action: PayloadAction,
 ) => {
   updateProtocolLogsState(state, action);
   state.status.botThinking = false;
@@ -218,6 +234,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchDataset.pending, processPending)
       .addCase(fetchDataset.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "dataset",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
@@ -232,6 +249,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchAnalyzeDataset.pending, processPending)
       .addCase(fetchAnalyzeDataset.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.body,
@@ -245,12 +263,13 @@ export const aiBotSlice = createSlice({
       .addCase(fetchTasklist.pending, processPending)
       .addCase(fetchTasklist.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "tasklist",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
           data:
             action.payload.tasks.map(
-              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`
+              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`,
             ) || [],
         });
         state.tasks = {
@@ -268,7 +287,7 @@ export const aiBotSlice = createSlice({
                 },
               };
             },
-            {}
+            {},
           ),
         };
         state.taskGroupIndex++;
@@ -281,6 +300,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchWebSearch.pending, processPending)
       .addCase(fetchWebSearch.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "websearch",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
@@ -295,6 +315,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchVideoSearch.pending, processPending)
       .addCase(fetchVideoSearch.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "videosearch",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
@@ -309,6 +330,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchImageGeneration.pending, processPending)
       .addCase(fetchImageGeneration.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
@@ -323,6 +345,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchMeme.pending, processPending)
       .addCase(fetchMeme.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.joke,
@@ -337,6 +360,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchLogoAgent.pending, processPending)
       .addCase(fetchLogoAgent.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.prompt,
@@ -351,6 +375,7 @@ export const aiBotSlice = createSlice({
       .addCase(fetchChat.pending, processPending)
       .addCase(fetchChat.fulfilled, (state, action) => {
         state.messages.push({
+          uuid: action.payload.uuid,
           type: "chat",
           avatarUrl: robotImageUrl,
           textMessage: action.payload.body,

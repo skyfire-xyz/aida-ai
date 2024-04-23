@@ -35,6 +35,7 @@ import {
   useAiBotSelector,
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
+import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -51,14 +52,13 @@ export default function ChatPane(props: any) {
   const chatMessages = useRef<ChatMessageType[]>([]);
   const chatPaneRef = useRef<HTMLDivElement>(null);
 
-  const { paymentsPaneRef, ProtocolLogsComp, robotImageUrl, userImageUrl } =
-    props;
+  const { robotImageUrl, userImageUrl } = props;
 
   // Common Utilities
   const addBotResponseMessage = (
     prompt: string,
     data?: any,
-    type?: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch"
+    type?: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch",
   ) => {
     chatMessages.current = [
       ...chatMessages.current,
@@ -73,7 +73,7 @@ export default function ChatPane(props: any) {
   };
 
   useEffect(() => {
-    scrollToBottom([chatPaneRef, paymentsPaneRef], () => {
+    scrollToBottom([chatPaneRef], () => {
       dispatch(setShouldScrollToBottom(false));
     });
   }, [shouldScrollToBottom]);
@@ -82,7 +82,7 @@ export default function ChatPane(props: any) {
     dispatch(
       addInitialMessage({
         textMessage: t("aiPrompt.defaultGreeting"),
-      })
+      }),
     );
   }, [messages]);
 
@@ -95,7 +95,7 @@ export default function ChatPane(props: any) {
           direction: "right",
           avatarUrl: userImageUrl,
           textMessage: inputText,
-        })
+        }),
       );
 
       setTimeout(() => {
@@ -124,7 +124,7 @@ export default function ChatPane(props: any) {
             addMessage({
               type: "chat",
               textMessage: t("aiPrompt.errorMessage"),
-            })
+            }),
           );
           return;
         }
@@ -234,7 +234,6 @@ export default function ChatPane(props: any) {
         ///////////////////////////////////////////////////////////
 
         dispatch(fetchMeme({ searchTerm: "", meme: false }));
-        // scrollToBottom([chatPaneRef, paymentsPaneRef]);
       } else {
         ///////////////////////////////////////////////////////////
         // Regular Chat Request
@@ -259,7 +258,7 @@ export default function ChatPane(props: any) {
                 addMessage({
                   type: "chat",
                   textMessage: t("aiPrompt.textVisitAdminDashboard"),
-                })
+                }),
               );
             }, 1000);
           }
@@ -271,10 +270,10 @@ export default function ChatPane(props: any) {
   };
 
   return (
-    <div className="w-full flex flex-col justify-between h-full">
+    <div className="flex h-full w-full flex-col justify-between">
       <div
         id="chat-pane"
-        className="flex flex-col mt-5 overflow-scroll flex-grow px-5 "
+        className="mt-5 flex flex-grow flex-col overflow-scroll px-5 "
         ref={chatPaneRef}
       >
         {messages &&
@@ -335,14 +334,14 @@ export default function ChatPane(props: any) {
           </ChatGeneral>
         )}
       </div>
-      <div className="md:pt-5 py-5 px-3 flex-none pt-1">
-        <div className="flex justify-end md:hidden mb-2">
+      <div className="flex-none px-3 py-5 pt-1 md:pt-5">
+        <div className="mb-2 flex justify-end md:hidden">
           <HiOutlineCurrencyDollar
-            className="w-5 h-5"
+            className="h-5 w-5"
             onClick={() => setShowMicroPayments(true)}
           />
           <IoIosInformationCircleOutline
-            className="w-5 h-5"
+            className="h-5 w-5"
             onClick={() => setShowExamples(true)}
           />
         </div>
@@ -390,7 +389,7 @@ export default function ChatPane(props: any) {
           </Link>
         </Modal.Header>
         <Modal.Body>
-          <ProtocolLogsComp />
+          <ProtocolLogs />
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowMicroPayments(false)}>Close</Button>
