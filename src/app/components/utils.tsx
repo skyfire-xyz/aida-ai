@@ -22,7 +22,7 @@ export function getLogoAIData() {
   };
   try {
     const key = "__storage__ai-demo";
-    if (window) {
+    if (typeof window !== "undefined") {
       const data = window["localStorage"].getItem(key);
       if (data) {
         return JSON.parse(data);

@@ -9,6 +9,7 @@ import {
 } from "@/src/app/reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
 import { useDispatch, useSelector } from "react-redux";
+import { CommonTransaction } from "@/src/app/reducers/types";
 
 export default function PaymentTransactions() {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +37,7 @@ export default function PaymentTransactions() {
           </Table.Head>
           <Table.Body className="divide-y">
             {transactions
-              .filter((tx) => {
+              .filter((tx: CommonTransaction) => {
                 return tx.type === "PAYMENT";
               })
               .map((tx: any, index: number) => (
