@@ -133,53 +133,61 @@ export default function ServiceManager() {
           </div>
           <div ref={walletList} className="mt-8 overflow-scroll">
             {!wallets[walletType].length && <p>No service found</p>}
-            {wallets[walletType].map((wallet: Wallet, index: number) => {
-              const reservedWalletInfo = reservedWallets[walletType].find(
-                (w) => {
-                  return w.address === wallet.address;
-                },
-              );
+            {wallets[walletType].length > 0 &&
+              wallets[walletType].map((wallet: Wallet, index: number) => {
+                const reservedWalletInfo = reservedWallets[walletType].find(
+                  (w: Wallet) => {
+                    return w.address === wallet.address;
+                  },
+                );
 
-              return (
-                <Card
-                  key={index}
-                  className={`mb-4 ${
-                    walletAdded
-                      ? "first:bg-[rgb(229,246,253)]"
-                      : "first:bg-[#ffffff]"
-                  } transition-all dark:text-white`}
-                >
-                  <div className="flex gap-4">
-                    <div>
-                      <ServiceImage service={reservedWalletInfo?.name} />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold">
-                        {reservedWalletInfo?.name || "No Name"}
-                      </h4>
+                return (
+                  <Card
+                    key={index}
+                    className={`mb-4  ${
+                      walletAdded
+                        ? "first:bg-[rgb(229,246,253)]"
+                        : "first:bg-[#ffffff]"
+                    } bg-[#ffffff] transition-all dark:text-white`}
+                  >
+                    <div className="flex gap-4">
                       <div>
-                        <b>Created At: </b>
-                        {wallet.createdAt}
+                        <ServiceImage
+                          service={reservedWalletInfo?.name || "No Name"}
+                        />
                       </div>
-                      <div className="flex">
+                      <div className="flex-1">
+                        <h4 className="text-xl font-bold">
+                          {reservedWalletInfo?.name || "No Name"}
+                        </h4>
+                        <div className="mt-1 text-xs">
+                          <div>
+                            <b>Address: </b>
+                            {wallet.address}
+                          </div>
+                          <div>
+                            <b>Created At: </b>
+                            {wallet.createdAt}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
                         {!reservedWalletInfo && (
-                          <Button size="xs" color="failure">
+                          <div className="flex items-center">
                             <MdDelete className="mr-2" />
-                            Delete
-                          </Button>
+                          </div>
                         )}
                       </div>
                     </div>
-                  </div>
-                </Card>
-              );
-            })}
+                  </Card>
+                );
+              })}
           </div>
         </div>
 
         <div className="flex w-full flex-col">
           {!!openInfo && (
-            <Toast className="fixed bottom-10 left-10 max-w-sm">
+            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
               <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
                 <MdLoop className="h-5 w-5 animate-spin" />
               </div>
@@ -190,7 +198,7 @@ export default function ServiceManager() {
             </Toast>
           )}
           {!!openSuccess && (
-            <Toast className="fixed bottom-10 left-10 max-w-sm">
+            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
               <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                 <HiCheck className="h-5 w-5" />
               </div>
@@ -201,7 +209,7 @@ export default function ServiceManager() {
             </Toast>
           )}
           {!!openError && (
-            <Toast className="fixed bottom-10 left-10 max-w-sm">
+            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
               <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
                 <HiExclamation className="h-5 w-5" />
               </div>

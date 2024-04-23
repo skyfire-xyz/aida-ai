@@ -65,7 +65,7 @@ export default function WalletManager() {
   const { status, transactions, wallets, reservedWallets } =
     useSelector(useDashboardSelector);
 
-  const [walletType, setWalletType] = useState<WalletType>("Receiver");
+  const [walletType, setWalletType] = useState<WalletType>("Sender");
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");
@@ -132,8 +132,8 @@ export default function WalletManager() {
       </Breadcrumb>
       <div className="flex w-full gap-10">
         <div className="min-w-auto flex flex-col">
-          <div className="w-full max-w-lg">
-            <h3 className="text-3xl dark:text-white">Wallet List</h3>
+          <div className="mt-4 w-full max-w-lg">
+            <h3 className="text-3xl dark:text-white">Wallets</h3>
           </div>
           <div className="mt-5">
             <Label htmlFor="wallet-type">Wallet Type</Label>
@@ -231,7 +231,7 @@ export default function WalletManager() {
                               }}
                             >
                               <IoMdSend className="mr-2" />
-                              Send
+                              Transfer
                             </Button>
                             {!reservedWalletInfo && (
                               <Button size="xs" color="failure">

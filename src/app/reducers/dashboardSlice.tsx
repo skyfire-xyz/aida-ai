@@ -1,6 +1,11 @@
 import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CommonTransaction, DashboardReduxState, WalletType } from "./types";
+import {
+  CommonTransaction,
+  DashboardReduxState,
+  Wallet,
+  WalletType,
+} from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import demoTransactions from "./demoTransactions.json";
 
@@ -11,7 +16,10 @@ const initialState: DashboardReduxState = {
       { name: "", address: "0x45c83889BD84D5FB77039B67C30695878f506313" },
     ],
     Receiver: [
-      { name: "", address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51" },
+      {
+        name: "Reserved",
+        address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51",
+      },
       { name: "Joke", address: "0xB94dD221ef1302576E2785dAFB4Bad28cbBeA540" },
       {
         name: "ChatGPT",
@@ -94,7 +102,28 @@ export const dashboardSlice = createSlice({
       })
       .addCase(fetchWallets.fulfilled, (state, action) => {
         const { walletType, wallets } = action.payload;
-        state.wallets[walletType as WalletType] = wallets;
+        state.wallets[walletType as WalletType] = wallets.sort(
+          (w1: Wallet, w2: Wallet) => {
+            const isReserved = state.reservedWallets[
+              walletType as WalletType
+            ].find((rWallet: Wallet) => {
+              return w1.address === rWallet.address;
+            });
+            if (isReserved) return -1;
+
+            const isReserved2 = state.reservedWallets[
+              walletType as WalletType
+            ].find((rWallet: Wallet) => {
+              return w2.address === rWallet.address;
+            });
+            if (isReserved2) return 1;
+
+            return (
+              new Date(w2.createdAt as string).getTime() -
+              new Date(w1.createdAt as string).getTime()
+            );
+          },
+        );
       })
       .addCase(fetchWallets.rejected, (state, action) => {
         state.status["fetchWallets"] = "failed";
