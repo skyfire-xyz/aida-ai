@@ -5,17 +5,19 @@ import AiChat from "./components/AiChat";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/src/locale/en.json";
 
-export default async function Home() {
+export default function Home() {
   return (
-    <NextIntlClientProvider
-      timeZone={"America/New_York"}
-      locale={"en"}
-      messages={messages}
-    >
-      <div className="md:h-[calc(100%-200px)] h-[calc(100%-220px)]">
-        <Header />
-        <AiChat images={[]} />
-      </div>
-    </NextIntlClientProvider>
+    <div className={`font-jones h-screen bg-[#002341]`}>
+      <NextIntlClientProvider
+        timeZone={"America/New_York"}
+        locale={"en"}
+        messages={messages}
+      >
+        <div className="h-[calc(100%-220px)] md:h-[calc(100%-200px)]">
+          <Header />
+          <AiChat images={[]} />
+        </div>
+      </NextIntlClientProvider>
+    </div>
   );
 }

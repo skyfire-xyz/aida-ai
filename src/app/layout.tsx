@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "@/src/globals.css";
 import { Providers } from "./providers";
+import { Flowbite, ThemeModeScript } from "flowbite-react";
+import theme from "@/src/common/flowbite-theme";
 
 export const metadata: Metadata = {
-  title: "Aida.AI - Powered by Supermojo Payments",
+  title: "Aida.AI - Powered by Skyfire Payments",
   description: "",
 };
 
@@ -17,7 +19,14 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="en">
-        <body className={`h-screen bg-[#002341] font-jones`}>{children};</body>
+        <head>
+          <ThemeModeScript />
+        </head>
+        <body className="bg-gray-50 dark:bg-gray-900">
+          <Flowbite theme={{ theme }}>
+            <div id="root">{children}</div>
+          </Flowbite>
+        </body>
       </html>
     </Providers>
   );

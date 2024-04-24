@@ -12,62 +12,62 @@ import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <aside className="relative bg-sidebar h-screen w-80 hidden sm:block shadow-xl">
-      <nav className="text-white text-base font-semibold pt-3">
-        <div className="m-6 mb-20 flex justify-center">
+    <aside className="bg-sidebar relative hidden h-screen w-80 shadow-xl sm:block">
+      <nav className="pt-3 text-base font-semibold text-white">
+        <div className="m-6 mb-10 flex justify-center">
           <Image
-            src="/images/logo_white.svg"
+            src="/images/logo-white.png"
             loading="lazy"
-            alt="Supermojo"
+            alt="Skyfire"
             width="160"
             height="40"
           />
         </div>
         <Link
           href="/admin"
-          className="flex items-center active-nav-link text-white py-6 pl-6 nav-item bg-[#193853]"
+          className="active-nav-link nav-item flex items-center bg-[#193853] py-6 pl-6 text-white"
         >
           <HiOutlineWallet className="mr-2" />
           Wallet Management
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiOutlineUserCircle className="mr-2" />
           IAM & Admin
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiCurrencyDollar className="mr-2" />
           Billing
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiSupport className="mr-2" />
           Support
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiDocumentText className="mr-2" />
           Documentation
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiUserGroup className="mr-2" />
           Team
         </Link>
         <Link
           href="/admin"
-          className="flex items-center text-white opacity-75 hover:opacity-100 py-5 pl-6 nav-item"
+          className="nav-item flex items-center py-5 pl-6 text-white opacity-75 hover:opacity-100"
         >
           <HiUserCircle className="mr-2" />
           My Profile

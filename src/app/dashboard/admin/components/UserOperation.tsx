@@ -9,7 +9,7 @@ import { deserializeSessionKeyAccount } from "@zerodev/session-key";
 import { bundlerActions } from "permissionless";
 import React, { useEffect, useState } from "react";
 import { createPublicClient, http, encodeFunctionData } from "viem";
-import { Alert, Button, Kbd } from "flowbite-react";
+import { Alert, Button, Kbd, Textarea } from "flowbite-react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { HiExternalLink, HiOutlineCurrencyDollar } from "react-icons/hi";
 import {
@@ -88,7 +88,7 @@ export default function Home() {
       if (key) {
         const deserializedSessionAccount = await deserializeSessionKeyAccount(
           publicClient,
-          key
+          key,
         );
         setSessionKeyAccount(deserializedSessionAccount);
       }
@@ -100,16 +100,22 @@ export default function Home() {
   if (!mounted) return <></>;
 
   return (
-    <div className="mt-20">
-      <div className="w-full max-w-lg">
+    <div>
+      <div className="w-full ">
         <h3 className="text-3xl">Test User Operation</h3>
       </div>
       {!sessionKeyAccount && "No Session Key Found"}
       {sessionKeyAccount && (
         <div className="mt-5">
-          <h5 className="font-bold text-lg">Session Key Found</h5>
-          <div className="text-sm">{JSON.stringify(sessionKeyAccount)}</div>
-          <div className="flex items-center mt-5">
+          <h5 className="text-lg font-bold">Session Key Found</h5>
+          <Textarea
+            className="text-sm"
+            value={JSON.stringify(sessionKeyAccount)}
+            required
+            rows={4}
+            disabled
+          />
+          <div className="mt-5 flex items-center">
             <Kbd
               className="cursor-pointer"
               onClick={() => {
@@ -122,19 +128,19 @@ export default function Home() {
               onClick={() => {
                 window.open(
                   `https://jiffyscan.xyz/account/${sessionKeyAccount.address}`,
-                  "_blank"
+                  "_blank",
                 );
               }}
             >
-              <HiExternalLink className="ml-2 w-5 h-5" />
+              <HiExternalLink className="ml-2 h-5 w-5" />
             </button>
           </div>
           <div className="mt-2">
             <Button onClick={handleSendUserOp} disabled={isSpending}>
               {isSpending ? (
-                <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
+                <AiOutlineLoading className="mr-2 h-5 w-5 animate-spin" />
               ) : (
-                <HiOutlineCurrencyDollar className="h-5 w-5 mr-2" />
+                <HiOutlineCurrencyDollar className="mr-2 h-5 w-5" />
               )}
               Spend USDC from this wallet
             </Button>

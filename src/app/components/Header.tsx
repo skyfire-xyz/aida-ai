@@ -1,27 +1,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
-// import styles from "styles/Header.module.scss";
-// import { useWindowSize } from 'usehooks-ts';
 import Image from "next/image";
 import { defaultImageLoader } from "@/src/common/lib/imageLoaders";
-// import { defaultImageLoader } from "src/imageLoaders";
-// import { Typography } from '@mui/material';
 
 const Header: React.FC = () => {
   const t = useTranslations("ai");
-  // const router = useRouter();
-  // const [open, setOpen] = useState(false);
-  // const [closed, setClosed] = useState(true);
-  // const { width } = useWindowSize();
-
-  // useEffect(() => {
-  //   if (width > 991 && open && !closed) {
-  //     setOpen(false);
-  //     setClosed(true);
-  //   }
-  // }, [width, open, closed]);
 
   return (
     <div>
@@ -36,7 +20,7 @@ const Header: React.FC = () => {
         data-duration="400"
       >
         <div
-          className="md:px-40 px-10 py-10"
+          className="px-10 py-10 md:px-40"
           // className={`container-medium navbar_container w-container ${
           //   open ? styles.navbar_container_open : ""
           // } !pt-[34px]`}
@@ -53,22 +37,17 @@ const Header: React.FC = () => {
             > */}
             <h2 className="text-4xl text-white">{t("page.title")}</h2>
             {/* </Typography> */}
-            <div className="flex">
-              {/* <Typography
-                variant="h6"
-                sx={{ fontSize: "16px", fontWeight: "1000" }}
-              > */}
-              <h3 className="mdL:text-xl text-white mr-2">
+            <div className="flex items-center">
+              <h3 className="mdL:text-xl mr-1 text-white">
                 <i>{t("page.poweredBy")}</i>
               </h3>
-              {/* </Typography> */}
               <div>
                 <Image
                   src="/images/logo-only.png"
                   loading="lazy"
-                  alt="Supermojo"
-                  width="42"
-                  height="26"
+                  alt="Skyfire"
+                  width="36"
+                  height="24"
                   loader={defaultImageLoader}
                 />
               </div>
