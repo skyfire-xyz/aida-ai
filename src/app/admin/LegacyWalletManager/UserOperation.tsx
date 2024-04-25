@@ -88,7 +88,7 @@ export default function Home() {
       if (key) {
         const deserializedSessionAccount = await deserializeSessionKeyAccount(
           publicClient,
-          key
+          key,
         );
         setSessionKeyAccount(deserializedSessionAccount);
       }
@@ -107,7 +107,7 @@ export default function Home() {
       {!sessionKeyAccount && "No Session Key Found"}
       {sessionKeyAccount && (
         <div className="mt-5">
-          <h5 className="font-bold text-lg">Session Key Found</h5>
+          <h5 className="text-lg font-bold">Session Key Found</h5>
           <Textarea
             className="text-sm"
             value={JSON.stringify(sessionKeyAccount)}
@@ -115,7 +115,7 @@ export default function Home() {
             rows={4}
             disabled
           />
-          <div className="flex items-center mt-5">
+          <div className="mt-5 flex items-center">
             <Kbd
               className="cursor-pointer"
               onClick={() => {
@@ -128,19 +128,19 @@ export default function Home() {
               onClick={() => {
                 window.open(
                   `https://jiffyscan.xyz/account/${sessionKeyAccount.address}`,
-                  "_blank"
+                  "_blank",
                 );
               }}
             >
-              <HiExternalLink className="ml-2 w-5 h-5" />
+              <HiExternalLink className="ml-2 h-5 w-5" />
             </button>
           </div>
           <div className="mt-2">
             <Button onClick={handleSendUserOp} disabled={isSpending}>
               {isSpending ? (
-                <AiOutlineLoading className="h-5 w-5 mr-2 animate-spin" />
+                <AiOutlineLoading className="mr-2 h-5 w-5 animate-spin" />
               ) : (
-                <HiOutlineCurrencyDollar className="h-5 w-5 mr-2" />
+                <HiOutlineCurrencyDollar className="mr-2 h-5 w-5" />
               )}
               Spend USDC from this wallet
             </Button>

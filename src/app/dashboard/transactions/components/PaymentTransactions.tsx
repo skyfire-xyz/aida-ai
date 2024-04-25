@@ -33,7 +33,9 @@ function PaymentRow(tx: CommonTransaction, index: number) {
       <Table.Cell>{payment?.destinationName}</Table.Cell>
       <Table.Cell>{Number(payment?.value) / 1000000} USDC</Table.Cell>
       <Table.Cell>
-        <Link href="">{tx.txHash}</Link>
+        <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
+          {tx.txHash}
+        </Link>
       </Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
@@ -63,7 +65,9 @@ function ClaimRow(tx: CommonTransaction, index: number) {
       <Table.Cell>{claim?.destinationName}</Table.Cell>
       <Table.Cell>{Number(claim?.value) / 1000000} USDC</Table.Cell>
       <Table.Cell>
-        <Link href="">{tx.txHash}</Link>
+        <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
+          {tx.txHash}
+        </Link>
       </Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
@@ -90,9 +94,13 @@ function RedemptionRow(tx: CommonTransaction, index: number) {
           : ""}
       </Table.Cell>
       <Table.Cell>{redemption?.destinationName}</Table.Cell>
-      <Table.Cell>{Number(redemption?.amounts.total) / 1000000}USDC</Table.Cell>
       <Table.Cell>
-        <Link href="">{tx.txHash}</Link>
+        {Number(redemption?.amounts.total) / 1000000} USDC
+      </Table.Cell>
+      <Table.Cell>
+        <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
+          {tx.txHash}
+        </Link>
       </Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
