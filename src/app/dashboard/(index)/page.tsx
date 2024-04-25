@@ -2,6 +2,7 @@
 
 import { FC, useEffect } from "react";
 import { Button, Card, Dropdown, Tooltip, useThemeMode } from "flowbite-react";
+import Chart from "react-apexcharts";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,9 +14,6 @@ import {
 } from "../../reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
 import Notification from "../../components/Notification";
-
-import dynamic from "next/dynamic";
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function AdminPage() {
   if (typeof window === "undefined") {

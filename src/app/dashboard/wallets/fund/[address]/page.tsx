@@ -3,7 +3,7 @@
 import {
   http,
   createWalletClient,
-  createPublicClient,
+  encodeFunctionData,
   custom,
   parseEther,
 } from "viem";
@@ -28,6 +28,10 @@ import { defaultImageLoader } from "@/src/common/lib/imageLoaders";
 import { IoLogoUsd } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { HiHome } from "react-icons/hi2";
+import {
+  USDC_CONTRACT_ABI,
+  USDC_CONTRACT_ADDRESS,
+} from "@/src/common/lib/constant";
 
 export default function Wallets(props: { params: { address: `0x${string}` } }) {
   const address: `0x${string}` = props.params.address;
@@ -45,11 +49,20 @@ export default function Wallets(props: { params: { address: `0x${string}` } }) {
       transport: custom(window.ethereum!),
     });
 
-    const hash = await walletClient.sendTransaction({
-      account: account,
-      to: address,
-      value: parseEther("0.1"),
-    });
+    try {
+      const hash = await walletClient.sendTransaction({
+        account: account,
+        to: USDC_CONTRACT_ADDRESS,
+        value: parseEther(""),
+        data: encodeFunctionData({
+          abi: USDC_CONTRACT_ABI,
+          functionName: "transfer",
+          args: [address, BigInt(usdc * 1000000)],
+        }),
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
@@ -203,6 +216,10 @@ export default function Wallets(props: { params: { address: `0x${string}` } }) {
                           setUsdc(Number(num));
                         }}
                       />
+                    </div>
+                    <div className="text-center text-sm">
+                      To
+                      <p className="mt-2 text-xs">{address}</p>
                     </div>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
