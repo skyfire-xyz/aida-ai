@@ -93,8 +93,21 @@ export enum TransactionType {
 }
 
 export interface CommonTransaction {
-  type: TransactionType;
-  token: {
+  id: string;
+  txId: string;
+  txType: string;
+  userId: string;
+  type:
+    | "PAYMENT"
+    | "TRANSFER"
+    | "MINTS"
+    | "BURNS"
+    | "WITHDRAWAL"
+    | "ACQUISITION"
+    | "ADJUSTMENT"
+    | "CLAIM"
+    | "REDEMPTION";
+  token?: {
     tokenId?: string;
     tokenAddress?: string;
     network?: string;
@@ -103,7 +116,19 @@ export interface CommonTransaction {
   txHash?: string | null;
   status: string;
   createdAt: string;
-  paymentId?: string;
+  redemption?: {
+    sourceAddress: string;
+    sourceName?: string;
+    destinationAddress: string;
+    amounts: {
+      currency: string;
+      fee: string;
+      subtotal: string;
+      total: string;
+    };
+    destinationName?: string;
+  };
+  redemptionId?: string;
   payment?: {
     sourceAddress?: string;
     destinationAddress?: string;
@@ -112,4 +137,14 @@ export interface CommonTransaction {
     sourceName?: string;
     destinationName?: string;
   };
+  paymentId?: string;
+  claim?: {
+    sourceAddress: string;
+    sourceName?: string;
+    destinationAddress: string;
+    value: string;
+    currency: string;
+    destinationName?: string;
+  };
+  claimId?: string;
 }

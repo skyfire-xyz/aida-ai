@@ -6,6 +6,13 @@ import axios from "axios";
 import Link from "next/link";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { Button, Modal, Radio, Select } from "flowbite-react";
+import { AppDispatch } from "@/src/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  transferFund,
+  useDashboardSelector,
+} from "@/src/app/reducers/dashboardSlice";
+import { useEffect } from "react";
 
 interface TransferFundFormInput {
   address: string;
@@ -13,13 +20,9 @@ interface TransferFundFormInput {
   currency: string;
 }
 
-export default function DialogFundTransfer({
-  transferFund,
-  onClose,
-  setOpenError,
-  setOpenInfo,
-  setOpenSuccess,
-}: any) {
+export default function DialogFundTransfer({ transferFundObj, onClose }: any) {
+  const dispatch = useDispatch<AppDispatch>();
+  const { status } = useSelector(useDashboardSelector);
   const {
     control,
     register,
@@ -31,34 +34,26 @@ export default function DialogFundTransfer({
     },
   });
 
+  useEffect(() => {
+    if (
+      status["transferFund"] === "succeeded" ||
+      status["transferFund"] === "failed"
+    ) {
+      onClose();
+    }
+  }, [status]);
+
   const onSubmit: SubmitHandler<TransferFundFormInput> = async (data) => {
     try {
-      setOpenInfo("Transferring fund...");
-      const response = await axios.post(
-        `${BACKEND_API_URL}v2/wallet/transfer`,
-        {
-          sourceAddress: transferFund?.address,
-          destinationAddress: data.address,
-          amount: data.amount,
-          currency: data.currency,
-        },
+      dispatch(
+        transferFund({ ...data, sourceAddress: transferFundObj?.address }),
       );
-      setOpenInfo("");
-      setOpenSuccess(
-        "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes.",
-      );
-      setTimeout(() => {
-        setOpenSuccess("");
-      }, 5000);
-      onClose();
-    } catch {
-      setOpenError("Sorry, something went wrong. Please try again.");
-    }
+    } catch {}
   };
 
   return (
     <>
-      <Modal show={transferFund} onClose={onClose}>
+      <Modal show={transferFundObj} onClose={onClose}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="mt-3 dark:text-white"
@@ -69,7 +64,7 @@ export default function DialogFundTransfer({
             </Link>
           </Modal.Header>
           <Modal.Body>
-            Transfer fund from <b>{transferFund?.address}</b>
+            Transfer fund from <b>{transferFundObj?.address}</b>
             <div className="mt-5 w-full">
               <label
                 className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"

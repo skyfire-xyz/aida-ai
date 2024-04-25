@@ -35,6 +35,7 @@ import { create } from "domain";
 import { useRouter } from "next/navigation";
 import { FiDownload, FiUpload } from "react-icons/fi";
 import { HiHome } from "react-icons/hi2";
+import Notification from "@/src/app/components/Notification";
 
 interface IFormInput {
   service: string;
@@ -87,38 +88,6 @@ export default function WalletManager() {
   };
 
   useEffect(() => {
-    if (status.createWallet === "succeeded") {
-      getWallets();
-      setWalletAdded(true);
-      setOpenInfo("");
-      setOpenSuccess("Successfully created wallet");
-
-      // Reset
-      setTimeout(() => {
-        setWalletAdded(false);
-        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
-      }, 3000);
-    } else if (status.createWallet === "pending") {
-      setOpenInfo("Creating wallet...");
-    } else if (status.createWallet === "failed") {
-      setOpenError("Sorry, the blockchain network is slow right now");
-
-      // Reset
-      setTimeout(() => {
-        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
-      }, 3000);
-    } else if (status.createWallet === "idle") {
-      setOpenInfo("");
-      setOpenSuccess("");
-      setOpenError("");
-    }
-  }, [status]);
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    dispatch(createWallet({ data }));
-  };
-
-  useEffect(() => {
     getWallets();
   }, [walletType]);
 
@@ -158,6 +127,7 @@ export default function WalletManager() {
                 <Table.Head>
                   <Table.HeadCell>Address</Table.HeadCell>
                   <Table.HeadCell>Service</Table.HeadCell>
+                  <Table.HeadCell>Balance</Table.HeadCell>
                   <Table.HeadCell>Network</Table.HeadCell>
                   <Table.HeadCell>Created At</Table.HeadCell>
                   <Table.HeadCell>
@@ -194,6 +164,7 @@ export default function WalletManager() {
                             <div>{reservedWalletInfo.name}</div>
                           )}
                         </Table.Cell>
+                        <Table.Cell>$ xx.xx</Table.Cell>
                         <Table.Cell>{wallet.network}</Table.Cell>
                         <Table.Cell>{wallet.createdAt}</Table.Cell>
                         <Table.Cell>
@@ -249,49 +220,22 @@ export default function WalletManager() {
             )}
 
             <DialogFundTransfer
-              transferFund={transferFund}
+              transferFundObj={transferFund}
               onClose={() => setTransferFund(null)}
-              setOpenError={setOpenError}
-              setOpenSuccess={setOpenSuccess}
-              setOpenInfo={setOpenInfo}
             />
           </div>
         </div>
 
         <div className="flex w-full flex-col">
-          {!!openInfo && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
-                <MdLoop className="h-5 w-5 animate-spin" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openInfo }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenInfo("")} />
-            </Toast>
-          )}
-          {!!openSuccess && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                <HiCheck className="h-5 w-5" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenSuccess("")} />
-            </Toast>
-          )}
-          {!!openError && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
-                <HiExclamation className="h-5 w-5" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openError }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenError("")} />
-            </Toast>
-          )}
+          <Notification
+            asyncActionKey="transferFund"
+            messages={{
+              success:
+                "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes.",
+              error: "",
+              pending: "Sorry, something went wrong. Please try again.",
+            }}
+          />
         </div>
       </div>
     </div>

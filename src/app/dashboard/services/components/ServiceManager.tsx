@@ -16,6 +16,7 @@ import {
 } from "@/src/app/reducers/dashboardSlice";
 import { Wallet } from "@/src/app/reducers/types";
 import { create } from "domain";
+import Notification from "@/src/app/components/Notification";
 
 interface IFormInput {
   service: string;
@@ -68,9 +69,6 @@ export default function ServiceManager() {
     useSelector(useDashboardSelector);
 
   const [walletType, setWalletType] = useState<WalletType>("Receiver");
-  const [openError, setOpenError] = useState("");
-  const [openSuccess, setOpenSuccess] = useState("");
-  const [openInfo, setOpenInfo] = useState("");
 
   const [walletAdded, setWalletAdded] = useState(false);
   const [transferFund, setTransferFund] = useState<any>(null);
@@ -92,27 +90,10 @@ export default function ServiceManager() {
     if (status.createWallet === "succeeded") {
       getWallets();
       setWalletAdded(true);
-      setOpenInfo("");
-      setOpenSuccess("Successfully created wallet");
-
       // Reset
       setTimeout(() => {
         setWalletAdded(false);
-        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
       }, 3000);
-    } else if (status.createWallet === "pending") {
-      setOpenInfo("Creating wallet...");
-    } else if (status.createWallet === "failed") {
-      setOpenError("Sorry, the blockchain network is slow right now");
-
-      // Reset
-      setTimeout(() => {
-        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
-      }, 3000);
-    } else if (status.createWallet === "idle") {
-      setOpenInfo("");
-      setOpenSuccess("");
-      setOpenError("");
     }
   }, [status]);
 
@@ -186,39 +167,14 @@ export default function ServiceManager() {
         </div>
 
         <div className="flex w-full flex-col">
-          {!!openInfo && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
-                <MdLoop className="h-5 w-5 animate-spin" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openInfo }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenInfo("")} />
-            </Toast>
-          )}
-          {!!openSuccess && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-                <HiCheck className="h-5 w-5" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenSuccess("")} />
-            </Toast>
-          )}
-          {!!openError && (
-            <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-              <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
-                <HiExclamation className="h-5 w-5" />
-              </div>
-              <div className="pl-4 text-sm font-normal">
-                <div dangerouslySetInnerHTML={{ __html: openError }} />
-              </div>
-              <Toast.Toggle onClick={() => setOpenError("")} />
-            </Toast>
-          )}
+          <Notification
+            asyncActionKey="createWallet"
+            messages={{
+              success: "Successfully created wallet",
+              error: "Sorry, the blockchain network is slow right now",
+              pending: "Creating wallet...",
+            }}
+          />
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
             <h3 className="text-3xl dark:text-white">Add Service</h3>
             <div className="-mx-3 mb-6 mt-4 flex flex-wrap">

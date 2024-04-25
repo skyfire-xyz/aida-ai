@@ -7,13 +7,16 @@ import {
   WalletType,
 } from "./types";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import demoTransactions from "./demoTransactions.json";
+import demoTsx from "./demoTxs";
 
 const initialState: DashboardReduxState = {
   status: {},
   reservedWallets: {
     Sender: [
-      { name: "", address: "0x45c83889BD84D5FB77039B67C30695878f506313" },
+      {
+        name: "Skyfire Demo",
+        address: "0x45c83889BD84D5FB77039B67C30695878f506313",
+      },
     ],
     Receiver: [
       {
@@ -42,12 +45,19 @@ const initialState: DashboardReduxState = {
   transactions: [],
 };
 
+export const fetchBalances = createAsyncThunk<any>(
+  "dashboard/fetchBalances",
+  async () => {
+    // const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
+    // return res.data;
+  },
+);
+
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
     const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
-    // return res.data;
-    return demoTransactions;
+    return res.data;
   },
 );
 
@@ -57,7 +67,16 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
     const res = await axios.get(
       `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`,
     );
+
     return { wallets: res.data, walletType };
+  },
+);
+
+export const createClaim = createAsyncThunk<any>(
+  "dashboard/createClaim",
+  async () => {
+    // const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
+    // return res.data;
   },
 );
 
@@ -65,6 +84,27 @@ export const redeemClaims = createAsyncThunk<any>(
   "dashboard/redeemClaims",
   async () => {
     const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
+    return res.data;
+  },
+);
+
+export const transferFund = createAsyncThunk<
+  any,
+  {
+    sourceAddress: string;
+    address: string;
+    amount: string;
+    currency: string;
+  }
+>(
+  "dashboard/transferFund",
+  async ({ sourceAddress, address, amount, currency }) => {
+    const res = await axios.post(`${BACKEND_API_URL}v2/wallet/transfer`, {
+      sourceAddress: sourceAddress,
+      destinationAddress: address,
+      amount: amount,
+      currency: currency,
+    });
     return res.data;
   },
 );
@@ -135,7 +175,8 @@ export const dashboardSlice = createSlice({
         state.status["fetchAllTransactions"] = "pending";
       })
       .addCase(fetchAllTransactions.fulfilled, (state, action) => {
-        state.transactions = action.payload;
+        // state.transactions = action.payload.transactions || [];
+        state.transactions = demoTsx as CommonTransaction[];
       })
       .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.status["fetchAllTransactions"] = "failed";
@@ -157,12 +198,68 @@ export const dashboardSlice = createSlice({
       })
       .addCase(createWallet.rejected, (state, action) => {
         state.status["createWallet"] = "failed";
+      })
+      /**
+       * Redeem Claims
+       */
+      .addCase(redeemClaims.pending, (state, action) => {
+        state.status["redeemClaims"] = "pending";
+      })
+      .addCase(redeemClaims.fulfilled, (state, action) => {
+        state.status["redeemClaims"] = "succeeded";
+      })
+      .addCase(redeemClaims.rejected, (state, action) => {
+        state.status["redeemClaims"] = "failed";
+      })
+      /**
+       * Fetch Balances
+       */
+      .addCase(fetchBalances.pending, (state, action) => {
+        state.status["fetchBalances"] = "pending";
+      })
+      .addCase(fetchBalances.fulfilled, (state, action) => {
+        state.status["fetchBalances"] = "succeeded";
+      })
+      .addCase(fetchBalances.rejected, (state, action) => {
+        state.status["fetchBalances"] = "failed";
+      })
+      /**
+       * Transfer Fund
+       */
+      .addCase(transferFund.pending, (state, action) => {
+        state.status["transferFund"] = "pending";
+      })
+      .addCase(transferFund.fulfilled, (state, action) => {
+        state.status["transferFund"] = "succeeded";
+      })
+      .addCase(transferFund.rejected, (state, action) => {
+        state.status["transferFund"] = "failed";
       });
   },
 });
 
 export const useDashboardSelector = (state: any) => {
   return state?.dashboard;
+};
+
+export const useBalanceSelector = (state: any) => {
+  const transactions = state?.dashboard?.transactions || [];
+  const wallets = state?.dashboard?.wallets || { Sender: [], Receiver: [] };
+
+  // TODO: Calculation might not be acculate.
+  const amount = transactions.reduce(
+    (acc: { received: number; paid: number }, tx: CommonTransaction) => {
+      if (tx.type === "REDEMPTION" && tx.status === "SUCCESS") {
+        acc.received += Number(tx.redemption?.amounts.total || 0) / 1000000;
+      } else if (tx.type === "PAYMENT") {
+        acc.paid += Number(tx.payment?.value || 0) / 1000000;
+      }
+      return acc;
+    },
+    { received: 0, paid: 0 },
+  );
+
+  return amount;
 };
 
 export const { resetStatus } = dashboardSlice.actions;
