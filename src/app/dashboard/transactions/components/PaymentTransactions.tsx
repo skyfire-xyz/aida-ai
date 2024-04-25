@@ -12,6 +12,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { CommonTransaction } from "@/src/app/reducers/types";
 import Link from "next/link";
 
+function StatusBadge({ status }: { status: string }) {
+  let color;
+  if (status === "SUCCESS") color = "green";
+  if (status === "FAIL") color = "red";
+
+  return (
+    <Badge className="inline-block" color={color}>
+      {status}
+    </Badge>
+  );
+}
+
 function PaymentRow(tx: CommonTransaction, index: number) {
   const payment = tx.payment;
   return (
@@ -23,7 +35,7 @@ function PaymentRow(tx: CommonTransaction, index: number) {
         <Badge className="inline-block">{tx?.type}</Badge>
       </Table.Cell>
       <Table.Cell>
-        <Badge className="inline-block">{tx?.status}</Badge>
+        <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
         {payment?.sourceName
@@ -55,7 +67,7 @@ function ClaimRow(tx: CommonTransaction, index: number) {
         </Badge>
       </Table.Cell>
       <Table.Cell>
-        <Badge className="inline-block">{tx?.status}</Badge>
+        <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
         {claim?.sourceName
@@ -86,7 +98,7 @@ function RedemptionRow(tx: CommonTransaction, index: number) {
         </Badge>
       </Table.Cell>
       <Table.Cell>
-        <Badge className="inline-block">{tx?.status}</Badge>
+        <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
         {redemption?.sourceName
