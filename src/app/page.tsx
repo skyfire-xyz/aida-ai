@@ -7,7 +7,7 @@ import messages from "@/src/locale/en.json";
 
 export default function Home() {
   return (
-    <div className={`font-jones h-screen bg-[#002341]`}>
+    <div className={`font-jones h-screen bg-gray-900`}>
       <NextIntlClientProvider
         timeZone={"America/New_York"}
         locale={"en"}

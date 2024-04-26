@@ -33,9 +33,19 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
         const dependentTask = tasks[`${task.parentId}-${id}`];
         if (dependentTask.status === "complete") {
           // TODO: This is only supporting websearch results for now.
-          const results = dependentTask.result?.results;
 
+          let results = dependentTask.result?.results; // Search
+          if (dependentTask.skill === "text_completion") {
+            // Perplexity
+            results = [
+              {
+                title: dependentTask.result?.prompt,
+                description: dependentTask.result?.body,
+              },
+            ];
+          }
           if (!results) return allResults;
+
           return [
             ...allResults,
             ...results.map((result: any) => {
@@ -45,8 +55,10 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
           ];
         }
       },
-      []
+      [],
     );
+
+    console.log(dependentTasksResults);
 
     if (task.skill === "text_completion") {
       const res = await axios.post(`${BACKEND_API_URL}v2/chat/perplexity`, {
