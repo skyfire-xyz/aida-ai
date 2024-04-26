@@ -20,7 +20,7 @@ const initialState: DashboardReduxState = {
     ],
     Receiver: [
       {
-        name: "Reserved",
+        name: "Gemini",
         address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51",
       },
       { name: "Joke", address: "0xB94dD221ef1302576E2785dAFB4Bad28cbBeA540" },
@@ -80,9 +80,9 @@ export const createClaim = createAsyncThunk<any>(
   },
 );
 
-export const redeemClaims = createAsyncThunk<any>(
+export const redeemClaims = createAsyncThunk<any, { address: string }>(
   "dashboard/redeemClaims",
-  async () => {
+  async (address) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
     return res.data;
   },
@@ -175,8 +175,7 @@ export const dashboardSlice = createSlice({
         state.status["fetchAllTransactions"] = "pending";
       })
       .addCase(fetchAllTransactions.fulfilled, (state, action) => {
-        // state.transactions = action.payload.transactions || [];
-        state.transactions = demoTsx as CommonTransaction[];
+        state.transactions = action.payload.transactions;
       })
       .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.status["fetchAllTransactions"] = "failed";
@@ -241,6 +240,47 @@ export const dashboardSlice = createSlice({
 export const useDashboardSelector = (state: any) => {
   return state?.dashboard;
 };
+
+export const useWalletBalanceSelector =
+  (walletType: string, wallet: Wallet) => (state: any) => {
+    const wallets = state?.dashboard?.wallets[walletType];
+    const transactions = state?.dashboard?.transactions || [];
+    if (wallets.length === 0) return { paid: 0, available: 0 };
+
+    const w = wallets.find((w: Wallet) => w.address === wallet.address);
+
+    const paid = transactions.reduce((acc: number, tx: CommonTransaction) => {
+      if (
+        tx.type === "PAYMENT" &&
+        tx.status === "SUCCESS" &&
+        tx.payment?.sourceAddress === wallet.address
+      ) {
+        acc += Number(tx.payment?.value || 0) / 1000000;
+      }
+      return acc;
+    }, 0);
+
+    const received = transactions.reduce(
+      (acc: number, tx: CommonTransaction) => {
+        if (
+          tx.type === "PAYMENT" &&
+          tx.status === "SUCCESS" &&
+          tx.payment?.destinationAddress === wallet.address
+        ) {
+          acc += Number(tx.payment?.value || 0) / 1000000;
+        }
+        return acc;
+      },
+      0,
+    );
+
+    return {
+      balance: 0,
+      escrowed: 0,
+      liability: 0,
+      available: 0,
+    };
+  };
 
 export const useBalanceSelector = (state: any) => {
   const transactions = state?.dashboard?.transactions || [];

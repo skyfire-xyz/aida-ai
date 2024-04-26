@@ -17,6 +17,7 @@ import {
 import { Wallet } from "@/src/app/reducers/types";
 import { create } from "domain";
 import Notification from "@/src/app/components/Notification";
+import Service from "./Service";
 
 interface IFormInput {
   service: string;
@@ -116,52 +117,7 @@ export default function ServiceManager() {
             {!wallets[walletType].length && <p>No service found</p>}
             {wallets[walletType].length > 0 &&
               wallets[walletType].map((wallet: Wallet, index: number) => {
-                const reservedWalletInfo = reservedWallets[walletType].find(
-                  (w: Wallet) => {
-                    return w.address === wallet.address;
-                  },
-                );
-
-                return (
-                  <Card
-                    key={index}
-                    className={`mb-4  ${
-                      walletAdded
-                        ? "first:bg-[rgb(229,246,253)]"
-                        : "first:bg-[#ffffff]"
-                    } bg-[#ffffff] transition-all dark:text-white`}
-                  >
-                    <div className="flex gap-4">
-                      <div>
-                        <ServiceImage
-                          service={reservedWalletInfo?.name || "No Name"}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold">
-                          {reservedWalletInfo?.name || "No Name"}
-                        </h4>
-                        <div className="mt-1 text-xs">
-                          <div>
-                            <b>Address: </b>
-                            {wallet.address}
-                          </div>
-                          <div>
-                            <b>Created At: </b>
-                            {wallet.createdAt}
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        {!reservedWalletInfo && (
-                          <div className="flex items-center">
-                            <MdDelete className="mr-2" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                );
+                return <Service walletType={walletType} wallet={wallet} />;
               })}
           </div>
         </div>

@@ -11,7 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 const ExampleSidebar: FC = function () {
   const router = useRouter();
   const pathname = usePathname();
-  console.log(pathname);
+
   const activeClass = "bg-gray-100 dark:bg-gray-700 cursor-pointer";
   const nonActiveClass = "cursor-pointer";
   return (

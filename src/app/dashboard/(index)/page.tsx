@@ -11,9 +11,12 @@ import {
   fetchWallets,
   redeemClaims,
   useBalanceSelector,
+  useDashboardSelector,
 } from "../../reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
 import Notification from "../../components/Notification";
+import Service from "./components/Service";
+import { Wallet } from "../../reducers/types";
 
 export default function AdminPage() {
   if (typeof window === "undefined") {
@@ -74,11 +77,11 @@ const SalesChart: FC = function () {
       },
     },
     markers: {
-      size: 5,
+      size: 2,
       strokeColors: "#ffffff",
       hover: {
         size: undefined,
-        sizeOffset: 3,
+        sizeOffset: 4,
       },
     },
     xaxis: {
@@ -94,7 +97,7 @@ const SalesChart: FC = function () {
       labels: {
         style: {
           colors: [labelColor],
-          fontSize: "14px",
+          fontSize: "8px",
           fontWeight: 500,
         },
       },
@@ -118,7 +121,7 @@ const SalesChart: FC = function () {
       labels: {
         style: {
           colors: [labelColor],
-          fontSize: "14px",
+          fontSize: "8px",
           fontWeight: 500,
         },
         formatter: function (value) {
@@ -127,7 +130,7 @@ const SalesChart: FC = function () {
       },
     },
     legend: {
-      fontSize: "14px",
+      fontSize: "8px",
       fontWeight: 500,
       fontFamily: "Inter, sans-serif",
       labels: {
@@ -159,7 +162,7 @@ const SalesChart: FC = function () {
   ];
 
   if (typeof window !== "undefined") {
-    return <Chart height={420} options={options} series={series} type="area" />;
+    return <Chart height={200} options={options} series={series} type="area" />;
   }
 };
 
@@ -186,6 +189,8 @@ const Datepicker: FC = function () {
 const SalesThisWeek: FC = function () {
   const dispatch = useDispatch<AppDispatch>();
   const { received, paid } = useSelector(useBalanceSelector);
+  const { status, transactions, wallets, reservedWallets } =
+    useSelector(useDashboardSelector);
 
   useEffect(() => {
     dispatch(fetchBalances());
@@ -211,34 +216,27 @@ const SalesThisWeek: FC = function () {
                 </Tooltip>
               </span>
               <h5 className="text-2xl font-bold tracking-tight">
-                $5,385.00 <span className="text-sm">USDC</span>
+                $xx.xx <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Escrowed</span>
               <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
-                $2,000.00 <span className="text-sm">USDC</span>
+                $xx.xx <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Liability</span>
               <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
-                ${paid.toFixed(2)} <span className="text-sm">USDC</span>
+                $xx.xx <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Available</span>
               <h5 className="stext-gray-90 text-2xl font-bold tracking-tight">
-                ${(2000 - paid).toFixed(2)}{" "}
+                $xx.xx
                 <span className="text-sm">USDC</span>
               </h5>
-              <Button
-                className="ml-auto mt-2"
-                size="xs"
-                onClick={() => dispatch(redeemClaims())}
-              >
-                Redeem
-              </Button>
             </div>
           </div>
         </Card>
@@ -246,14 +244,18 @@ const SalesThisWeek: FC = function () {
           <div className="flex flex-col">
             <div className="mb-4">
               Total Amount Received
-              <h5 className="tracking-tigh text-2xl font-bold">${received}</h5>
+              <h5 className="tracking-tigh text-2xl font-bold">$xx.xx</h5>
             </div>
             <div>
               Total Amount Paid
-              <h5 className="text-2xl font-bold tracking-tight">${paid}</h5>
+              <h5 className="text-2xl font-bold tracking-tight">$xx.xx</h5>
             </div>
           </div>
         </Card>
+
+        <div>
+          <SalesChart />
+        </div>
         {/* <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
             $5,385 USDC
@@ -278,7 +280,20 @@ const SalesThisWeek: FC = function () {
           </svg>
         </div> */}
       </div>
-      <SalesChart />
+      <div className="mt-8 overflow-scroll">
+        <h3>Spending Wallet</h3>
+        {wallets["Sender"].length > 0 &&
+          wallets["Sender"].map((wallet: Wallet, index: number) => {
+            return <Service walletType={"Sender"} wallet={wallet} />;
+          })}
+
+        <h3>Service Providers</h3>
+        {wallets["Receiver"].length > 0 &&
+          wallets["Receiver"].map((wallet: Wallet, index: number) => {
+            return <Service walletType={"Receiver"} wallet={wallet} />;
+          })}
+      </div>
+      {/* <SalesChart /> */}
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
         <Datepicker />
         <Notification
