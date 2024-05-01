@@ -327,7 +327,7 @@ const SalesThisWeek: FC = function () {
           asyncActionKey="redeemClaims"
           messages={{
             success: "Successfully redeemed funds",
-            error: "Sorry, tihe blockchain network is slow right now",
+            error: "Sorry, the blockchain network is slow right now",
             pending: "Redeeming Fund...",
           }}
         />
