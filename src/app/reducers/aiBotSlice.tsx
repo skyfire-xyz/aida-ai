@@ -58,8 +58,6 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       [],
     );
 
-    console.log(dependentTasksResults);
-
     if (task.skill === "text_completion") {
       const res = await axios.post(`${BACKEND_API_URL}v2/chat/perplexity`, {
         prompt: task.task,

@@ -17,6 +17,7 @@ import { AppDispatch } from "@/src/store";
 import Notification from "../../components/Notification";
 import Service from "./components/Service";
 import { Wallet } from "../../reducers/types";
+import { useFormatter } from "next-intl";
 
 export default function AdminPage() {
   if (typeof window === "undefined") {
@@ -187,10 +188,10 @@ const Datepicker: FC = function () {
 };
 
 const SalesThisWeek: FC = function () {
+  const format = useFormatter();
   const dispatch = useDispatch<AppDispatch>();
-  const { received, paid } = useSelector(useBalanceSelector);
-  const { status, transactions, wallets, reservedWallets } =
-    useSelector(useDashboardSelector);
+  const aggrBalance = useSelector(useBalanceSelector);
+  const { wallets } = useSelector(useDashboardSelector);
 
   useEffect(() => {
     dispatch(fetchBalances());
@@ -216,25 +217,49 @@ const SalesThisWeek: FC = function () {
                 </Tooltip>
               </span>
               <h5 className="text-2xl font-bold tracking-tight">
-                $xx.xx <span className="text-sm">USDC</span>
+                {format.number(Number((aggrBalance?.total || 0) / 1000000), {
+                  style: "currency",
+                  currency: "USD",
+                })}
+                <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Escrowed</span>
               <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
-                $xx.xx <span className="text-sm">USDC</span>
+                {format.number(
+                  Number((aggrBalance?.escrow.total || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
+                <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Liability</span>
               <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
-                $xx.xx <span className="text-sm">USDC</span>
+                {format.number(
+                  Number((aggrBalance?.liabilities || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
+                <span className="text-sm">USDC</span>
               </h5>
             </div>
             <div>
               <span>Available</span>
               <h5 className="stext-gray-90 text-2xl font-bold tracking-tight">
-                $xx.xx
+                {format.number(
+                  Number((aggrBalance?.escrow.available || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
                 <span className="text-sm">USDC</span>
               </h5>
             </div>
@@ -253,9 +278,9 @@ const SalesThisWeek: FC = function () {
           </div>
         </Card>
 
-        <div>
+        {/* <div>
           <SalesChart />
-        </div>
+        </div> */}
         {/* <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
             $5,385 USDC
@@ -281,13 +306,13 @@ const SalesThisWeek: FC = function () {
         </div> */}
       </div>
       <div className="mt-8 overflow-scroll">
-        <h3>Spending Wallet</h3>
+        <h3 className="text-2xl">Spending Wallet</h3>
         {wallets["Sender"].length > 0 &&
           wallets["Sender"].map((wallet: Wallet, index: number) => {
             return <Service walletType={"Sender"} wallet={wallet} />;
           })}
 
-        <h3>Service Providers</h3>
+        <h3 className="mt-10 text-2xl">Service Providers</h3>
         {wallets["Receiver"].length > 0 &&
           wallets["Receiver"].map((wallet: Wallet, index: number) => {
             return <Service walletType={"Receiver"} wallet={wallet} />;

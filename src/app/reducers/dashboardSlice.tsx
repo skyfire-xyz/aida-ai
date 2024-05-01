@@ -53,6 +53,16 @@ export const fetchBalances = createAsyncThunk<any>(
   },
 );
 
+export const walletBalance = createAsyncThunk<any, { address: string }>(
+  "dashboard/walletBalance",
+  async (address) => {
+    const res = await axios.get(
+      `${BACKEND_API_URL}v2/wallet/balance?address=${address}`,
+    );
+    return res.data;
+  },
+);
+
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
@@ -68,22 +78,28 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
       `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`,
     );
 
-    return { wallets: res.data, walletType };
+    const wallets = res.data;
+    const balances = await Promise.all(
+      wallets.map(async (w: Wallet) => {
+        return await axios.get(
+          `${BACKEND_API_URL}v2/wallet/balance?address=${w.address}`,
+        );
+      }),
+    );
+    balances.forEach((b: any, index: number) => {
+      wallets[index].balance = b.data;
+    });
+
+    return { wallets, walletType };
   },
 );
 
-export const createClaim = createAsyncThunk<any>(
-  "dashboard/createClaim",
-  async () => {
-    // const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
-    // return res.data;
-  },
-);
-
-export const redeemClaims = createAsyncThunk<any, { address: string }>(
+export const redeemClaims = createAsyncThunk<any, { sourceAddress: string }>(
   "dashboard/redeemClaims",
-  async (address) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
+  async (sourceAddress) => {
+    const res = await axios.post(`${BACKEND_API_URL}v2/demo/payments/redeem`, {
+      sourceAddress: sourceAddress,
+    });
     return res.data;
   },
 );
@@ -283,23 +299,38 @@ export const useWalletBalanceSelector =
   };
 
 export const useBalanceSelector = (state: any) => {
-  const transactions = state?.dashboard?.transactions || [];
   const wallets = state?.dashboard?.wallets || { Sender: [], Receiver: [] };
 
-  // TODO: Calculation might not be acculate.
-  const amount = transactions.reduce(
-    (acc: { received: number; paid: number }, tx: CommonTransaction) => {
-      if (tx.type === "REDEMPTION" && tx.status === "SUCCESS") {
-        acc.received += Number(tx.redemption?.amounts.total || 0) / 1000000;
-      } else if (tx.type === "PAYMENT") {
-        acc.paid += Number(tx.payment?.value || 0) / 1000000;
+  let aggregatedBalance: Wallet["balance"] = {
+    assets: 0,
+    total: 0,
+    virtual: 0,
+    escrow: {
+      total: 0,
+      available: 0,
+    },
+    liabilities: 0,
+  };
+
+  function aggregateBalance(wls: Wallet[], aggrBalance: Wallet["balance"]) {
+    return wls.reduce((acc: Wallet["balance"], w: Wallet) => {
+      if (acc) {
+        acc.assets += w.balance?.assets || 0;
+        acc.total += w.balance?.total || 0;
+        acc.virtual += w.balance?.virtual || 0;
+        acc.escrow.total += w.balance?.escrow.total || 0;
+        acc.escrow.available += w.balance?.escrow.available || 0;
+        acc.liabilities += w.balance?.liabilities || 0;
       }
       return acc;
-    },
-    { received: 0, paid: 0 },
-  );
+    }, aggrBalance);
+    return;
+  }
 
-  return amount;
+  aggregatedBalance = aggregateBalance(wallets.Sender, aggregatedBalance);
+  aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
+
+  return aggregatedBalance;
 };
 
 export const { resetStatus } = dashboardSlice.actions;

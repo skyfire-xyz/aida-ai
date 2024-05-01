@@ -13,10 +13,19 @@ export interface Task {
 export interface Wallet {
   name: string;
   address: string;
-  balance?: string;
   transactions?: PaymentType[];
   network?: string;
   createdAt?: string;
+  balance?: {
+    assets: number;
+    escrow: {
+      total: number;
+      available: number;
+    };
+    liabilities: number;
+    total: number;
+    virtual: number;
+  };
 }
 
 export type WalletType = "Sender" | "Receiver";

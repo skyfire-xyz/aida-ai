@@ -19,15 +19,18 @@ interface ServiceProps {
   wallet: Wallet;
 }
 
+function formatBalance(balance: number) {
+  if (!balance) return 0;
+  return Number(balance / 1000000);
+}
+
 export default function Service({ walletType, wallet }: ServiceProps) {
   const format = useFormatter();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { balance, escrowed, liability, available } = useSelector(
-    useWalletBalanceSelector(walletType, wallet),
-  );
-  const { status, transactions, wallets, reservedWallets } =
-    useSelector(useDashboardSelector);
+  const { reservedWallets } = useSelector(useDashboardSelector);
+
+  const { total, escrow, liabilities } = wallet.balance || {};
 
   const reservedWalletInfo = reservedWallets[walletType].find((w: Wallet) => {
     return w.address === wallet.address;
@@ -55,7 +58,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
           <div>
             <span className="flex items-center">Balance</span>
             <h5 className="font-bold tracking-tight">
-              {format.number(balance || 0, {
+              {format.number(Number((total || 0) / 1000000), {
                 style: "currency",
                 currency: "USD",
               })}
@@ -64,7 +67,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
           <div>
             <span>Escrowed</span>
             <h5 className="text-gray-90 font-bold tracking-tight">
-              {format.number(escrowed || 0, {
+              {format.number(Number((escrow?.total || 0) / 1000000), {
                 style: "currency",
                 currency: "USD",
               })}
@@ -74,7 +77,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
             <div>
               <span>Liability</span>
               <h5 className="text-gray-90 font-bold tracking-tight">
-                {format.number(liability || 0, {
+                {format.number(Number((liabilities || 0) / 1000000), {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -85,7 +88,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
             <div>
               <span>Available</span>
               <h5 className="stext-gray-90 font-bold tracking-tight">
-                {format.number(available || 0, {
+                {format.number(Number((escrow?.available || 0) / 1000000), {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -93,23 +96,30 @@ export default function Service({ walletType, wallet }: ServiceProps) {
             </div>
           )}
         </div>
-        <div className="flex gap-2">
-          <Button
-            className="inline"
-            size="xs"
-            onClick={() => dispatch(redeemClaims({ address: wallet.address }))}
-          >
-            Redeem
-          </Button>
-          <Button
-            className="inline-block"
-            size="xs"
-            onClick={() => {
-              router.push(`/dashboard/wallets/fund/${wallet.address}`);
-            }}
-          >
-            Fund
-          </Button>
+        <div className="flex">
+          {walletType === "Receiver" && (
+            <Button
+              className="inline"
+              size="xs"
+              disabled={wallet.balance?.escrow?.available === 0}
+              onClick={() =>
+                dispatch(redeemClaims({ sourceAddress: wallet.address }))
+              }
+            >
+              Redeem
+            </Button>
+          )}
+          {walletType === "Sender" && (
+            <Button
+              className="inline-block"
+              size="xs"
+              onClick={() => {
+                router.push(`/dashboard/wallets/fund/${wallet.address}`);
+              }}
+            >
+              Fund
+            </Button>
+          )}
         </div>
       </div>
     </Card>
