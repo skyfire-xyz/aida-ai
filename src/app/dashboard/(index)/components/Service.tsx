@@ -101,7 +101,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
             <Button
               className="inline"
               size="xs"
-              disabled={wallet.balance?.escrow?.available === 0}
+              // disabled={wallet.balance?.escrow?.available === 0}
               onClick={() =>
                 dispatch(redeemClaims({ sourceAddress: wallet.address }))
               }
