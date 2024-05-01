@@ -96,7 +96,7 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
 
 export const redeemClaims = createAsyncThunk<any, { sourceAddress: string }>(
   "dashboard/redeemClaims",
-  async (sourceAddress) => {
+  async ({ sourceAddress }) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/demo/payments/redeem`, {
       sourceAddress: sourceAddress,
     });

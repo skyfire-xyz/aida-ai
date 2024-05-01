@@ -67,7 +67,7 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       return { ...res.data, task };
     } else if (task.skill === "random_joke") {
       const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
-        searchTerm: task.task,
+        sssearchTerm: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
       });
@@ -169,7 +169,7 @@ export const fetchMeme = createAsyncThunk<
 >("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
   const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
     meme,
-    searchTerm: searchTerm.trim(),
+    sssearchTerm: searchTerm.trim(),
   });
   return { ...res.data, type: "meme", uuid: new Date().getTime() };
 });
