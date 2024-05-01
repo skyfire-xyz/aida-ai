@@ -70,11 +70,11 @@ function ClaimRow(tx: CommonTransaction, index: number) {
         <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {claim?.sourceName
-          ? claim?.sourceName.replace("Supermojo", "Skyfire")
+        {claim?.sourceAddress
+          ? claim?.sourceAddress.replace("Supermojo", "Skyfire")
           : ""}
       </Table.Cell>
-      <Table.Cell>{claim?.destinationName}</Table.Cell>
+      <Table.Cell>{claim?.destinationAddress}</Table.Cell>
       <Table.Cell>{Number(claim?.value) / 1000000} USDC</Table.Cell>
       <Table.Cell>
         <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
@@ -101,11 +101,11 @@ function RedemptionRow(tx: CommonTransaction, index: number) {
         <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {redemption?.sourceName
-          ? redemption?.sourceName.replace("Supermojo", "Skyfire")
+        {redemption?.sourceAddress
+          ? redemption?.sourceAddress.replace("Supermojo", "Skyfire")
           : ""}
       </Table.Cell>
-      <Table.Cell>{redemption?.destinationName}</Table.Cell>
+      <Table.Cell>{redemption?.destinationAddress}</Table.Cell>
       <Table.Cell>
         {Number(redemption?.amounts.total) / 1000000} USDC
       </Table.Cell>
