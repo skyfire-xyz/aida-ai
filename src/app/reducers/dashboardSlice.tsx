@@ -327,7 +327,6 @@ export const useBalanceSelector = (state: any) => {
     return;
   }
 
-  aggregatedBalance = aggregateBalance(wallets.Sender, aggregatedBalance);
   aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
 
   return aggregatedBalance;

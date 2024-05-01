@@ -202,8 +202,57 @@ const SalesThisWeek: FC = function () {
 
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 dark:text-white sm:p-6 xl:p-8">
-      <div className="mb-4 flex h-[180px] items-center gap-4">
-        <Card className="h-full">
+      <div className="mb-4 flex items-center gap-4">
+        {/* <Card className="h-full max-w-lg">
+          <div className="flex flex-col">
+            <div className="mb-4">
+              Total Amount Received
+              <h5 className="tracking-tigh text-2xl font-bold">$xx.xx</h5>
+            </div>
+            <div>
+              Total Amount Paid
+              <h5 className="text-2xl font-bold tracking-tight">$xx.xx</h5>
+            </div>
+          </div>
+        </Card> */}
+
+        {/* <div>
+          <SalesChart />
+        </div> */}
+        {/* <div className="shrink-0">
+          <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
+            $5,385 USDC
+          </span>
+          <h3 className="text-base font-normal text-gray-600 dark:text-gray-400">
+            Wallet Balance
+          </h3>
+        </div> */}
+        {/* <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
+          12.5%
+          <svg
+            className="h-5 w-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div> */}
+      </div>
+      <div className="mt-8 overflow-scroll">
+        <h3 className="text-2xl">Spending Wallet</h3>
+        {wallets["Sender"].length > 0 &&
+          wallets["Sender"].map((wallet: Wallet, index: number) => {
+            return <Service walletType={"Sender"} wallet={wallet} />;
+          })}
+
+        <h3 className="mt-10 text-2xl">Service Providers</h3>
+
+        <Card className="mb-10 h-full">
           <h4 className="text-2xl font-bold ">Balance</h4>
           <div className="flex gap-10 dark:text-white">
             <div>
@@ -265,54 +314,7 @@ const SalesThisWeek: FC = function () {
             </div>
           </div>
         </Card>
-        <Card className="h-full max-w-lg">
-          <div className="flex flex-col">
-            <div className="mb-4">
-              Total Amount Received
-              <h5 className="tracking-tigh text-2xl font-bold">$xx.xx</h5>
-            </div>
-            <div>
-              Total Amount Paid
-              <h5 className="text-2xl font-bold tracking-tight">$xx.xx</h5>
-            </div>
-          </div>
-        </Card>
 
-        {/* <div>
-          <SalesChart />
-        </div> */}
-        {/* <div className="shrink-0">
-          <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
-            $5,385 USDC
-          </span>
-          <h3 className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Wallet Balance
-          </h3>
-        </div> */}
-        {/* <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
-          12.5%
-          <svg
-            className="h-5 w-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div> */}
-      </div>
-      <div className="mt-8 overflow-scroll">
-        <h3 className="text-2xl">Spending Wallet</h3>
-        {wallets["Sender"].length > 0 &&
-          wallets["Sender"].map((wallet: Wallet, index: number) => {
-            return <Service walletType={"Sender"} wallet={wallet} />;
-          })}
-
-        <h3 className="mt-10 text-2xl">Service Providers</h3>
         {wallets["Receiver"].length > 0 &&
           wallets["Receiver"].map((wallet: Wallet, index: number) => {
             return <Service walletType={"Receiver"} wallet={wallet} />;
