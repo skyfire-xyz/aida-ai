@@ -157,3 +157,13 @@ export interface CommonTransaction {
   };
   claimId?: string;
 }
+
+export interface AuthenticationReduxState {
+  user?: {
+    email?: string;
+    username?: string;
+    token: string;
+    avatar?: string;
+  };
+  status: "idle" | "pending" | "succeeded" | "failed";
+}
