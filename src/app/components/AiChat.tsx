@@ -20,6 +20,7 @@ import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 import { setUser, useAuthSelector } from "../reducers/authentication";
 import { HiLogout } from "react-icons/hi";
 import { AppDispatch } from "@/src/store";
+import { Card } from "flowbite-react";
 // import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 
 type Image = any;
@@ -58,8 +59,7 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
           <ChatPanel
             showSignIn={showSignIn}
             userImageUrl={
-              userAvatarImageData?.url ||
-              "https://avatars.githubusercontent.com/u/5210813?v=4"
+              userAvatarImageData?.url || "/images/aichat/defaultUser.png"
             }
             robotImageUrl={
               botAvatarImageData?.url || "/images/aichat/ai-robot.png"
@@ -67,30 +67,13 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
           />
           <div className="hidden w-2/5 border-l-2 px-5 pt-5 md:block">
             <div className="flex h-full flex-col">
-              {auth.user && (
-                <div className="flex justify-between">
-                  <div>
-                    Welcome Back <b>{auth.user.username}</b>!
-                  </div>
-                  <Link
-                    className="flex items-center"
-                    href="void:0"
-                    onClick={() => {
-                      dispatch(setUser({}));
-                    }}
-                  >
-                    <HiLogout />
-                    <span className="ml-1 text-xs">Logout</span>
-                  </Link>
-                </div>
-              )}
               {/* <img
                 src={botImageData?.url || "/images/aichat/ai-robot-flat.png"}
                 className="w-240px h-28 rounded-xl object-cover"
                 alt=""
               /> */}
               <div>
-                <p className="mt-6 font-bold">
+                <p className="mb-2 mt-6 font-bold">
                   {t("page.titleExamplePrompts")}
                 </p>
                 <ExamplePrompts />

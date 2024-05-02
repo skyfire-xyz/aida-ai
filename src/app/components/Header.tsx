@@ -3,24 +3,22 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { defaultImageLoader } from "@/src/common/lib/imageLoaders";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, useAuthSelector } from "../reducers/authentication";
+import { Card } from "flowbite-react";
+import { AppDispatch } from "@/src/store";
+import { HiLogout } from "react-icons/hi";
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const t = useTranslations("ai");
+  const auth = useSelector(useAuthSelector);
 
   return (
-    <div>
-      <div
-        data-animation="default"
-        className={`navbar w-nav animation-header open`}
-        data-easing2="ease"
-        data-easing="ease"
-        data-collapse="medium"
-        role="banner"
-        data-no-scroll="1"
-        data-duration="400"
-      >
+    <div className="container mx-auto">
+      <div className="items-center justify-between md:flex">
         <div
-          className="px-10 py-10 md:px-40"
+          className="py-10"
           // className={`container-medium navbar_container w-container ${
           //   open ? styles.navbar_container_open : ""
           // } !pt-[34px]`}
@@ -54,6 +52,32 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
+        {auth.user && (
+          <div className="text-white">
+            <div className="flex items-center">
+              <img
+                src={auth.user.avatar}
+                className="mr-2 h-12 w-12 rounded-full object-cover"
+                alt=""
+              />
+              <div className="text-sm">
+                Username: <b>{auth.user.username}</b>
+                <p>
+                  Balance: <b>$0.00</b>
+                </p>
+              </div>
+              <Link
+                className="ml-4 flex items-center"
+                href="void:0"
+                onClick={() => {
+                  dispatch(setUser({}));
+                }}
+              >
+                <span className="ml-1 text-xs">Log out</span>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -24,24 +24,34 @@ export const authenticationSlice = createSlice({
         state.user = undefined;
         setSessionData("user", "");
       } else {
-        state.user = payload;
-
         if (payload.username.toLocaleLowerCase() === "aida") {
           setSessionData(
             "user",
             JSON.stringify({
               token: "aaa",
               username: "Aida",
+              avatar: "/images/aichat/defaultUser.png",
             }),
           );
+          state.user = {
+            token: "aaa",
+            username: "Aida",
+            avatar: "/images/aichat/defaultUser.png",
+          };
         } else {
           setSessionData(
             "user",
             JSON.stringify({
               token: "aaa",
               username: "Aida",
+              avatar: "/images/aichat/defaultUser.png",
             }),
           );
+          state.user = {
+            token: "aaa",
+            username: "Aida",
+            avatar: "/images/aichat/defaultUser.png",
+          };
         }
       }
     },
