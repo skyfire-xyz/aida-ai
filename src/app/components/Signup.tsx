@@ -1,10 +1,11 @@
 import { Button, Label, Modal, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/src/store";
 import { setUser } from "../reducers/authentication";
+import { useRouter } from "next/navigation";
 
 interface LoginFormInput {
   username: string;
@@ -12,6 +13,7 @@ interface LoginFormInput {
 }
 
 function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const {
     control,
@@ -31,27 +33,6 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
         username: data.username,
       }),
     );
-    // try {
-    //   setOpenInfo("Transferring fund...");
-    //   const response = await axios.post(
-    //     `${BACKEND_API_URL}v2/wallet/transfer`,
-    //     {
-    //       sourceAddress: transferFund?.address,
-    //       destinationAddress: data.address,
-    //       amount: data.amount,
-    //       currency: data.currency,
-    //     },
-    //   );
-    //   setOpenInfo("");
-    //   setOpenSuccess(
-    //     "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes.",
-    //   );
-    //   setTimeout(() => {
-    //     setOpenSuccess("");
-    //   }, 5000);
-    //   onClose();
-    // } catch {
-    // }
   };
 
   return (
@@ -92,7 +73,9 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
         <a
           href="#"
           className="text-primary-600 dark:text-primary-500 font-medium hover:underline"
-          onClick={() => setIsSignup(true)}
+          onClick={() => {
+            router.push("/signup");
+          }}
         >
           Sign up
         </a>

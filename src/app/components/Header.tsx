@@ -68,7 +68,7 @@ const Header: React.FC = () => {
               </div>
               <Link
                 className="ml-4 flex items-center"
-                href="void:0"
+                href={"#"}
                 onClick={() => {
                   dispatch(setUser({}));
                 }}
