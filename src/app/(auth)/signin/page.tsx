@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { setUser } from "../../reducers/authentication";
 
 interface LoginFormInput {
   username: string;
@@ -28,7 +29,16 @@ const SignInPage: FC = function () {
     },
   });
 
-  const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {};
+  const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
+    dispatch(
+      setUser({
+        username: data.username,
+      }),
+    );
+    if (data.username === "aida") {
+      router.push("/dashboard");
+    }
+  };
 
   return (
     <div>
@@ -52,18 +62,18 @@ const SignInPage: FC = function () {
               <Label htmlFor="username">Your username</Label>
               <TextInput
                 id="username"
-                name="username"
                 placeholder="Username"
                 type="text"
+                {...register("username", { required: "Username is required" })}
               />
             </div>
             <div className="mb-2 flex flex-col gap-y-3">
               <Label htmlFor="password">Your password</Label>
               <TextInput
                 id="password"
-                name="password"
                 placeholder="••••••••"
                 type="password"
+                {...register("password")}
               />
             </div>
             <div className="mb-6 flex items-center justify-between">
@@ -73,7 +83,7 @@ const SignInPage: FC = function () {
             </div> */}
               <a
                 href="#"
-                className="text-primary-600 dark:text-primary-300 ml-auto w-1/2 text-right text-sm"
+                className="text-primary-600 dark:text-primary-300 ml-auto w-1/2 text-right text-sm dark:text-white"
               >
                 Lost Password?
               </a>

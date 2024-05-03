@@ -3,7 +3,12 @@ import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { FaCode, FaRobot } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
-import { HiChartPie, HiInformationCircle, HiSearch } from "react-icons/hi";
+import {
+  HiChartPie,
+  HiInformationCircle,
+  HiLogout,
+  HiSearch,
+} from "react-icons/hi";
 import { HiMiniWallet } from "react-icons/hi2";
 import { RiAdminLine } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
@@ -91,8 +96,6 @@ const ExampleSidebar: FC = function () {
               >
                 Admin
               </Sidebar.Item>
-            </Sidebar.ItemGroup>
-            <Sidebar.ItemGroup>
               <Sidebar.Item
                 onClick={() => router.push("/dashboard/support")}
                 className={
@@ -103,6 +106,15 @@ const ExampleSidebar: FC = function () {
                 icon={HiInformationCircle}
               >
                 Support
+              </Sidebar.Item>
+            </Sidebar.ItemGroup>
+            <Sidebar.ItemGroup>
+              <Sidebar.Item
+                onClick={() => router.push("/logout")}
+                className={nonActiveClass}
+                icon={HiLogout}
+              >
+                Logout
               </Sidebar.Item>
             </Sidebar.ItemGroup>
           </Sidebar.Items>

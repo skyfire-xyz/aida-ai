@@ -3,6 +3,7 @@ import { AuthenticationReduxState } from "./types";
 import { getSessionData, setSessionData } from "@/src/common/lib/utils";
 import axios from "axios";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
+import api from "@/src/common/lib/api";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -49,22 +50,26 @@ export const authenticationSlice = createSlice({
       }
     },
     setUser: (state, { payload }) => {
-      console.log("payload", payload);
       if (!payload.username) {
         state.user = undefined;
         setSessionData("user", "");
+        api.defaults.headers["x-skyfire-user"] = "";
       } else {
+        const token = "b5c61e12-20d0-4c14-8eba-76aba6036ee9";
+
         if (payload.username.toLocaleLowerCase() === "aida") {
+          api.defaults.headers["x-skyfire-user"] = token;
+
           setSessionData(
             "user",
             JSON.stringify({
-              token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+              token: token,
               username: "Aida",
               avatar: "/images/aichat/defaultUser.png",
             }),
           );
           state.user = {
-            token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+            token: token,
             username: "Aida",
             avatar: "/images/aichat/defaultUser.png",
           };
@@ -72,13 +77,13 @@ export const authenticationSlice = createSlice({
           setSessionData(
             "user",
             JSON.stringify({
-              token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+              token: token,
               username: "Aida",
               avatar: "/images/aichat/defaultUser.png",
             }),
           );
           state.user = {
-            token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+            token: token,
             username: "Aida",
             avatar: "/images/aichat/defaultUser.png",
           };
