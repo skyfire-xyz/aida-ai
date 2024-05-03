@@ -165,6 +165,7 @@ export interface AuthenticationReduxState {
     token: string;
     avatar?: string;
   };
+  init: boolean;
   status: {
     [key: string]: "idle" | "pending" | "succeeded" | "failed";
   };

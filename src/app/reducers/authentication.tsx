@@ -8,6 +8,7 @@ import api from "@/src/common/lib/api";
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
 const initialState: AuthenticationReduxState = {
+  init: false,
   status: {},
 };
 
@@ -48,6 +49,7 @@ export const authenticationSlice = createSlice({
       if (user) {
         state.user = JSON.parse(user);
       }
+      state.init = true;
     },
     setUser: (state, { payload }) => {
       if (!payload.username) {
