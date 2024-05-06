@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/src/store";
-import { setUser } from "../reducers/authentication";
+import { setUser, signInUser } from "../reducers/authentication";
 import { useRouter } from "next/navigation";
 
 interface LoginFormInput {
@@ -28,11 +28,16 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
   });
 
   const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
-    dispatch(
-      setUser({
-        username: data.username,
-      }),
-    );
+    if (data.username === "aida") {
+      dispatch(
+        setUser({
+          username: "aida",
+        }),
+      );
+      router.push("/admin");
+    } else {
+      dispatch(signInUser(data));
+    }
   };
 
   return (

@@ -21,6 +21,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (auth.init && !auth.user) {
       router.push("/signin");
+    } else if (auth.init && auth.user) {
+      router.push("/dashboard");
     }
   }, [auth]);
 

@@ -4,6 +4,7 @@ import { getSessionData, setSessionData } from "@/src/common/lib/utils";
 import axios from "axios";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
+import { LoginFormInput } from "../(auth)/signin/page";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -13,7 +14,7 @@ const initialState: AuthenticationReduxState = {
 };
 
 export const createSenderWallet = createAsyncThunk<any, { data: any }>(
-  "dashboard/createSenderWallet",
+  "authentication/createSenderWallet",
   async ({ data }, thunkAPI) => {
     const res = await axios.post(
       `${BACKEND_API_URL}v2/demo/skyfire-users/sender`,
@@ -26,7 +27,7 @@ export const createSenderWallet = createAsyncThunk<any, { data: any }>(
 );
 
 export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
-  "dashboard/createReceiverWallet",
+  "authentication/createReceiverWallet",
   async ({ data }, thunkAPI) => {
     const price = Number(data.price) * 1000000;
     const service = data.service;
@@ -40,6 +41,17 @@ export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
   },
 );
 
+export const signInUser = createAsyncThunk<any, LoginFormInput>(
+  "authentication/signInUser",
+  async ({ username, password }, thunkAPI) => {
+    const res = await axios.post(`${BACKEND_API_URL}v2/login`, {
+      username: username,
+      password: password,
+    });
+    return res.data;
+  },
+);
+
 export const authenticationSlice = createSlice({
   name: "authentication",
   initialState,
@@ -47,7 +59,9 @@ export const authenticationSlice = createSlice({
     getUser: (state) => {
       const user = getSessionData("user");
       if (user) {
-        state.user = JSON.parse(user);
+        const userObj = JSON.parse(user);
+        state.user = userObj;
+        api.defaults.headers["x-skyfire-user"] = userObj.token;
       }
       state.init = true;
     },
@@ -57,36 +71,36 @@ export const authenticationSlice = createSlice({
         setSessionData("user", "");
         api.defaults.headers["x-skyfire-user"] = "";
       } else {
-        const token = "b5c61e12-20d0-4c14-8eba-76aba6036ee9";
-
         if (payload.username.toLocaleLowerCase() === "aida") {
-          api.defaults.headers["x-skyfire-user"] = token;
+          api.defaults.headers["x-skyfire-user"] =
+            "b5c61e12-20d0-4c14-8eba-76aba6036ee9";
 
           setSessionData(
             "user",
             JSON.stringify({
-              token: token,
+              token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
               username: "Aida",
               avatar: "/images/aichat/defaultUser.png",
             }),
           );
           state.user = {
-            token: token,
+            token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
             username: "Aida",
             avatar: "/images/aichat/defaultUser.png",
           };
         } else {
+          api.defaults.headers["x-skyfire-user"] = payload.id;
           setSessionData(
             "user",
             JSON.stringify({
-              token: token,
-              username: "Aida",
+              token: payload.id,
+              username: payload.username,
               avatar: "/images/aichat/defaultUser.png",
             }),
           );
           state.user = {
-            token: token,
-            username: "Aida",
+            token: payload.id,
+            username: payload.username,
             avatar: "/images/aichat/defaultUser.png",
           };
         }
@@ -95,6 +109,32 @@ export const authenticationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      /**
+       * Sign in
+       */
+      .addCase(signInUser.pending, (state, action) => {
+        state.status["signInUser"] = "pending";
+      })
+      .addCase(signInUser.fulfilled, (state, action) => {
+        state.status["signInUser"] = "succeeded";
+        state.user = {
+          username: action.payload.username,
+          token: action.payload.id,
+          avatar: "/images/aichat/defaultUser.png",
+        };
+        api.defaults.headers["x-skyfire-user"] = action.payload.id;
+        setSessionData(
+          "user",
+          JSON.stringify({
+            token: action.payload.id,
+            username: action.payload.username,
+            avatar: "/images/aichat/defaultUser.png",
+          }),
+        );
+      })
+      .addCase(signInUser.rejected, (state, action) => {
+        state.status["signInUser"] = "failed";
+      })
       /**
        * createSenderWallet
        */

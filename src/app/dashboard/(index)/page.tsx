@@ -244,13 +244,15 @@ const SalesThisWeek: FC = function () {
         </div> */}
       </div>
       <div className="mt-8 overflow-scroll">
-        <h3 className="text-2xl">Spending Wallet</h3>
-        {wallets["Sender"].length > 0 &&
-          wallets["Sender"].map((wallet: Wallet, index: number) => {
-            return <Service walletType={"Sender"} wallet={wallet} />;
-          })}
-
-        <h3 className="mt-10 text-2xl">Service Providers</h3>
+        {wallets["Sender"].length > 0 && (
+          <div>
+            <h3 className="text-2xl">Spending Wallet</h3>
+            {wallets["Sender"].length > 0 &&
+              wallets["Sender"].map((wallet: Wallet, index: number) => {
+                return <Service walletType={"Sender"} wallet={wallet} />;
+              })}
+          </div>
+        )}
         {/* 
         <Card className="mb-10 h-full">
           <h4 className="text-2xl font-bold ">Balance</h4>
@@ -314,11 +316,14 @@ const SalesThisWeek: FC = function () {
             </div>
           </div>
         </Card> */}
-
-        {wallets["Receiver"].length > 0 &&
-          wallets["Receiver"].map((wallet: Wallet, index: number) => {
-            return <Service walletType={"Receiver"} wallet={wallet} />;
-          })}
+        {wallets["Receiver"].length > 0 && (
+          <div>
+            <h3 className="mt-10 text-2xl">Service Providers</h3>
+            {wallets["Receiver"].map((wallet: Wallet, index: number) => {
+              return <Service walletType={"Receiver"} wallet={wallet} />;
+            })}
+          </div>
+        )}
       </div>
       {/* <SalesChart /> */}
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">

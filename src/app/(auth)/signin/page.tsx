@@ -1,15 +1,19 @@
 "use client";
 
 import { AppDispatch } from "@/src/store";
-import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
-import type { FC } from "react";
+import { Button, Card, Label, TextInput } from "flowbite-react";
+import { useEffect, type FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { setUser } from "../../reducers/authentication";
+import {
+  getUser,
+  setUser,
+  signInUser,
+  useAuthSelector,
+} from "../../reducers/authentication";
 
-interface LoginFormInput {
+export interface LoginFormInput {
   username: string;
   password: string;
 }
@@ -30,13 +34,15 @@ const SignInPage: FC = function () {
   });
 
   const onSubmit: SubmitHandler<LoginFormInput> = async (data) => {
-    dispatch(
-      setUser({
-        username: data.username,
-      }),
-    );
     if (data.username === "aida") {
-      router.push("/dashboard");
+      dispatch(
+        setUser({
+          username: "aida",
+        }),
+      );
+      router.push("/admin");
+    } else {
+      dispatch(signInUser(data));
     }
   };
 

@@ -77,17 +77,12 @@ export const fetchAllTransactions = createAsyncThunk<any>(
 export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   "dashboard/fetchWallets",
   async ({ walletType }) => {
-    // const res = await axios.get(
-    //   `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`,
-    // );
     const res = await api.get(`v2/wallet?walletType=${walletType}`);
 
-    const wallets = res.data;
+    const wallets = Array.isArray(res.data) ? res.data : [res.data];
+
     const balances = await Promise.all(
       wallets.map(async (w: Wallet) => {
-        // return await axios.get(
-        //   `${BACKEND_API_URL}v2/wallet/balance?address=${w.address}`,
-        // );
         return await api.get(`v2/wallet/balance?address=${w.address}`);
       }),
     );
@@ -95,7 +90,12 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
       wallets[index].balance = b.data;
     });
 
-    return { wallets, walletType };
+    return {
+      wallets: wallets.filter((w: Wallet) => {
+        return w.type === walletType;
+      }),
+      walletType,
+    };
   },
 );
 
