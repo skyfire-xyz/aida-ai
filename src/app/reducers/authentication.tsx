@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AuthenticationReduxState } from "./types";
 import { getSessionData, setSessionData } from "@/src/common/lib/utils";
 import axios from "axios";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
+import { AIDA_USER_ID, BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
 import { LoginFormInput } from "../(auth)/signin/page";
 
@@ -72,19 +72,18 @@ export const authenticationSlice = createSlice({
         api.defaults.headers["x-skyfire-user"] = "";
       } else {
         if (payload.username.toLocaleLowerCase() === "aida") {
-          api.defaults.headers["x-skyfire-user"] =
-            "b5c61e12-20d0-4c14-8eba-76aba6036ee9";
+          api.defaults.headers["x-skyfire-user"] = AIDA_USER_ID;
 
           setSessionData(
             "user",
             JSON.stringify({
-              token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+              token: AIDA_USER_ID,
               username: "Aida",
               avatar: "/images/aichat/defaultUser.png",
             }),
           );
           state.user = {
-            token: "b5c61e12-20d0-4c14-8eba-76aba6036ee9",
+            token: AIDA_USER_ID,
             username: "Aida",
             avatar: "/images/aichat/defaultUser.png",
           };
