@@ -32,7 +32,6 @@ import {
   USDC_CONTRACT_ABI,
   USDC_CONTRACT_ADDRESS,
 } from "@/src/common/lib/constant";
-import Service from "../../../services/components/Service";
 
 export default function Wallets(props: { params: { address: `0x${string}` } }) {
   const address: `0x${string}` = props.params.address;

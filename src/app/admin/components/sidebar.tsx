@@ -35,46 +35,31 @@ const ExampleSidebar: FC = function () {
           <Sidebar.Items>
             <Sidebar.ItemGroup>
               <Sidebar.Item
-                icon={HiChartPie}
-                onClick={() => router.push("/dashboard")}
-                className={
-                  "/dashboard" === pathname ? activeClass : nonActiveClass
-                }
+                icon={HiMiniWallet}
+                onClick={() => router.push("/admin")}
+                className={"/admin" === pathname ? activeClass : nonActiveClass}
               >
-                Dashboard
+                Wallet Management
               </Sidebar.Item>
               <Sidebar.Item
-                onClick={() => router.push("/dashboard/transactions")}
+                icon={FaRobot}
+                onClick={() => router.push("/admin/services")}
                 className={
-                  "/dashboard/transactions" === pathname
+                  "/admin/services" === pathname ? activeClass : nonActiveClass
+                }
+              >
+                Add Service
+              </Sidebar.Item>
+              <Sidebar.Item
+                onClick={() => router.push("/admin/transactions")}
+                className={
+                  "/admin/transactions" === pathname
                     ? activeClass
                     : nonActiveClass
                 }
                 icon={GrTransaction}
               >
                 Transactions
-              </Sidebar.Item>
-              <Sidebar.Item
-                onClick={() => router.push("/dashboard/developers")}
-                className={
-                  "/dashboard/developers" === pathname
-                    ? activeClass
-                    : nonActiveClass
-                }
-                icon={FaCode}
-              >
-                Developers
-              </Sidebar.Item>
-              <Sidebar.Item
-                onClick={() => router.push("/dashboard/support")}
-                className={
-                  "/dashboard/support" === pathname
-                    ? activeClass
-                    : nonActiveClass
-                }
-                icon={HiInformationCircle}
-              >
-                Support
               </Sidebar.Item>
             </Sidebar.ItemGroup>
             <Sidebar.ItemGroup>

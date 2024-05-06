@@ -8,6 +8,7 @@ import { setUser, useAuthSelector } from "../reducers/authentication";
 import { Card } from "flowbite-react";
 import { AppDispatch } from "@/src/store";
 import { HiLogout } from "react-icons/hi";
+import UserLoginInfo from "../../common/components/UserLoginInfo";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,7 +53,8 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
-        {auth.user && (
+        <UserLoginInfo />
+        {/* {auth.user && (
           <div className="text-white">
             <div className="flex items-center">
               <img
@@ -77,7 +79,7 @@ const Header: React.FC = () => {
               </Link>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

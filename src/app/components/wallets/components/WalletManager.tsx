@@ -20,7 +20,7 @@ import { MdDelete } from "react-icons/md";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { MdLoop } from "react-icons/md";
 import { IoIosWallet } from "react-icons/io";
-import UserOperation from "../../admin/components/UserOperation";
+import UserOperation from "../../../dashboard/admin/components/UserOperation";
 import PaymentTransactions from "../../transactions/components/PaymentTransactions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
@@ -93,12 +93,6 @@ export default function WalletManager() {
 
   return (
     <div className="h-full w-full rounded-lg">
-      <Breadcrumb aria-label="Default breadcrumb example mb-20">
-        <Breadcrumb.Item href="/dashboard" icon={HiHome}>
-          Dashboard
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>Fund & Withdraw</Breadcrumb.Item>
-      </Breadcrumb>
       <div className="flex w-full gap-10">
         <div className="min-w-auto flex flex-col">
           <div className="mt-4 w-full max-w-lg">

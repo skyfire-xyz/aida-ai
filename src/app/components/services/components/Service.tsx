@@ -1,5 +1,5 @@
 import { Card } from "flowbite-react";
-import { ServiceImage } from "../../services/components/ServiceManager";
+import { ServiceImage } from "./ServiceManager";
 import { AppDispatch } from "@/src/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useDashboardSelector } from "@/src/app/reducers/dashboardSlice";

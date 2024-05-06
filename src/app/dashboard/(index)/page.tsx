@@ -251,7 +251,7 @@ const SalesThisWeek: FC = function () {
           })}
 
         <h3 className="mt-10 text-2xl">Service Providers</h3>
-
+        {/* 
         <Card className="mb-10 h-full">
           <h4 className="text-2xl font-bold ">Balance</h4>
           <div className="flex gap-10 dark:text-white">
@@ -313,7 +313,7 @@ const SalesThisWeek: FC = function () {
               </h5>
             </div>
           </div>
-        </Card>
+        </Card> */}
 
         {wallets["Receiver"].length > 0 &&
           wallets["Receiver"].map((wallet: Wallet, index: number) => {
@@ -322,7 +322,7 @@ const SalesThisWeek: FC = function () {
       </div>
       {/* <SalesChart /> */}
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
-        <Datepicker />
+        {/* <Datepicker /> */}
         <Notification
           asyncActionKey="redeemClaims"
           messages={{

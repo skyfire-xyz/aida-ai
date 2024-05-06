@@ -10,7 +10,7 @@ import {
 } from "@/src/app/reducers/dashboardSlice";
 import { Wallet } from "@/src/app/reducers/types";
 import { MdDelete } from "react-icons/md";
-import { ServiceImage } from "../../services/components/ServiceManager";
+import { ServiceImage } from "../../../components/services/components/ServiceManager";
 import { useFormatter } from "next-intl";
 import { useRouter } from "next/navigation";
 
@@ -114,7 +114,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
               className="inline-block"
               size="xs"
               onClick={() => {
-                router.push(`/dashboard/wallets/fund/${wallet.address}`);
+                router.push(`/dashboard/fund/${wallet.address}`);
               }}
             >
               Fund
