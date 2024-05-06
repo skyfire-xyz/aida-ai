@@ -167,6 +167,14 @@ export const dashboardSlice = createSlice({
     resetStatus: (state, action) => {
       state.status[action.payload.key] = action.payload.status;
     },
+    resetState: (state) => {
+      state.status = {};
+      state.wallets = {
+        Sender: [],
+        Receiver: [],
+      };
+      state.transactions = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -352,6 +360,6 @@ export const useBalanceSelector = (state: any) => {
   return aggregatedBalance;
 };
 
-export const { resetStatus } = dashboardSlice.actions;
+export const { resetStatus, resetState } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

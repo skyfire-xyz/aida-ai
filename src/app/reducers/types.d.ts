@@ -16,7 +16,7 @@ export interface Wallet {
   transactions?: PaymentType[];
   network?: string;
   createdAt?: string;
-  type: string;
+  type?: string;
   balance?: {
     assets: number;
     escrow: {

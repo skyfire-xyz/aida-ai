@@ -34,7 +34,6 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
           username: "aida",
         }),
       );
-      router.push("/admin");
     } else {
       dispatch(signInUser(data));
     }
