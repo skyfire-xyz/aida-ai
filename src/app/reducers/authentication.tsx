@@ -13,6 +13,18 @@ const initialState: AuthenticationReduxState = {
   status: {},
 };
 
+function storeLocalUserInfo(user: any) {
+  api.defaults.headers["x-skyfire-user"] = user.id;
+  setSessionData(
+    "user",
+    JSON.stringify({
+      token: user.id,
+      username: user.username,
+      avatar: "/images/aichat/defaultUser.png",
+    }),
+  );
+}
+
 export const createSenderWallet = createAsyncThunk<any, { data: any }>(
   "authentication/createSenderWallet",
   async ({ data }, thunkAPI) => {
@@ -29,8 +41,6 @@ export const createSenderWallet = createAsyncThunk<any, { data: any }>(
 export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
   "authentication/createReceiverWallet",
   async ({ data }, thunkAPI) => {
-    const price = Number(data.price) * 1000000;
-    const service = data.service;
     const res = await axios.post(
       `${BACKEND_API_URL}v2/demo/skyfire-users/receiver`,
       {
@@ -72,36 +82,22 @@ export const authenticationSlice = createSlice({
         api.defaults.headers["x-skyfire-user"] = "";
       } else {
         if (payload.username.toLocaleLowerCase() === "aida") {
-          api.defaults.headers["x-skyfire-user"] = AIDA_USER_ID;
-
-          setSessionData(
-            "user",
-            JSON.stringify({
-              token: AIDA_USER_ID,
-              username: "Aida",
-              avatar: "/images/aichat/defaultUser.png",
-            }),
-          );
           state.user = {
             token: AIDA_USER_ID,
             username: "Aida",
             avatar: "/images/aichat/defaultUser.png",
           };
+          storeLocalUserInfo({
+            id: AIDA_USER_ID,
+            username: "Aida",
+          });
         } else {
-          api.defaults.headers["x-skyfire-user"] = payload.id;
-          setSessionData(
-            "user",
-            JSON.stringify({
-              token: payload.id,
-              username: payload.username,
-              avatar: "/images/aichat/defaultUser.png",
-            }),
-          );
           state.user = {
             token: payload.id,
             username: payload.username,
             avatar: "/images/aichat/defaultUser.png",
           };
+          storeLocalUserInfo(payload);
         }
       }
     },
@@ -121,15 +117,7 @@ export const authenticationSlice = createSlice({
           token: action.payload.id,
           avatar: "/images/aichat/defaultUser.png",
         };
-        api.defaults.headers["x-skyfire-user"] = action.payload.id;
-        setSessionData(
-          "user",
-          JSON.stringify({
-            token: action.payload.id,
-            username: action.payload.username,
-            avatar: "/images/aichat/defaultUser.png",
-          }),
-        );
+        storeLocalUserInfo(action.payload);
       })
       .addCase(signInUser.rejected, (state, action) => {
         state.status["signInUser"] = "failed";
@@ -146,17 +134,27 @@ export const authenticationSlice = createSlice({
           username: action.payload.username,
           token: action.payload.id,
         };
-        setSessionData(
-          "user",
-          JSON.stringify({
-            token: action.payload.id,
-            username: action.payload.username,
-            avatar: "/images/aichat/defaultUser.png",
-          }),
-        );
+        storeLocalUserInfo(action.payload);
       })
       .addCase(createSenderWallet.rejected, (state, action) => {
         state.status["createSenderWallet"] = "failed";
+      })
+      /**
+       * createReceiverWallet
+       */
+      .addCase(createReceiverWallet.pending, (state, action) => {
+        state.status["createReceiverWallet"] = "pending";
+      })
+      .addCase(createReceiverWallet.fulfilled, (state, action) => {
+        state.status["createReceiverWallet"] = "succeeded";
+        state.user = {
+          username: action.payload.username,
+          token: action.payload.id,
+        };
+        storeLocalUserInfo(action.payload);
+      })
+      .addCase(createReceiverWallet.rejected, (state, action) => {
+        state.status["createReceiverWallet"] = "failed";
       });
   },
 });

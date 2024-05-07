@@ -22,7 +22,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (auth.init && !auth.user) {
       router.push("/signin");
     } else if (auth.init && auth.user) {
-      router.push("/dashboard");
+      if (auth.user.username.toLocaleLowerCase() === "aida") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
     }
   }, [auth]);
 

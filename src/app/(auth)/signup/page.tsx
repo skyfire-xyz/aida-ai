@@ -6,6 +6,7 @@ import {
   Card,
   Checkbox,
   Label,
+  Select,
   Spinner,
   TextInput,
 } from "flowbite-react";
@@ -16,6 +17,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useDashboardSelector } from "../../reducers/dashboardSlice";
 import {
+  createReceiverWallet,
   createSenderWallet,
   useAuthSelector,
 } from "../../reducers/authentication";
@@ -23,7 +25,8 @@ import {
 interface SignupFormInput {
   username: string;
   password: string;
-  acceptTerms: boolean;
+  // acceptTerms: boolean;
+  walletType: "receiver" | "sender";
 }
 
 const SignUpPage: FC = function () {
@@ -36,10 +39,18 @@ const SignUpPage: FC = function () {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormInput>({});
+  } = useForm<SignupFormInput>({
+    defaultValues: {
+      walletType: "sender",
+    },
+  });
 
   const onSubmit: SubmitHandler<SignupFormInput> = async (data) => {
-    dispatch(createSenderWallet({ data }));
+    if (data.walletType === "sender") {
+      dispatch(createSenderWallet({ data }));
+    } else {
+      dispatch(createReceiverWallet({ data }));
+    }
   };
 
   useEffect(() => {
@@ -88,7 +99,28 @@ const SignUpPage: FC = function () {
                 {...register("password")}
               />
             </div>
-            <div className="mb-6 flex items-center gap-x-3">
+            <div>
+              <Label htmlFor="password">Account Type</Label>
+              <Controller
+                {...register("walletType", { required: true })}
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    id="walletType"
+                    onChange={(e) => onChange(e.target.value)}
+                  >
+                    <option value="sender">Service User</option>
+                    <option value="receiver">Service Provider</option>
+                  </Select>
+                )}
+              ></Controller>
+            </div>
+            {/* {errors.currency && (
+              <p className="mt-2 text-xs italic text-red-500">
+                {errors.currency?.type === "required" && "Currency is required"}
+              </p>
+            )} */}
+            {/* <div className="mb-6 flex items-center gap-x-3">
               <Controller
                 {...register("acceptTerms", { required: true })}
                 control={control}
@@ -108,7 +140,7 @@ const SignUpPage: FC = function () {
                   </>
                 )}
               ></Controller>
-            </div>
+            </div> */}
             <div className="mb-7">
               {isPending ? (
                 <Button
