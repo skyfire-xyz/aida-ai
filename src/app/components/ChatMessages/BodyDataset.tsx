@@ -13,6 +13,7 @@ import { addProtocolLog, fetchAnalyzeDataset } from "../../reducers/aiBotSlice";
 import { useDispatch } from "react-redux";
 import App from "next/app";
 import { AppDispatch } from "@/src/store";
+import api from "@/src/common/lib/api";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");
@@ -23,15 +24,12 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function getDataset(data: any) {
     // Regular Chat API
     try {
-      const response = await axios.post(
-        `${BACKEND_API_URL}v2/dataset/download`,
-        {
-          dataset: data.ref,
-        }
-      );
+      const response = await api.post(`${BACKEND_API_URL}v2/dataset/download`, {
+        dataset: data.ref,
+      });
       const fileName = response?.data?.filename;
       dispatch(
-        addProtocolLog({ payload: { payment: response?.data.payment } })
+        addProtocolLog({ payload: { payment: response?.data.payment } }),
       );
       return fileName;
     } catch {}
@@ -41,7 +39,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function downloadDataset(filename: string) {
     // Regular Chat API
     try {
-      const response = await axios.get(`${BACKEND_API_URL}${filename}`);
+      const response = await api.get(`${BACKEND_API_URL}${filename}`);
       fileDownload(response.data, filename);
     } catch (error) {
       console.log("error");
@@ -55,7 +53,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
         return (
           <li
             key={index}
-            className="bg-white rounded-lg text-black mb-4 flex items-center"
+            className="mb-4 flex items-center rounded-lg bg-white text-black"
           >
             {/* <img
                     className="object-cover rounded-tr-lg rounded-tl-lg w-full h-[100px]"
@@ -63,17 +61,17 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
                       'https://storage.googleapis.com/kaggle-datasets-images/4580651/7818480/97bc9a21bc6c5ac1d7e84a97e61e9730/dataset-thumbnail.jpg?t=2024-03-11-19-00-54'
                     }
                   /> */}
-            <div className="py-2 px-4 px grow items-center">
+            <div className="px grow items-center px-4 py-2">
               <div className="grow">
                 <b>{data.title}</b>
                 <br />
                 <span>1 File CSV</span>
               </div>
             </div>
-            <div className="flex gap-1 mr-2">
+            <div className="mr-2 flex gap-1">
               <Button
                 color="light"
-                className="h-6 w-6 flex items-center"
+                className="flex h-6 w-6 items-center"
                 onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
                   dispatch(fetchAnalyzeDataset({ ref: data.ref }));
@@ -83,7 +81,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
               </Button>
               <Button
                 color="light"
-                className="h-6 w-6 flex items-center"
+                className="flex h-6 w-6 items-center"
                 onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
                   const filename = await getDataset(data);

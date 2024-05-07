@@ -53,10 +53,10 @@ export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
 
 export const signInUser = createAsyncThunk<any, LoginFormInput>(
   "authentication/signInUser",
-  async ({ username, password }, thunkAPI) => {
+  async ({ username, _password }, thunkAPI) => {
     const res = await axios.post(`${BACKEND_API_URL}v2/login`, {
       username: username,
-      password: password,
+      _password: _password,
     });
     return res.data;
   },

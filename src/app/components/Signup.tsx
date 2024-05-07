@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 interface LoginFormInput {
   username: string;
-  password: string;
+  _password: string;
 }
 
 function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
@@ -23,7 +23,7 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
   } = useForm<LoginFormInput>({
     defaultValues: {
       username: "",
-      password: "",
+      _password: "",
     },
   });
 
@@ -53,10 +53,10 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
         ></TextInput>
       </div>
       <div className="mb-4">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="_password">Password</Label>
         <TextInput
-          type="password"
-          {...register("password")}
+          type="_password"
+          {...register("_password")}
           placeholder="password"
           className="w-full rounded-xl bg-[#f7f9fa]"
         ></TextInput>

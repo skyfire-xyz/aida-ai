@@ -15,7 +15,7 @@ import {
 
 export interface LoginFormInput {
   username: string;
-  password: string;
+  _password: string;
 }
 
 const SignInPage: FC = function () {
@@ -29,7 +29,7 @@ const SignInPage: FC = function () {
   } = useForm<LoginFormInput>({
     defaultValues: {
       username: "",
-      password: "",
+      _password: "",
     },
   });
 
@@ -74,12 +74,12 @@ const SignInPage: FC = function () {
               />
             </div>
             <div className="mb-2 flex flex-col gap-y-3">
-              <Label htmlFor="password">Your password</Label>
+              <Label htmlFor="_password">Your password</Label>
               <TextInput
-                id="password"
+                id="_password"
                 placeholder="••••••••"
-                type="password"
-                {...register("password")}
+                type="_password"
+                {...register("_password")}
               />
             </div>
             <div className="mb-6 flex items-center justify-between">
