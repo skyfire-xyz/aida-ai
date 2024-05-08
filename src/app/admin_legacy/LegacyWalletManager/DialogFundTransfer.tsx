@@ -6,6 +6,7 @@ import axios from "axios";
 import Link from "next/link";
 import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { Button, Modal, Radio, Select } from "flowbite-react";
+import api from "@/src/common/lib/api";
 
 interface TransferFundFormInput {
   address: string;
@@ -34,18 +35,15 @@ export default function DialogFundTransfer({
   const onSubmit: SubmitHandler<TransferFundFormInput> = async (data) => {
     try {
       setOpenInfo("Transferring fund...");
-      const response = await axios.post(
-        `${BACKEND_API_URL}v2/wallet/transfer`,
-        {
-          sourceAddress: transferFund?.address,
-          destinationAddress: data.address,
-          amount: data.amount,
-          currency: data.currency,
-        }
-      );
+      const response = await api.post(`v2/wallet/transfer`, {
+        sourceAddress: transferFund?.address,
+        destinationAddress: data.address,
+        amount: data.amount,
+        currency: data.currency,
+      });
       setOpenInfo("");
       setOpenSuccess(
-        "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes."
+        "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes.",
       );
       setTimeout(() => {
         setOpenSuccess("");
@@ -67,17 +65,17 @@ export default function DialogFundTransfer({
           </Modal.Header>
           <Modal.Body>
             Transfer fund from <b>{transferFund?.address}</b>
-            <div className="w-full mt-5">
+            <div className="mt-5 w-full">
               <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
                 htmlFor="service"
               >
                 To
               </label>
               <input
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border ${
+                className={`block w-full appearance-none border bg-gray-200 text-gray-700 ${
                   errors.address ? "border-red-500" : ""
-                } rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white`}
+                } rounded px-4 py-3 leading-tight focus:bg-white focus:outline-none`}
                 type="text"
                 placeholder="Wallet Address"
                 {...register("address", {
@@ -85,14 +83,14 @@ export default function DialogFundTransfer({
                 })}
               />
               {errors.address && (
-                <p className="text-red-500 text-xs italic mt-2">
+                <p className="mt-2 text-xs italic text-red-500">
                   {errors.address?.type === "required" && "Address is required"}
                 </p>
               )}
             </div>
-            <div className="w-full mt-5">
+            <div className="mt-5 w-full">
               <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold"
+                className="block text-xs font-bold uppercase tracking-wide text-gray-700"
                 htmlFor="price"
               >
                 Currency
@@ -108,30 +106,30 @@ export default function DialogFundTransfer({
                 )}
               ></Controller>
               {errors.currency && (
-                <p className="text-red-500 text-xs italic mt-2">
+                <p className="mt-2 text-xs italic text-red-500">
                   {errors.currency?.type === "required" &&
                     "Currency is required"}
                 </p>
               )}
             </div>
-            <div className="w-full mt-3">
+            <div className="mt-3 w-full">
               <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
                 htmlFor="price"
               >
                 Amount
               </label>
               <input
-                className={`appearance-none block w-full bg-gray-200 text-gray-700 border  ${
+                className={`block w-full appearance-none border bg-gray-200 text-gray-700  ${
                   errors.amount ? "border-red-500" : ""
-                } border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500`}
+                } rounded border-gray-200 px-4 py-3 leading-tight focus:border-gray-500 focus:bg-white focus:outline-none`}
                 type="number"
                 placeholder="Amount in selected currency"
                 step="any"
                 {...register("amount", { required: true })}
               />
               {errors.amount && (
-                <p className="text-red-500 text-xs italic mt-2">
+                <p className="mt-2 text-xs italic text-red-500">
                   {errors.amount?.type === "required" && "Amount is required"}
                 </p>
               )}

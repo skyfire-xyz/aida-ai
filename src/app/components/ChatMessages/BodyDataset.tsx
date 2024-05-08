@@ -24,7 +24,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function getDataset(data: any) {
     // Regular Chat API
     try {
-      const response = await api.post(`${BACKEND_API_URL}v2/dataset/download`, {
+      const response = await api.post(`v2/dataset/download`, {
         dataset: data.ref,
       });
       const fileName = response?.data?.filename;
@@ -39,7 +39,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function downloadDataset(filename: string) {
     // Regular Chat API
     try {
-      const response = await api.get(`${BACKEND_API_URL}${filename}`);
+      const response = await api.get(`${filename}`);
       fileDownload(response.data, filename);
     } catch (error) {
       console.log("error");
