@@ -55,10 +55,7 @@ export default function PaymentTransactions() {
                 </Table.Row>
               ))}
           </Table.Body>
-        </Table>
-        <Button className="mt-10" onClick={() => dispatch(redeemClaims())}>
-          Redeem Payments
-        </Button>
+        </Table> */}
       </div>
     </div>
   );

@@ -1,9 +1,8 @@
-import { Badge, Table } from "flowbite-react";
+import { Badge, Button, Table } from "flowbite-react";
 import { useEffect } from "react";
 import {
   fetchAllTransactions,
   fetchUserClaims,
-  fetchUserTransactions,
   useDashboardSelector,
 } from "@/src/app/reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
@@ -24,62 +23,78 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function PaymentRow(tx: CommonTransaction, index: number) {
-  const payment = tx.payment;
+function ClaimRow(tx: CommonTransaction, index: number) {
+  const claim = tx.claim;
   return (
     <Table.Row
       key={index}
       className="bg-white dark:border-gray-700 dark:bg-gray-800"
     >
       <Table.Cell>
-        <Badge className="inline-block">{tx?.type}</Badge>
+        <StatusBadge status={tx?.status} />
       </Table.Cell>
+      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+        {claim?.sourceAddress
+          ? claim?.sourceAddress.replace("Supermojo", "Skyfire")
+          : ""}
+      </Table.Cell>
+      <Table.Cell>{claim?.destinationAddress}</Table.Cell>
+      <Table.Cell>{Number(claim?.value) / 1000000} USDC</Table.Cell>
+      <Table.Cell></Table.Cell>
+    </Table.Row>
+  );
+}
+function RedemptionRow(tx: CommonTransaction, index: number) {
+  const redemption = tx.redemption;
+  return (
+    <Table.Row
+      key={index}
+      className="bg-white dark:border-gray-700 dark:bg-gray-800"
+    >
       <Table.Cell>
         <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {payment?.sourceName
-          ? payment?.sourceName.replace("Supermojo", "Skyfire")
+        {redemption?.sourceAddress
+          ? redemption?.sourceAddress.replace("Supermojo", "Skyfire")
           : ""}
       </Table.Cell>
-      <Table.Cell>{payment?.destinationName}</Table.Cell>
-      <Table.Cell>{Number(payment?.value) / 1000000} USDC</Table.Cell>
+      <Table.Cell>{redemption?.destinationAddress}</Table.Cell>
       <Table.Cell>
-        <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
-          {tx.txHash}
-        </Link>
+        {Number(redemption?.amounts.total) / 1000000} USDC
       </Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
   );
 }
-
 export default function PaymentTransactions() {
   const dispatch = useDispatch<AppDispatch>();
-  const { transactions } = useSelector(useDashboardSelector);
+  const { claims } = useSelector(useDashboardSelector);
   const auth = useSelector(useAuthSelector);
 
   useEffect(() => {
-    dispatch(fetchUserTransactions({ walletAddress: auth.user.walletAddress }));
+    dispatch(fetchUserClaims({ walletAddress: auth.user.walletAddress }));
   }, [auth]);
 
   return (
     <div>
-      <div className=" w-full">
+      <div className="w-full">
         <Table striped>
           <Table.Head>
-            <Table.HeadCell>Type</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
             <Table.HeadCell>Source</Table.HeadCell>
             <Table.HeadCell>Destination Service</Table.HeadCell>
             <Table.HeadCell>Amount</Table.HeadCell>
-            <Table.HeadCell>TxHash</Table.HeadCell>
             <Table.HeadCell>
               <span className="sr-only">Edit</span>
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {transactions.map(PaymentRow)}
+            {claims?.map((tx: CommonTransaction, index: number) => {
+              if (tx.type === "PAYMENT_CLAIM") {
+                return ClaimRow(tx, index);
+              } else return RedemptionRow(tx, index);
+            })}
           </Table.Body>
         </Table>
       </div>

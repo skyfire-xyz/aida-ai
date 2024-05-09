@@ -44,6 +44,7 @@ const initialState: DashboardReduxState = {
     Receiver: [],
   },
   transactions: [],
+  claims: [],
 };
 
 export const fetchBalances = createAsyncThunk<any>(
@@ -95,15 +96,15 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   },
 );
 
-export const redeemClaims = createAsyncThunk<any, { sourceAddress: string }>(
-  "dashboard/redeemClaims",
-  async ({ sourceAddress }) => {
-    const res = await api.post(`v3/users/redeem`, {
-      sourceAddress: sourceAddress,
-    });
-    return res.data;
-  },
-);
+export const redeemClaims = createAsyncThunk<
+  any,
+  { destinationAddress: string }
+>("dashboard/redeemClaims", async ({ destinationAddress }) => {
+  const res = await api.post(`v3/users/redeem`, {
+    destinationAddress: destinationAddress,
+  });
+  return res.data;
+});
 
 export const transferFund = createAsyncThunk<
   any,
@@ -126,17 +127,27 @@ export const transferFund = createAsyncThunk<
   },
 );
 
+export const fetchUserTransactions = createAsyncThunk<
+  any,
+  { walletAddress: string }
+>("dashboard/fetchUserTransactions", async ({ walletAddress }) => {
+  const res = await api.get(`v3/wallet/transactions/${walletAddress}`);
+  return res.data;
+});
+
+export const fetchUserClaims = createAsyncThunk<any, { walletAddress: string }>(
+  "dashboard/fetchUserClaims",
+  async ({ walletAddress }) => {
+    const res = await api.get(`v3/wallet/claims/${walletAddress}`);
+    return res.data;
+  },
+);
+
 export const createWallet = createAsyncThunk<any, { data: any }>(
   "dashboard/createWallet",
   async ({ data }, thunkAPI) => {
     const price = Number(data.price) * 1000000;
     const service = data.service;
-    // const res = await axios.post(`${BACKEND_API_URL}v2/wallet`, {
-    //   price,
-    //   serviceName: service,
-    //   description: data.description,
-    //   website: data.website,
-    // });
     const res = await api.post(`v3/wallet`, {
       price,
       serviceName: service,
@@ -200,7 +211,7 @@ export const dashboardSlice = createSlice({
         state.status["fetchWallets"] = "failed";
       })
       /**
-       * Transactions
+       * All Transactions
        */
       .addCase(fetchAllTransactions.pending, (state, action) => {
         state.status["fetchAllTransactions"] = "pending";
@@ -210,6 +221,30 @@ export const dashboardSlice = createSlice({
       })
       .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.status["fetchAllTransactions"] = "failed";
+      })
+      /**
+       * Transactions
+       */
+      .addCase(fetchUserClaims.pending, (state, action) => {
+        state.status["fetchUserClaims"] = "pending";
+      })
+      .addCase(fetchUserClaims.fulfilled, (state, action) => {
+        state.claims = action.payload.transactions;
+      })
+      .addCase(fetchUserClaims.rejected, (state, action) => {
+        state.status["fetchUserClaims"] = "failed";
+      })
+      /**
+       * Claims
+       */
+      .addCase(fetchUserTransactions.pending, (state, action) => {
+        state.status["fetchUserTransactions"] = "pending";
+      })
+      .addCase(fetchUserTransactions.fulfilled, (state, action) => {
+        state.transactions = action.payload.transactions;
+      })
+      .addCase(fetchUserTransactions.rejected, (state, action) => {
+        state.status["fetchUserTransactions"] = "failed";
       })
       /**
        * Create Wallet
@@ -316,33 +351,33 @@ export const useWalletBalanceSelector =
 export const useBalanceSelector = (state: any) => {
   const wallets = state?.dashboard?.wallets || { Sender: [], Receiver: [] };
 
-  let aggregatedBalance: Wallet["balance"] = {
-    assets: 0,
-    total: 0,
-    virtual: 0,
-    escrow: {
-      total: 0,
-      available: 0,
-    },
-    liabilities: 0,
-  };
+  // let aggregatedBalance: Wallet["balance"] = {
+  //   assets: 0,
+  //   total: 0,
+  //   virtual: 0,
+  //   escrow: {
+  //     total: 0,
+  //     available: 0,
+  //   },
+  //   liabilities: 0,
+  // };
 
-  function aggregateBalance(wls: Wallet[], aggrBalance: Wallet["balance"]) {
-    return wls.reduce((acc: Wallet["balance"], w: Wallet) => {
-      if (acc) {
-        acc.assets += w.balance?.assets || 0;
-        acc.total += w.balance?.total || 0;
-        acc.virtual += w.balance?.virtual || 0;
-        acc.escrow.total += w.balance?.escrow.total || 0;
-        acc.escrow.available += w.balance?.escrow.available || 0;
-        acc.liabilities += w.balance?.liabilities || 0;
-      }
-      return acc;
-    }, aggrBalance);
-    return;
-  }
+  // function aggregateBalance(wls: Wallet[], aggrBalance: Wallet["balance"]) {
+  //   return wls.reduce((acc: Wallet["balance"], w: Wallet) => {
+  //     if (acc) {
+  //       acc.assets += w.balance?.assets || 0;
+  //       acc.total += w.balance?.total || 0;
+  //       acc.virtual += w.balance?.virtual || 0;
+  //       acc.escrow.total += w.balance?.escrow.total || 0;
+  //       acc.escrow.available += w.balance?.escrow.available || 0;
+  //       acc.liabilities += w.balance?.liabilities || 0;
+  //     }
+  //     return acc;
+  //   }, aggrBalance);
+  //   return;
+  // }
 
-  aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
+  // aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
 
   return aggregatedBalance;
 };

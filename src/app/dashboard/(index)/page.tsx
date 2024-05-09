@@ -190,7 +190,7 @@ const Datepicker: FC = function () {
 const SalesThisWeek: FC = function () {
   const format = useFormatter();
   const dispatch = useDispatch<AppDispatch>();
-  const aggrBalance = useSelector(useBalanceSelector);
+  // const aggrBalance = useSelector(useBalanceSelector);
   const { wallets } = useSelector(useDashboardSelector);
 
   useEffect(() => {
@@ -246,7 +246,7 @@ const SalesThisWeek: FC = function () {
       <div className="mt-8 overflow-scroll">
         {wallets["Sender"].length > 0 && (
           <div>
-            <h3 className="text-2xl">Spending Wallet</h3>
+            <h3 className="text-2xl">Sender Wallet</h3>
             {wallets["Sender"].length > 0 &&
               wallets["Sender"].map((wallet: Wallet, index: number) => {
                 return <Service walletType={"Sender"} wallet={wallet} />;

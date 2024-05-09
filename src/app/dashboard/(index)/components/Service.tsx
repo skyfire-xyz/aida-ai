@@ -30,7 +30,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { reservedWallets } = useSelector(useDashboardSelector);
 
-  const { total, escrow, liabilities } = wallet.balance || {};
+  const { total, escrow, claims } = wallet.balance || {};
 
   const reservedWalletInfo = reservedWallets[walletType].find((w: Wallet) => {
     return w.address === wallet.address;
@@ -64,20 +64,22 @@ export default function Service({ walletType, wallet }: ServiceProps) {
               })}
             </h5>
           </div>
-          <div>
-            <span>Escrowed</span>
-            <h5 className="text-gray-90 font-bold tracking-tight">
-              {format.number(Number((escrow?.total || 0) / 1000000), {
-                style: "currency",
-                currency: "USD",
-              })}
-            </h5>
-          </div>
           {walletType === "Sender" && (
             <div>
-              <span>Liability</span>
+              <span>Escrow Available</span>
               <h5 className="text-gray-90 font-bold tracking-tight">
-                {format.number(Number((liabilities || 0) / 1000000), {
+                {format.number(Number((escrow?.available || 0) / 1000000), {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </h5>
+            </div>
+          )}
+          {walletType === "Sender" && (
+            <div>
+              <span>Claims Pending</span>
+              <h5 className="text-gray-90 font-bold tracking-tight">
+                {format.number(Number((claims?.sent || 0) / 1000000), {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -86,9 +88,9 @@ export default function Service({ walletType, wallet }: ServiceProps) {
           )}
           {walletType === "Receiver" && (
             <div>
-              <span>Available</span>
+              <span>Claims</span>
               <h5 className="stext-gray-90 font-bold tracking-tight">
-                {format.number(Number((escrow?.available || 0) / 1000000), {
+                {format.number(Number((claims?.received || 0) / 1000000), {
                   style: "currency",
                   currency: "USD",
                 })}
@@ -103,7 +105,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
               size="xs"
               // disabled={wallet.balance?.escrow?.available === 0}
               onClick={() =>
-                dispatch(redeemClaims({ sourceAddress: wallet.address }))
+                dispatch(redeemClaims({ destinationAddress: wallet.address }))
               }
             >
               Redeem

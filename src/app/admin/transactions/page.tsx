@@ -1,6 +1,6 @@
 "use client";
 
-import PaymentTransactions from "../../components/transactions/components/PaymentTransactions";
+import PaymentTransactions from "../../components/transactions/components/AllTransactions";
 
 export default function Page() {
   return (

@@ -18,8 +18,7 @@ function storeLocalUserInfo(user: any) {
   setSessionData(
     "user",
     JSON.stringify({
-      token: user.id,
-      username: user.username,
+      ...user,
       avatar: "/images/aichat/defaultUser.png",
     }),
   );
@@ -65,7 +64,7 @@ export const authenticationSlice = createSlice({
       if (user) {
         const userObj = JSON.parse(user);
         state.user = userObj;
-        api.defaults.headers["x-skyfire-user"] = userObj.token;
+        storeLocalUserInfo(userObj);
       }
       state.init = true;
     },
@@ -75,24 +74,11 @@ export const authenticationSlice = createSlice({
         setSessionData("user", "");
         api.defaults.headers["x-skyfire-user"] = "";
       } else {
-        if (payload.username.toLocaleLowerCase() === "aida") {
-          state.user = {
-            token: AIDA_USER_ID,
-            username: "Aida",
-            avatar: "/images/aichat/defaultUser.png",
-          };
-          storeLocalUserInfo({
-            id: AIDA_USER_ID,
-            username: "Aida",
-          });
-        } else {
-          state.user = {
-            token: payload.id,
-            username: payload.username,
-            avatar: "/images/aichat/defaultUser.png",
-          };
-          storeLocalUserInfo(payload);
-        }
+        state.user = {
+          ...payload,
+          avatar: "/images/aichat/defaultUser.png",
+        };
+        storeLocalUserInfo(payload);
       }
     },
   },
@@ -107,8 +93,7 @@ export const authenticationSlice = createSlice({
       .addCase(signInUser.fulfilled, (state, action) => {
         state.status["signInUser"] = "succeeded";
         state.user = {
-          username: action.payload.username,
-          token: action.payload.id,
+          ...action.payload,
           avatar: "/images/aichat/defaultUser.png",
         };
         storeLocalUserInfo(action.payload);
@@ -124,10 +109,7 @@ export const authenticationSlice = createSlice({
       })
       .addCase(createSenderWallet.fulfilled, (state, action) => {
         state.status["createSenderWallet"] = "succeeded";
-        state.user = {
-          username: action.payload.username,
-          token: action.payload.id,
-        };
+        state.user = action.payload;
         storeLocalUserInfo(action.payload);
       })
       .addCase(createSenderWallet.rejected, (state, action) => {
@@ -141,10 +123,7 @@ export const authenticationSlice = createSlice({
       })
       .addCase(createReceiverWallet.fulfilled, (state, action) => {
         state.status["createReceiverWallet"] = "succeeded";
-        state.user = {
-          username: action.payload.username,
-          token: action.payload.id,
-        };
+        state.user = action.payload;
         storeLocalUserInfo(action.payload);
       })
       .addCase(createReceiverWallet.rejected, (state, action) => {

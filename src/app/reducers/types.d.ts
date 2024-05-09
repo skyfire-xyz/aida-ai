@@ -18,14 +18,15 @@ export interface Wallet {
   createdAt?: string;
   type?: string;
   balance?: {
-    assets: number;
     escrow: {
       total: number;
       available: number;
     };
-    liabilities: number;
+    claims: {
+      received: number;
+      sent: number;
+    };
     total: number;
-    virtual: number;
   };
 }
 
@@ -44,6 +45,7 @@ export interface DashboardReduxState {
     [key: string]: "idle" | "pending" | "succeeded" | "failed";
   };
   transactions: CommonTransaction[];
+  claims: CommonTransaction[];
 }
 export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
@@ -115,7 +117,7 @@ export interface CommonTransaction {
     | "WITHDRAWAL"
     | "ACQUISITION"
     | "ADJUSTMENT"
-    | "CLAIM"
+    | "PAYMENT_CLAIM"
     | "REDEMPTION";
   token?: {
     tokenId?: string;
@@ -163,7 +165,10 @@ export interface AuthenticationReduxState {
   user?: {
     email?: string;
     username?: string;
-    token: string;
+    id: string;
+    walletType: "Sender" | "Receiver";
+    updatedDate: string;
+    createdDate: string;
     avatar?: string;
   };
   init: boolean;

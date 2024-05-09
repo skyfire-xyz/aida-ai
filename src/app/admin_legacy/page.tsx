@@ -5,7 +5,7 @@ import messages from "@/src/locale/en.json";
 import Sidebar from "@/src/common/components/OldSidebar";
 import WalletManager from "./LegacyWalletManager/WalletManager";
 import { useEffect, useState } from "react";
-import PaymentTransactions from "../components/transactions/components/PaymentTransactions";
+import PaymentTransactions from "../components/transactions/components/AllTransactions";
 import ServiceManager from "../components/services/components/ServiceManager";
 
 export default function AdminPage() {
