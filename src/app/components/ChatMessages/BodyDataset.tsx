@@ -24,7 +24,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function getDataset(data: any) {
     // Regular Chat API
     try {
-      const response = await api.post(`v2/dataset/download`, {
+      const response = await api.post(`v3/receivers/dataset/download`, {
         dataset: data.ref,
       });
       const fileName = response?.data?.filename;

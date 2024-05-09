@@ -57,10 +57,7 @@ export const fetchBalances = createAsyncThunk<any>(
 export const walletBalance = createAsyncThunk<any, { address: string }>(
   "dashboard/walletBalance",
   async (address) => {
-    // const res = await axios.get(
-    //   `${BACKEND_API_URL}v2/wallet/balance?address=${address}`,
-    // );
-    const res = await api.get(`v2/wallet/balance?address=${address}`);
+    const res = await api.get(`v3/wallet/balance?address=${address}`);
     return res.data;
   },
 );
@@ -68,8 +65,7 @@ export const walletBalance = createAsyncThunk<any, { address: string }>(
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
-    // const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
-    const res = await api.get(`v2/transactions`);
+    const res = await api.get(`v3/wallet/transactions`);
     return res.data;
   },
 );
@@ -77,13 +73,13 @@ export const fetchAllTransactions = createAsyncThunk<any>(
 export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   "dashboard/fetchWallets",
   async ({ walletType }) => {
-    const res = await api.get(`v2/wallet?walletType=${walletType}`);
+    const res = await api.get(`v3/wallet?walletType=${walletType}`);
 
     const wallets = Array.isArray(res.data) ? res.data : [res.data];
 
     const balances = await Promise.all(
       wallets.map(async (w: Wallet) => {
-        return await api.get(`v2/wallet/balance?address=${w.address}`);
+        return await api.get(`v3/wallet/balance?address=${w.address}`);
       }),
     );
     balances.forEach((b: any, index: number) => {
@@ -102,10 +98,7 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
 export const redeemClaims = createAsyncThunk<any, { sourceAddress: string }>(
   "dashboard/redeemClaims",
   async ({ sourceAddress }) => {
-    // const res = await axios.post(`${BACKEND_API_URL}v2/demo/payments/redeem`, {
-    //   sourceAddress: sourceAddress,
-    // });
-    const res = await api.post(`v2/demo/payments/redeem`, {
+    const res = await api.post(`v3/users/redeem`, {
       sourceAddress: sourceAddress,
     });
     return res.data;
@@ -123,13 +116,7 @@ export const transferFund = createAsyncThunk<
 >(
   "dashboard/transferFund",
   async ({ sourceAddress, address, amount, currency }) => {
-    // const res = await axios.post(`${BACKEND_API_URL}v2/wallet/transfer`, {
-    //   sourceAddress: sourceAddress,
-    //   destinationAddress: address,
-    //   amount: amount,
-    //   currency: currency,
-    // });
-    const res = await api.post(`v2/wallet/transfer`, {
+    const res = await api.post(`v3/wallet/transfer`, {
       sourceAddress: sourceAddress,
       destinationAddress: address,
       amount: amount,
@@ -150,7 +137,7 @@ export const createWallet = createAsyncThunk<any, { data: any }>(
     //   description: data.description,
     //   website: data.website,
     // });
-    const res = await api.post(`v2/wallet`, {
+    const res = await api.post(`v3/wallet`, {
       price,
       serviceName: service,
       description: data.description,

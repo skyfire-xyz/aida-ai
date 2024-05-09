@@ -56,41 +56,41 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
     );
 
     if (task.skill === "text_completion") {
-      const res = await api.post(`v2/chat/perplexity`, {
+      const res = await api.post(`v3/receivers/chat/perplexity`, {
         prompt: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "random_joke") {
-      const res = await api.post(`v2/joke`, {
+      const res = await api.post(`v3/receivers/joke`, {
         searchTerm: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "image_generation") {
-      const res = await api.post(`v2/chat/image`, {
+      const res = await api.post(`v3/receivers/chat/image`, {
         prompt: task.task,
         objective: task.objective,
       });
       return { ...res.data, task };
     } else if (task.skill === "video_search") {
-      const res = await api.post(`v2/websearch/video`, {
+      const res = await api.post(`v3/receivers/websearch/video`, {
         prompt: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "web_search") {
-      const res = await api.post(`v2/websearch`, {
+      const res = await api.post(`v3/receivers/websearch`, {
         prompt: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "dataset_search") {
-      const res = await api.post(`v2/dataset/search`, {
+      const res = await api.post(`v3/receivers/dataset/search`, {
         prompt: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
@@ -103,7 +103,7 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchDataset",
   async ({ searchTerm }) => {
-    const res = await api.post(`v2/dataset/search`, {
+    const res = await api.post(`v3/receivers/dataset/search`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "dataset", uuid: new Date().getTime() };
@@ -113,7 +113,7 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
   "aiBot/fetchAnalyzeDataset",
   async ({ ref }) => {
-    const res = await api.post(`v2/dataset/analyze`, {
+    const res = await api.post(`v3/receivers/dataset/analyze`, {
       dataset: ref,
     });
     return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
@@ -123,7 +123,7 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
 export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchTasklist",
   async ({ searchTerm }) => {
-    const res = await api.post(`v2/chat/tasklist`, {
+    const res = await api.post(`v3/receivers/chat/tasklist`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
@@ -133,7 +133,7 @@ export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchWebSearch",
   async ({ searchTerm }) => {
-    const res = await api.post(`v2/websearch`, {
+    const res = await api.post(`v3/receivers/websearch`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "web_search", uuid: new Date().getTime() };
@@ -143,7 +143,7 @@ export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchVideoSearch",
   async ({ searchTerm }) => {
-    const res = await api.post(`v2/websearch/video`, {
+    const res = await api.post(`v3/receivers/websearch/video`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "video_search", uuid: new Date().getTime() };
@@ -154,7 +154,7 @@ export const fetchImageGeneration = createAsyncThunk<
   any,
   { searchTerm: string }
 >("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
-  const res = await api.post(`v2/chat/image`, {
+  const res = await api.post(`v3/receivers/chat/image`, {
     prompt: searchTerm.trim(),
   });
   return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
@@ -164,7 +164,7 @@ export const fetchMeme = createAsyncThunk<
   any,
   { searchTerm: string; meme: boolean }
 >("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
-  const res = await api.post(`v2/joke`, {
+  const res = await api.post(`v3/receivers/joke`, {
     meme,
     searchTerm: searchTerm.trim(),
   });
@@ -175,7 +175,7 @@ export const fetchLogoAgent = createAsyncThunk<
   any,
   { logoAIAgent: { service: string; price: number } }
 >("aiBot/fetchLogoAgent", async ({ logoAIAgent }) => {
-  const res = await api.post(`v2/logo`, {
+  const res = await api.post(`v3/receivers/logo`, {
     agent: logoAIAgent.service,
     cost: logoAIAgent.price,
   });
@@ -185,7 +185,7 @@ export const fetchLogoAgent = createAsyncThunk<
 export const fetchChat = createAsyncThunk<any, { prompt: string }>(
   "aiBot/fetchChat",
   async ({ prompt }) => {
-    const res = await api.post(`v2/chat`, {
+    const res = await api.post(`v3/receivers/chat`, {
       prompt,
     });
     return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
