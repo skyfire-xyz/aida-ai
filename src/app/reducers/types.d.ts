@@ -110,6 +110,7 @@ export interface CommonTransaction {
   txType: string;
   userId: string;
   type:
+    | "CLAIM"
     | "PAYMENT"
     | "TRANSFER"
     | "MINTS"

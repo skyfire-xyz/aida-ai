@@ -90,11 +90,15 @@ export default function PaymentTransactions() {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {claims?.map((tx: CommonTransaction, index: number) => {
-              if (tx.type === "PAYMENT_CLAIM") {
-                return ClaimRow(tx, index);
-              } else return RedemptionRow(tx, index);
-            })}
+            {claims
+              ?.filter((tx: CommonTransaction) => {
+                return tx.status === "CREATED";
+              })
+              .map((tx: CommonTransaction, index: number) => {
+                if (tx.type === "PAYMENT_CLAIM") {
+                  return ClaimRow(tx, index);
+                } else return RedemptionRow(tx, index);
+              })}
           </Table.Body>
         </Table>
       </div>

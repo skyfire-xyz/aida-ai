@@ -12,7 +12,7 @@ export default function Page() {
         <Tabs.Item active title="Transactions">
           <PaymentTransactions />
         </Tabs.Item>
-        <Tabs.Item title="Claims">
+        <Tabs.Item title="Unredeemed Claims">
           <Claims />
         </Tabs.Item>
       </Tabs>
