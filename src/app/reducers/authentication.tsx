@@ -81,6 +81,9 @@ export const authenticationSlice = createSlice({
         storeLocalUserInfo(payload);
       }
     },
+    resetStatus: (state, action) => {
+      state.status[action.payload.key] = action.payload.status;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -136,6 +139,6 @@ export const useAuthSelector = (state: any) => {
   return state?.authentication;
 };
 
-export const { setUser, getUser } = authenticationSlice.actions;
+export const { setUser, getUser, resetStatus } = authenticationSlice.actions;
 
 export default authenticationSlice.reducer;

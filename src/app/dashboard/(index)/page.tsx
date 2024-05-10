@@ -10,6 +10,7 @@ import {
   fetchBalances,
   fetchWallets,
   redeemClaims,
+  resetStatus,
   useBalanceSelector,
   useDashboardSelector,
 } from "../../reducers/dashboardSlice";
@@ -330,6 +331,8 @@ const SalesThisWeek: FC = function () {
         {/* <Datepicker /> */}
         <Notification
           asyncActionKey="redeemClaims"
+          resetStatus={resetStatus}
+          selector={useDashboardSelector}
           messages={{
             success: "Successfully redeemed funds",
             error: "Sorry, the blockchain network is slow right now",

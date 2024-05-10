@@ -1,11 +1,11 @@
-import { Toast } from "flowbite-react";
+import { Alert, Toast } from "flowbite-react";
 import { HiExclamation } from "react-icons/hi";
 import { HiCheck } from "react-icons/hi2";
 import { MdLoop } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { resetStatus, useDashboardSelector } from "../reducers/dashboardSlice";
 import { useEffect, useState } from "react";
 import { AppDispatch } from "@/src/store";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface NotificationProps {
   asyncActionKey: string;
@@ -14,15 +14,22 @@ interface NotificationProps {
     error: string;
     pending: string;
   };
+  selector: (state: any) => {
+    status: { [key: string]: "idle" | "pending" | "succeeded" | "failed" };
+  };
+  resetStatus: (payload: { key: string; status: string }) => any;
 }
 
 export default function Notification({
   asyncActionKey,
+  resetStatus,
   messages,
+  selector,
 }: NotificationProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { status } = useSelector(useDashboardSelector);
+  const { status } = useSelector(selector);
 
+  console.log(status, "status");
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");
@@ -43,7 +50,7 @@ export default function Notification({
 
       // Reset
       setTimeout(() => {
-        dispatch(resetStatus({ key: "createWallet", status: "idle" }));
+        dispatch(resetStatus({ key: asyncActionKey, status: "idle" }));
       }, 3000);
     } else if (status[asyncActionKey] === "idle") {
       setOpenInfo("");
@@ -53,40 +60,106 @@ export default function Notification({
   }, [status]);
 
   return (
-    <>
+    <AnimatePresence initial={false} mode="wait">
       {!!openInfo && (
-        <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
-            <MdLoop className="h-5 w-5 animate-spin" />
-          </div>
-          <div className="pl-4 text-sm font-normal">
-            <div dangerouslySetInnerHTML={{ __html: openInfo }} />
-          </div>
-          <Toast.Toggle onClick={() => setOpenInfo("")} />
-        </Toast>
+        <motion.div
+          key={asyncActionKey}
+          initial={{
+            position: "fixed",
+            opacity: 0,
+            top: 30,
+            right: 0,
+            x: 500,
+          }}
+          animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
+          exit={{
+            opacity: 0,
+            top: 30,
+            x: 0,
+            right: 0,
+            transition: { duration: 0.5 },
+          }}
+        >
+          <Toast className="fixed right-[30px] z-50 max-w-sm dark:bg-cyan-200 dark:text-cyan-800">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-100 text-cyan-500 dark:bg-cyan-900 dark:text-cyan-300">
+              <MdLoop className="h-5 w-5 animate-spin" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openInfo }} />
+            </div>
+            <Toast.Toggle
+              className="dark:bg-cyan-200 dark:text-cyan-800 dark:hover:bg-cyan-200 dark:hover:text-cyan-800"
+              onClick={() => setOpenInfo("")}
+            />
+          </Toast>
+        </motion.div>
       )}
       {!!openSuccess && (
-        <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-            <HiCheck className="h-5 w-5" />
-          </div>
-          <div className="pl-4 text-sm font-normal">
-            <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
-          </div>
-          <Toast.Toggle onClick={() => setOpenSuccess("")} />
-        </Toast>
+        <motion.div
+          key={asyncActionKey}
+          initial={{
+            position: "fixed",
+            opacity: 0,
+            top: 30,
+            right: 0,
+            x: 500,
+          }}
+          animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
+          exit={{
+            opacity: 0,
+            top: 30,
+            x: 0,
+            right: 0,
+            transition: { duration: 0.5 },
+          }}
+        >
+          <Toast className="fixed right-[30px] z-50 max-w-sm dark:bg-green-200 dark:text-green-800">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openSuccess }} />
+            </div>
+            <Toast.Toggle
+              className="dark:bg-green-200 dark:text-green-800 dark:hover:bg-green-200 dark:hover:text-green-800"
+              onClick={() => setOpenSuccess("")}
+            />
+          </Toast>
+        </motion.div>
       )}
       {!!openError && (
-        <Toast className="fixed bottom-10 left-10 z-50 max-w-sm">
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
-            <HiExclamation className="h-5 w-5" />
-          </div>
-          <div className="pl-4 text-sm font-normal">
-            <div dangerouslySetInnerHTML={{ __html: openError }} />
-          </div>
-          <Toast.Toggle onClick={() => setOpenError("")} />
-        </Toast>
+        <motion.div
+          key={asyncActionKey}
+          initial={{
+            position: "fixed",
+            opacity: 0,
+            top: 30,
+            right: 0,
+            x: 500,
+          }}
+          animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
+          exit={{
+            opacity: 0,
+            top: 30,
+            x: 0,
+            right: 0,
+            transition: { duration: 0.5 },
+          }}
+        >
+          <Toast className="fixed right-[30px] z-50 max-w-sm dark:bg-red-200 dark:text-red-800">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+              <HiExclamation className="h-5 w-5" />
+            </div>
+            <div className="pl-4 text-sm font-normal">
+              <div dangerouslySetInnerHTML={{ __html: openError }} />
+            </div>
+            <Toast.Toggle
+              className="dark:bg-red-200 dark:text-red-800 dark:hover:bg-red-200 dark:hover:text-red-800"
+              onClick={() => setOpenError("")}
+            />
+          </Toast>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 }

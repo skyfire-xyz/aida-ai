@@ -125,6 +125,8 @@ export default function ServiceManager() {
         <div className="flex w-full flex-col">
           <Notification
             asyncActionKey="createWallet"
+            selector={useDashboardSelector}
+            resetStatus={resetStatus}
             messages={{
               success: "Successfully created wallet",
               error: "Sorry, the blockchain network is slow right now",

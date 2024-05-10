@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../reducers/authentication";
 import { useRouter } from "next/navigation";
-import { resetState } from "../../reducers/dashboardSlice";
+import { resetState, resetStatus } from "../../reducers/dashboardSlice";
 
 function Logout() {
   const dispatch = useDispatch<AppDispatch>();

@@ -379,7 +379,7 @@ export const useBalanceSelector = (state: any) => {
 
   // aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
 
-  return aggregatedBalance;
+  // return aggregatedBalance;
 };
 
 export const { resetStatus, resetState } = dashboardSlice.actions;

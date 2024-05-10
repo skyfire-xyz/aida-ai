@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { useAuthSelector } from "./reducers/authentication";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Notification from "./components/Notification";
 
 export const metadata: Metadata = {
   title: "Aida.AI - Powered by Skyfire Payments",

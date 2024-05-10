@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import {
   getUser,
+  resetStatus,
   setUser,
   signInUser,
   useAuthSelector,
 } from "../../reducers/authentication";
+import Notification from "../../components/Notification";
 
 export interface LoginFormInput {
   username: string;
@@ -114,6 +116,16 @@ const SignInPage: FC = function () {
           </Card>
         </div>
       </form>
+      <Notification
+        asyncActionKey="signInUser"
+        resetStatus={resetStatus}
+        selector={useAuthSelector}
+        messages={{
+          success: "Successfully Logged in",
+          error: "Something went wrong",
+          pending: "",
+        }}
+      />
     </div>
   );
 };

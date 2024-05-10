@@ -20,7 +20,6 @@ import { MdDelete } from "react-icons/md";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { MdLoop } from "react-icons/md";
 import { IoIosWallet } from "react-icons/io";
-import UserOperation from "../../../dashboard/admin/components/UserOperation";
 import PaymentTransactions from "../../transactions/components/AllTransactions";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
@@ -223,6 +222,8 @@ export default function WalletManager() {
         <div className="flex w-full flex-col">
           <Notification
             asyncActionKey="transferFund"
+            selector={useDashboardSelector}
+            resetStatus={resetStatus}
             messages={{
               success:
                 "Successfully requested fund transfer. <br />Your fund will be transferred in a few minutes.",

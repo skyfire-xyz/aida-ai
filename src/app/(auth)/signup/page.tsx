@@ -19,8 +19,10 @@ import { useDashboardSelector } from "../../reducers/dashboardSlice";
 import {
   createReceiverWallet,
   createSenderWallet,
+  resetStatus,
   useAuthSelector,
 } from "../../reducers/authentication";
+import Notification from "../../components/Notification";
 
 interface SignupFormInput {
   username: string;
@@ -172,6 +174,26 @@ const SignUpPage: FC = function () {
           </Card>
         </div>
       </form>
+      <Notification
+        asyncActionKey="createSenderWallet"
+        selector={useAuthSelector}
+        resetStatus={resetStatus}
+        messages={{
+          success: "Successfully created an account",
+          error: "",
+          pending: "Something went wrong...",
+        }}
+      />
+      <Notification
+        asyncActionKey="createReceiverWallet"
+        selector={useAuthSelector}
+        resetStatus={resetStatus}
+        messages={{
+          success: "Successfully created an account",
+          error: "",
+          pending: "Something went wrong...",
+        }}
+      />
     </div>
   );
 };

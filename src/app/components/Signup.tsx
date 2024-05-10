@@ -57,7 +57,7 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
         <TextInput
           type="_password"
           {...register("_password")}
-          placeholder="password"
+          placeholder="_password"
           className="w-full rounded-xl bg-[#f7f9fa]"
         ></TextInput>
       </div>
