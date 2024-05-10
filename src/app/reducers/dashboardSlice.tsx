@@ -96,15 +96,33 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   },
 );
 
-export const redeemClaims = createAsyncThunk<
-  any,
-  { destinationAddress: string }
->("dashboard/redeemClaims", async ({ destinationAddress }) => {
-  const res = await api.post(`v3/users/redeem`, {
-    destinationAddress: destinationAddress,
-  });
-  return res.data;
-});
+export const redeemClaims = createAsyncThunk<any, { walletAddress: string }>(
+  "dashboard/redeemClaims",
+  async ({ walletAddress }, thunkAPI) => {
+    const r = await api.get(`v3/wallet/claims/${walletAddress}`);
+    const claims = r.data.transactions;
+    const sourceAddresses = claims.reduce(
+      (acc: string[], claim: CommonTransaction) => {
+        if (claim.claim?.sourceAddress) {
+          if (acc.indexOf(claim.claim?.sourceAddress) === -1) {
+            return acc.concat(claim.claim?.sourceAddress);
+          }
+        }
+        return acc;
+      },
+      [],
+    );
+    const res = await Promise.all(
+      sourceAddresses.map(async (address: string) => {
+        return await api.post(`v3/users/redeem`, {
+          sourceAddress: address,
+        });
+      }),
+    );
+
+    return res;
+  },
+);
 
 export const transferFund = createAsyncThunk<
   any,

@@ -105,7 +105,7 @@ export default function Service({ walletType, wallet }: ServiceProps) {
               size="xs"
               // disabled={wallet.balance?.escrow?.available === 0}
               onClick={() =>
-                dispatch(redeemClaims({ destinationAddress: wallet.address }))
+                dispatch(redeemClaims({ walletAddress: wallet.address }))
               }
             >
               Redeem
