@@ -29,7 +29,6 @@ export default function Notification({
   const dispatch = useDispatch<AppDispatch>();
   const { status } = useSelector(selector);
 
-  console.log(status, "status");
   const [openError, setOpenError] = useState("");
   const [openSuccess, setOpenSuccess] = useState("");
   const [openInfo, setOpenInfo] = useState("");
@@ -46,6 +45,7 @@ export default function Notification({
     } else if (status[asyncActionKey] === "pending") {
       setOpenInfo(messages.pending);
     } else if (status[asyncActionKey] === "failed") {
+      setOpenInfo("");
       setOpenError(messages.error);
 
       // Reset
@@ -70,6 +70,7 @@ export default function Notification({
             top: 30,
             right: 0,
             x: 500,
+            zIndex: 50,
           }}
           animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
           exit={{
@@ -103,6 +104,7 @@ export default function Notification({
             top: 30,
             right: 0,
             x: 500,
+            zIndex: 50,
           }}
           animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
           exit={{
@@ -136,6 +138,7 @@ export default function Notification({
             top: 30,
             right: 0,
             x: 500,
+            zIndex: 50,
           }}
           animate={{ opacity: 1, top: 30, x: 0, right: 0, width: "100%" }}
           exit={{

@@ -55,7 +55,7 @@ export default function PaymentTransactions() {
                 </Table.Row>
               ))}
           </Table.Body>
-        </Table> */}
+        </Table>
       </div>
     </div>
   );
