@@ -1,28 +1,16 @@
 "use client";
 
-import DataSource from "./DataSource";
 import ChatPanel from "./ChatPanel";
-import {
-  Dispatch,
-  SetStateAction,
-  use,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { PaymentType } from "./types";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useDispatch, useSelector } from "react-redux";
-import { useProtocolLogsSelector } from "../reducers/aiBotSlice";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { setUser, useAuthSelector } from "../reducers/authentication";
-import { HiLogout } from "react-icons/hi";
+import { useAuthSelector } from "../reducers/authentication";
 import { AppDispatch } from "@/src/store";
-import { Card } from "flowbite-react";
+import UserBalance from "@/src/common/components/UserBalance";
 // import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
-
 type Image = any;
 interface AiChatProps {
   images: Image[];

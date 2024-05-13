@@ -1,31 +1,13 @@
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getUserBalance,
-  setUser,
-  useAuthSelector,
-  userBalanceSelector,
-} from "../../app/reducers/authentication";
+import { setUser, useAuthSelector } from "../../app/reducers/authentication";
 import { AppDispatch } from "@/src/store";
-import {
-  fetchWallets,
-  resetState,
-  useDashboardSelector,
-} from "@/src/app/reducers/dashboardSlice";
-import { use, useEffect } from "react";
+import { resetState } from "@/src/app/reducers/dashboardSlice";
+import UserBalance from "./UserBalance";
 
 function UserLoginInfo() {
   const dispatch = useDispatch<AppDispatch>();
-  const format = useFormatter();
   const auth = useSelector(useAuthSelector);
-  const userBalance = useSelector(userBalanceSelector);
-
-  useEffect(() => {
-    if (!userBalance && auth.user) {
-      dispatch(getUserBalance());
-    }
-  }, [userBalance, auth]);
 
   return (
     <>
@@ -37,22 +19,11 @@ function UserLoginInfo() {
               className="mr-2 h-12 w-12 rounded-full object-cover"
               alt=""
             />
-            <div className="text-sm">
-              Username: <b>{auth.user.username}</b>
-              {userBalance && (
-                <p>
-                  Balance:{" "}
-                  <b>
-                    {format.number(
-                      Number((userBalance.escrow?.available || 0) / 1000000),
-                      {
-                        style: "currency",
-                        currency: "USD",
-                      },
-                    )}
-                  </b>
-                </p>
-              )}
+            <div>
+              <div className="text-sm">
+                <b>{auth.user.username}</b>
+              </div>
+              <UserBalance />
             </div>
             <Link
               className="ml-4 flex items-center"
