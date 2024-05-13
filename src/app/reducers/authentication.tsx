@@ -6,6 +6,7 @@ import { AIDA_USER_ID, BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
 import { LoginFormInput } from "../(auth)/signin/page";
 import { stat } from "fs";
+import { useSelector } from "react-redux";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -57,10 +58,13 @@ export const signInUser = createAsyncThunk<any, LoginFormInput>(
   },
 );
 
-export const getUserBalance = createAsyncThunk<any, { walletAddress: string }>(
+export const getUserBalance = createAsyncThunk<any>(
   "authentication/getUserBalance",
-  async ({ walletAddress }, thunkAPI) => {
-    const res = await api.get(`v3/wallet/balance?address=${walletAddress}`);
+  async (_, thunkAPI) => {
+    const auth = useAuthSelector(thunkAPI.getState());
+    const res = await api.get(
+      `v3/wallet/balance?address=${auth.user.walletAddress}`,
+    );
     return res.data;
   },
 );

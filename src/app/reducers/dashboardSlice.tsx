@@ -6,8 +6,6 @@ import {
   Wallet,
   WalletType,
 } from "./types";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import demoTsx from "./demoTxs";
 import api from "@/src/common/lib/api";
 
 const initialState: DashboardReduxState = {

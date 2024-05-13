@@ -10,6 +10,7 @@ import {
 import { useTranslations } from "next-intl";
 import { scrollToBottom } from "../utils";
 import { AppDispatch } from "@/src/store";
+import { getUserBalance } from "../../reducers/authentication";
 
 export interface ProtocolLogsProps {}
 
@@ -27,6 +28,10 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
       dispatch(setShouldScrollToBottom(false));
     });
   }, [shouldScrollToBottom]);
+
+  useEffect(() => {
+    dispatch(getUserBalance());
+  }, [protocolLogs]);
 
   return (
     <div

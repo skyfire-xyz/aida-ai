@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import App from "next/app";
 import { AppDispatch } from "@/src/store";
 import api from "@/src/common/lib/api";
+import { getUserBalance } from "../../reducers/authentication";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");

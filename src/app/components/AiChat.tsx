@@ -48,6 +48,7 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
   const userAvatarImageData = { url: "" };
   const botAvatarImageData = { url: "" };
   const botImageData = { url: "" };

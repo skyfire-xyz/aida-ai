@@ -36,7 +36,7 @@ import {
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { useAuthSelector } from "../reducers/authentication";
+import { getUserBalance, useAuthSelector } from "../reducers/authentication";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

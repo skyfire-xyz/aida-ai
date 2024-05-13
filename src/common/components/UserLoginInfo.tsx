@@ -23,7 +23,7 @@ function UserLoginInfo() {
 
   useEffect(() => {
     if (!userBalance && auth.user) {
-      dispatch(getUserBalance({ walletAddress: auth.user.walletAddress }));
+      dispatch(getUserBalance());
     }
   }, [userBalance, auth]);
 
