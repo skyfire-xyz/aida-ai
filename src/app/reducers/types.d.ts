@@ -172,6 +172,17 @@ export interface AuthenticationReduxState {
     createdDate: string;
     avatar?: string;
   };
+  userBalance?: {
+    escrow: {
+      total: number;
+      available: number;
+    };
+    claims: {
+      received: number;
+      sent: number;
+    };
+    total: number;
+  } | null;
   init: boolean;
   status: {
     [key: string]: "idle" | "pending" | "succeeded" | "failed";

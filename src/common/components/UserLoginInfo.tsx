@@ -1,14 +1,31 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, useAuthSelector } from "../../app/reducers/authentication";
+import {
+  getUserBalance,
+  setUser,
+  useAuthSelector,
+  userBalanceSelector,
+} from "../../app/reducers/authentication";
 import { AppDispatch } from "@/src/store";
-import { resetState } from "@/src/app/reducers/dashboardSlice";
+import {
+  fetchWallets,
+  resetState,
+  useDashboardSelector,
+} from "@/src/app/reducers/dashboardSlice";
+import { use, useEffect } from "react";
 
 function UserLoginInfo() {
   const dispatch = useDispatch<AppDispatch>();
-  const t = useTranslations("ai");
+  const format = useFormatter();
   const auth = useSelector(useAuthSelector);
+  const userBalance = useSelector(userBalanceSelector);
+
+  useEffect(() => {
+    if (!userBalance && auth.user) {
+      dispatch(getUserBalance({ walletAddress: auth.user.walletAddress }));
+    }
+  }, [userBalance, auth]);
 
   return (
     <>
@@ -22,9 +39,20 @@ function UserLoginInfo() {
             />
             <div className="text-sm">
               Username: <b>{auth.user.username}</b>
-              <p>
-                Balance: <b>$0.00</b>
-              </p>
+              {userBalance && (
+                <p>
+                  Balance:{" "}
+                  <b>
+                    {format.number(
+                      Number((userBalance.escrow?.available || 0) / 1000000),
+                      {
+                        style: "currency",
+                        currency: "USD",
+                      },
+                    )}
+                  </b>
+                </p>
+              )}
             </div>
             <Link
               className="ml-4 flex items-center"

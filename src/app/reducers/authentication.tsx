@@ -5,12 +5,14 @@ import axios from "axios";
 import { AIDA_USER_ID, BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
 import { LoginFormInput } from "../(auth)/signin/page";
+import { stat } from "fs";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
 const initialState: AuthenticationReduxState = {
   init: false,
   status: {},
+  userBalance: null,
 };
 
 function storeLocalUserInfo(user: any) {
@@ -51,6 +53,14 @@ export const signInUser = createAsyncThunk<any, LoginFormInput>(
       username: username,
       _password: _password,
     });
+    return res.data;
+  },
+);
+
+export const getUserBalance = createAsyncThunk<any, { walletAddress: string }>(
+  "authentication/getUserBalance",
+  async ({ walletAddress }, thunkAPI) => {
+    const res = await api.get(`v3/wallet/balance?address=${walletAddress}`);
     return res.data;
   },
 );
@@ -131,12 +141,29 @@ export const authenticationSlice = createSlice({
       })
       .addCase(createReceiverWallet.rejected, (state, action) => {
         state.status["createReceiverWallet"] = "failed";
+      })
+      /**
+       * User Balance
+       */
+      .addCase(getUserBalance.pending, (state, action) => {
+        state.status["getUserBalance"] = "pending";
+      })
+      .addCase(getUserBalance.fulfilled, (state, action) => {
+        state.status["getUserBalance"] = "succeeded";
+        state.userBalance = action.payload;
+      })
+      .addCase(getUserBalance.rejected, (state, action) => {
+        state.status["getUserBalance"] = "failed";
       });
   },
 });
 
 export const useAuthSelector = (state: any) => {
   return state?.authentication;
+};
+
+export const userBalanceSelector = (state: any) => {
+  return state?.authentication?.userBalance;
 };
 
 export const { setUser, getUser, resetStatus } = authenticationSlice.actions;

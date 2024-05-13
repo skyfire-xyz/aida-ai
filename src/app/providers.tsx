@@ -2,7 +2,7 @@
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, store } from "@/src/store";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getUser, useAuthSelector } from "./reducers/authentication";
 import { DarkThemeWrapper } from "./dashboard/DarkThemeWrapper";
 
@@ -12,6 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector(useAuthSelector);
 
@@ -22,9 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (auth.init && !auth.user) {
       router.push("/signin");
     } else if (auth.init && auth.user) {
-      if (auth.user.username.toLocaleLowerCase() === "aida") {
-        router.push("/admin");
-      } else {
+      if (pathname === "/signup" || pathname === "/signin") {
         router.push("/dashboard");
       }
     }
