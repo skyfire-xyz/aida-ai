@@ -11,6 +11,7 @@ const config: Config = {
   plugins: [flowbite.plugin()],
   theme: {
     fontSize: {
+      xs: "10px",
       sm: "12px",
       lg: "14px",
       xl: "16px",
