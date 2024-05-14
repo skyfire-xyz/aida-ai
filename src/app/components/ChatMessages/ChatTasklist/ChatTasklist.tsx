@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Accordion, Badge, Button, Card, List } from "flowbite-react";
+import { Badge, Button, Card } from "flowbite-react";
 import {
   MdOutlineCheckBox,
   MdOutlineCheckBoxOutlineBlank,
 } from "react-icons/md";
+import { RxCrossCircled } from "react-icons/rx";
 import { ImSpinner11 } from "react-icons/im";
 import { FaPlay } from "react-icons/fa";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
@@ -34,7 +35,11 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
     if (executeAll) {
       const isAllExecuted = results?.every((result) => {
         const task = tasks[result];
-        return task.status === "complete" || task.status === "pending";
+        return (
+          task.status === "complete" ||
+          task.status === "pending" ||
+          task.status === "error"
+        );
       });
       if (!isAllExecuted) {
         results?.forEach((result) => {
@@ -42,6 +47,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
           if (
             task.status === "complete" ||
             task.status === "pending" ||
+            task.status === "error" ||
             !task.isDependentTasksComplete
           )
             return;
@@ -71,6 +77,8 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
             StatusIcon = MdOutlineCheckBox;
           } else if (task.status === "pending") {
             StatusIcon = ImSpinner11;
+          } else if (task.status === "error") {
+            StatusIcon = RxCrossCircled;
           }
 
           return (
@@ -80,7 +88,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                 task.status === "complete"
                   ? "cursor-pointer bg-green-100"
                   : "white"
-              }`}
+              } `}
             >
               <div className="flex items-center">
                 <Badge color="gray" className="mr-2">
@@ -89,7 +97,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                 <TaskSource skillName={task.skill} />
                 <div>
                   <p
-                    className="flex-grow-1 font-normal text-gray-700 dark:text-gray-400"
+                    className={`flex-grow-1 font-normal text-gray-700 dark:text-gray-400 ${task.status === "error" ? "text-red-400" : ""}`}
                     onClick={() => {
                       if (task.status === "complete") {
                         setShowTasks({
@@ -136,6 +144,14 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                         </div>
                       </Button>
                     )}
+                  {task.status === "error" && (
+                    <div className="ml-4 flex items-center">
+                      <RxCrossCircled
+                        color="red"
+                        className="h-6 w-6 flex-shrink-0"
+                      />
+                    </div>
+                  )}
                   {task.status === "pending" && (
                     <Button
                       color="light"

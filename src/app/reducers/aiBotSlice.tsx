@@ -438,7 +438,7 @@ export const aiBotSlice = createSlice({
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
-        // TODO: Handle error cases
+        console.log("????");
         state.tasks[action.meta.arg.task.referenceId].status = "error";
         state.error.fetchAll = "Something went wrong";
       });
