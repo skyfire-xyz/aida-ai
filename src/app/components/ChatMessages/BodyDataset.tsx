@@ -49,7 +49,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   }
 
   return (
-    <ul className="pt-4">
+    <ul className="pt-2">
       {showingDatasets.map((data: any, index: number) => {
         return (
           <li

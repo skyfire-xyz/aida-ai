@@ -24,15 +24,15 @@ function ChatGeneral({
   const t = useTranslations("ai");
   if (direction === "right") {
     return (
-      <div className="flex justify-end mb-4">
-        <div className="mr-2 py-3 px-4 bg-gray-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl">
-          <article className="text-white prose">
+      <div className="mb-4 flex justify-end">
+        <div className="mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-gray-400 px-4 py-3">
+          <article className="prose text-white">
             <Markdown>{textMessage}</Markdown>
           </article>
         </div>
         <img
           src={avatarUrl}
-          className="object-cover h-12 w-12 rounded-full"
+          className="h-10 w-10 rounded-full object-cover"
           alt=""
         />
       </div>
@@ -40,24 +40,24 @@ function ChatGeneral({
   }
 
   return (
-    <div className={`flex justify-start mb-4`}>
+    <div className={`mb-4 flex justify-start`}>
       <img
         src={avatarUrl}
-        className="object-cover h-12 w-12 rounded-full"
+        className="h-10 w-10 rounded-full object-cover"
         alt=""
       />
-      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl md:max-w-[400px] max-w-[calc(100%-80px)]">
-        <article className="text-white prose">
+      <div className="ml-2 max-w-[calc(100%-80px)] rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3 md:max-w-[400px]">
+        <article className="prose text-white">
           <Markdown>{textMessage}</Markdown>
         </article>
-        {children && <div className="mt-2">{children}</div>}
+        {children && <div className="mt-1">{children}</div>}
         {contentImageUrl && (
           <div>
             <img
               src={contentImageUrl}
-              className="mt-4 object-cover w-90 h-90 rounded-xl"
+              className="w-90 h-90 mt-4 rounded-xl object-cover"
             />
-            <div className="mt-2 flex mx-auto gap-2 justify-center">
+            <div className="mx-auto mt-2 flex justify-center gap-2">
               <Button
                 color="light"
                 onClick={() => {

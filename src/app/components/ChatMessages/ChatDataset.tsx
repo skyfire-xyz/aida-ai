@@ -17,13 +17,13 @@ export interface ChatDatasetProps {
 
 function ChatDataset(props: ChatDatasetProps) {
   return (
-    <div className={`flex justify-start mb-4`}>
+    <div className={`mb-4 flex justify-start`}>
       <img
         src={props.avatarUrl}
-        className="object-cover h-12 w-12 rounded-full"
+        className="h-10 w-10 rounded-full object-cover"
         alt=""
       />
-      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white">
+      <div className="ml-2 rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3 text-white">
         <span>{props.textMessage}</span>
         <BodyDataset {...props} />
       </div>

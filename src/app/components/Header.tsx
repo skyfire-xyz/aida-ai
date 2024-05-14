@@ -34,7 +34,7 @@ const Header: React.FC = () => {
               variant="h2"
               sx={{ fontSize: "36px", fontWeight: "700" }}
             > */}
-            <h2 className="text-4xl text-white">{t("page.title")}</h2>
+            <h2 className="text-4xl font-bold text-white">{t("page.title")}</h2>
             {/* </Typography> */}
             <div className="flex items-center">
               <h3 className="mdL:text-xl mr-1 text-white">

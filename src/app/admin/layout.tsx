@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/src/locale/en.json";
 import { AuthProvider } from "../providers";
 import { DarkThemeWrapper } from "../dashboard/DarkThemeWrapper";
-import NavbarSidebarLayout from "./components/navbar-sidebar";
+import NavbarSidebarLayout from "../dashboard/components/navbar-sidebar";
 
 export default function RootLayout({
   children,

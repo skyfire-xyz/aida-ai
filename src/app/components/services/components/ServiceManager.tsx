@@ -51,14 +51,14 @@ export function ServiceImage({ service }: { service: string }) {
 
   if (!imageUrl && service) {
     return (
-      <div className="rounded-ful flex h-12 w-12 items-center justify-center rounded-lg bg-gray-500">
+      <div className="rounded-ful flex h-10 w-10 items-center justify-center rounded-lg bg-gray-500">
         {service[0]}
       </div>
     );
   }
 
   return (
-    <div className="flex h-12 w-12 items-center justify-center">
+    <div className="flex h-10 w-10 items-center justify-center">
       <img src={imageUrl} width="50" height="50" />
     </div>
   );

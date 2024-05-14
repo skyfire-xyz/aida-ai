@@ -16,7 +16,7 @@ function UserLoginInfo() {
           <div className="flex items-center">
             <img
               src={auth.user.avatar}
-              className="mr-2 h-12 w-12 rounded-full object-cover"
+              className="mr-2 h-10 w-10 rounded-full object-cover"
               alt=""
             />
             <div>

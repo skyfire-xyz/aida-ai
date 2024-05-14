@@ -35,14 +35,14 @@ const ExampleSidebar: FC = function () {
           <Sidebar.Items>
             <Sidebar.ItemGroup>
               <Sidebar.Item
-                icon={HiMiniWallet}
+                icon={() => <HiMiniWallet className="h-4 w-4" />}
                 onClick={() => router.push("/admin")}
                 className={"/admin" === pathname ? activeClass : nonActiveClass}
               >
                 Wallet Management
               </Sidebar.Item>
               <Sidebar.Item
-                icon={FaRobot}
+                icon={() => <FaRobot className="h-4 w-4" />}
                 onClick={() => router.push("/admin/services")}
                 className={
                   "/admin/services" === pathname ? activeClass : nonActiveClass
@@ -57,7 +57,7 @@ const ExampleSidebar: FC = function () {
                     ? activeClass
                     : nonActiveClass
                 }
-                icon={GrTransaction}
+                icon={() => <GrTransaction className="h-4 w-4" />}
               >
                 Transactions
               </Sidebar.Item>
@@ -66,7 +66,7 @@ const ExampleSidebar: FC = function () {
               <Sidebar.Item
                 onClick={() => router.push("/logout")}
                 className={nonActiveClass}
-                icon={HiLogout}
+                icon={() => <HiLogout className="h-4 w-4" />}
               >
                 Logout
               </Sidebar.Item>

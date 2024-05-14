@@ -12,18 +12,21 @@ import {
 import { HiMiniWallet } from "react-icons/hi2";
 import { RiAdminLine } from "react-icons/ri";
 import { usePathname, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { useAuthSelector } from "../../reducers/authentication";
 
 const ExampleSidebar: FC = function () {
   const router = useRouter();
   const pathname = usePathname();
+  const auth = useSelector(useAuthSelector);
 
   const activeClass = "bg-gray-100 dark:bg-gray-700 cursor-pointer";
   const nonActiveClass = "cursor-pointer";
   return (
     <Sidebar aria-label="Sidebar with multi-level dropdown example">
       <div className="flex h-full flex-col justify-between py-2">
-        <div>
-          <form className="pb-3 md:hidden">
+        {/* <div className=""> */}
+        {/* <form className="pb-3 md:hidden">
             <TextInput
               icon={HiSearch}
               type="search"
@@ -31,63 +34,94 @@ const ExampleSidebar: FC = function () {
               required
               size={32}
             />
-          </form>
-          <Sidebar.Items>
+          </form> */}
+        <Sidebar.Items className="flex h-full flex-col">
+          <Sidebar.ItemGroup>
+            <Sidebar.Item
+              icon={() => <HiChartPie className="h-4 w-4" />}
+              onClick={() => router.push("/dashboard")}
+              className={
+                "/dashboard" === pathname ? activeClass : nonActiveClass
+              }
+            >
+              Dashboard
+            </Sidebar.Item>
+            <Sidebar.Item
+              onClick={() => router.push("/dashboard/activity")}
+              className={
+                "/dashboard/activity" === pathname
+                  ? activeClass
+                  : nonActiveClass
+              }
+              icon={() => <GrTransaction className="h-4 w-4" />}
+            >
+              Activity
+            </Sidebar.Item>
+            <Sidebar.Item
+              onClick={() => router.push("/dashboard/developers")}
+              className={
+                "/dashboard/developers" === pathname
+                  ? activeClass
+                  : nonActiveClass
+              }
+              icon={() => <FaCode className="h-4 w-4" />}
+            >
+              Developers
+            </Sidebar.Item>
+            <Sidebar.Item
+              onClick={() => router.push("/dashboard/support")}
+              className={
+                "/dashboard/support" === pathname ? activeClass : nonActiveClass
+              }
+              icon={() => <HiInformationCircle className="h-4 w-4" />}
+            >
+              Support
+            </Sidebar.Item>
+          </Sidebar.ItemGroup>
+          {auth.user && auth.user.isAdmin && (
             <Sidebar.ItemGroup>
               <Sidebar.Item
-                icon={HiChartPie}
-                onClick={() => router.push("/dashboard")}
+                icon={() => <HiMiniWallet className="h-4 w-4" />}
+                onClick={() => router.push("/admin/wallets")}
                 className={
-                  "/dashboard" === pathname ? activeClass : nonActiveClass
+                  "/admin/wallets" === pathname ? activeClass : nonActiveClass
                 }
               >
-                Dashboard
+                Wallet Management
               </Sidebar.Item>
               <Sidebar.Item
-                onClick={() => router.push("/dashboard/activity")}
+                icon={() => <FaRobot className="h-4 w-4" />}
+                onClick={() => router.push("/admin/services")}
                 className={
-                  "/dashboard/activity" === pathname
+                  "/admin/services" === pathname ? activeClass : nonActiveClass
+                }
+              >
+                Add Service
+              </Sidebar.Item>
+              <Sidebar.Item
+                onClick={() => router.push("/admin/transactions")}
+                className={
+                  "/admin/transactions" === pathname
                     ? activeClass
                     : nonActiveClass
                 }
-                icon={GrTransaction}
+                icon={() => <GrTransaction className="h-4 w-4" />}
               >
-                Activity
-              </Sidebar.Item>
-              <Sidebar.Item
-                onClick={() => router.push("/dashboard/developers")}
-                className={
-                  "/dashboard/developers" === pathname
-                    ? activeClass
-                    : nonActiveClass
-                }
-                icon={FaCode}
-              >
-                Developers
-              </Sidebar.Item>
-              <Sidebar.Item
-                onClick={() => router.push("/dashboard/support")}
-                className={
-                  "/dashboard/support" === pathname
-                    ? activeClass
-                    : nonActiveClass
-                }
-                icon={HiInformationCircle}
-              >
-                Support
+                Transactions
               </Sidebar.Item>
             </Sidebar.ItemGroup>
-            <Sidebar.ItemGroup>
-              <Sidebar.Item
-                onClick={() => router.push("/logout")}
-                className={nonActiveClass}
-                icon={HiLogout}
-              >
-                Logout
-              </Sidebar.Item>
-            </Sidebar.ItemGroup>
-          </Sidebar.Items>
-        </div>
+          )}
+          <Sidebar.ItemGroup className="mt-auto">
+            <Sidebar.Item
+              onClick={() => router.push("/logout")}
+              className={nonActiveClass}
+              icon={() => <HiLogout className="h-4 w-4" />}
+            >
+              Logout
+            </Sidebar.Item>
+          </Sidebar.ItemGroup>
+        </Sidebar.Items>
+        {/* </div> */}
       </div>
     </Sidebar>
   );

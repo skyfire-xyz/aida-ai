@@ -16,7 +16,7 @@ export interface ChatVideoSearchProps {
         static: string;
         rich: string;
       };
-    }
+    },
   ];
 }
 
@@ -29,14 +29,14 @@ function ChatVideoSearch({
   const t = useTranslations("ai");
 
   return (
-    <div className={`flex justify-start mb-4`}>
+    <div className={`mb-4 flex justify-start`}>
       <img
         src={avatarUrl}
-        className="object-cover h-12 w-12 rounded-full"
+        className="h-10 w-10 rounded-full object-cover"
         alt=""
       />
-      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl max-w-[calc(100%-80px)]">
-        <article className="text-white prose">
+      <div className="ml-2 max-w-[calc(100%-80px)] rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3">
+        <article className="prose text-white">
           <Markdown>{textMessage}</Markdown>
         </article>
         <BodyVideos results={results} />

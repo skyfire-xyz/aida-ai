@@ -67,7 +67,7 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
                 </p>
                 <ExamplePrompts />
               </div>
-              <p className="mt-4 font-bold">
+              <p className="mb-2 mt-4 font-bold">
                 <Link
                   href="https://www.oklink.com/amoy/address/0x45c83889BD84D5FB77039B67C30695878f506313/token-transfer"
                   target="_blank"
