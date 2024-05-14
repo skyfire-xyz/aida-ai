@@ -16,7 +16,10 @@ function UserBalance() {
   const userBalance = useSelector(userBalanceSelector);
 
   useEffect(() => {
-    if (!userBalance && auth.user) {
+    if (
+      (!userBalance && auth.user && !auth.status["getUserBalance"]) ||
+      auth.status["getUserBalance"] === "idle"
+    ) {
       dispatch(getUserBalance());
     }
   }, [userBalance, auth]);
