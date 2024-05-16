@@ -35,7 +35,7 @@ export default function DialogFundTransfer({
   const onSubmit: SubmitHandler<TransferFundFormInput> = async (data) => {
     try {
       setOpenInfo("Transferring fund...");
-      const response = await api.post(`v3/wallet/transfer`, {
+      const response = await api.post(`v1/wallet/transfer`, {
         sourceAddress: transferFund?.address,
         destinationAddress: data.address,
         amount: data.amount,

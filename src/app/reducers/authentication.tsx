@@ -30,7 +30,7 @@ function storeLocalUserInfo(user: any) {
 export const createSenderWallet = createAsyncThunk<any, { data: any }>(
   "authentication/createSenderWallet",
   async ({ data }, thunkAPI) => {
-    const res = await axios.post(`${BACKEND_API_URL}v3/users/sender`, {
+    const res = await axios.post(`${BACKEND_API_URL}v1/users/sender`, {
       username: data.username,
     });
     return res.data;
@@ -40,7 +40,7 @@ export const createSenderWallet = createAsyncThunk<any, { data: any }>(
 export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
   "authentication/createReceiverWallet",
   async ({ data }, thunkAPI) => {
-    const res = await axios.post(`${BACKEND_API_URL}v3/users/receiver`, {
+    const res = await axios.post(`${BACKEND_API_URL}v1/users/receiver`, {
       username: data.username,
     });
     return res.data;
@@ -50,7 +50,7 @@ export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
 export const signInUser = createAsyncThunk<any, LoginFormInput>(
   "authentication/signInUser",
   async ({ username, _password }, thunkAPI) => {
-    const res = await axios.post(`${BACKEND_API_URL}v3/login`, {
+    const res = await axios.post(`${BACKEND_API_URL}v1/login`, {
       username: username,
       _password: _password,
     });
@@ -63,7 +63,7 @@ export const getUserBalance = createAsyncThunk<any>(
   async (_, thunkAPI) => {
     const auth = useAuthSelector(thunkAPI.getState());
     const res = await api.get(
-      `v3/wallet/balance?address=${auth.user.walletAddress}`,
+      `v1/wallet/balance?address=${auth.user.walletAddress}`,
     );
     return res.data;
   },

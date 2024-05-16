@@ -56,7 +56,7 @@ export const fetchBalances = createAsyncThunk<any>(
 export const walletBalance = createAsyncThunk<any, { address: string }>(
   "dashboard/walletBalance",
   async (address) => {
-    const res = await api.get(`v3/wallet/balance?address=${address}`);
+    const res = await api.get(`v1/wallet/balance?address=${address}`);
     return res.data;
   },
 );
@@ -64,7 +64,7 @@ export const walletBalance = createAsyncThunk<any, { address: string }>(
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
-    const res = await api.get(`v3/wallet/transactions`);
+    const res = await api.get(`v1/wallet/transactions`);
     return res.data;
   },
 );
@@ -72,13 +72,13 @@ export const fetchAllTransactions = createAsyncThunk<any>(
 export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   "dashboard/fetchWallets",
   async ({ walletType }) => {
-    const res = await api.get(`v3/wallet?walletType=${walletType}`);
+    const res = await api.get(`v1/wallet?walletType=${walletType}`);
 
     const wallets = Array.isArray(res.data) ? res.data : [res.data];
 
     const balances = await Promise.all(
       wallets.map(async (w: Wallet) => {
-        return await api.get(`v3/wallet/balance?address=${w.address}`);
+        return await api.get(`v1/wallet/balance?address=${w.address}`);
       }),
     );
     balances.forEach((b: any, index: number) => {
@@ -97,7 +97,7 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
 export const redeemClaims = createAsyncThunk<any, { walletAddress: string }>(
   "dashboard/redeemClaims",
   async ({ walletAddress }, thunkAPI) => {
-    const r = await api.get(`v3/wallet/claims/${walletAddress}`);
+    const r = await api.get(`v1/wallet/claims/${walletAddress}`);
     const claims = r.data.transactions;
     const sourceAddresses = claims.reduce(
       (acc: string[], claim: CommonTransaction) => {
@@ -112,7 +112,7 @@ export const redeemClaims = createAsyncThunk<any, { walletAddress: string }>(
     );
     const res = await Promise.all(
       sourceAddresses.map(async (address: string) => {
-        return await api.post(`v3/users/redeem`, {
+        return await api.post(`v1/users/redeem`, {
           sourceAddress: address,
         });
       }),
@@ -133,7 +133,7 @@ export const transferFund = createAsyncThunk<
 >(
   "dashboard/transferFund",
   async ({ sourceAddress, address, amount, currency }) => {
-    const res = await api.post(`v3/wallet/transfer`, {
+    const res = await api.post(`v1/wallet/transfer`, {
       sourceAddress: sourceAddress,
       destinationAddress: address,
       amount: amount,
@@ -147,14 +147,14 @@ export const fetchUserTransactions = createAsyncThunk<
   any,
   { walletAddress: string }
 >("dashboard/fetchUserTransactions", async ({ walletAddress }) => {
-  const res = await api.get(`v3/wallet/transactions/${walletAddress}`);
+  const res = await api.get(`v1/wallet/transactions/${walletAddress}`);
   return res.data;
 });
 
 export const fetchUserClaims = createAsyncThunk<any, { walletAddress: string }>(
   "dashboard/fetchUserClaims",
   async ({ walletAddress }) => {
-    const res = await api.get(`v3/wallet/claims/${walletAddress}`);
+    const res = await api.get(`v1/wallet/claims/${walletAddress}`);
     return res.data;
   },
 );
@@ -164,7 +164,7 @@ export const createWallet = createAsyncThunk<any, { data: any }>(
   async ({ data }, thunkAPI) => {
     const price = Number(data.price) * 1000000;
     const service = data.service;
-    const res = await api.post(`v3/wallet`, {
+    const res = await api.post(`v1/wallet`, {
       price,
       serviceName: service,
       description: data.description,
