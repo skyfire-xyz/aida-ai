@@ -6,18 +6,20 @@ import {
   Wallet,
   WalletType,
 } from "./types";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import demoTransactions from "./demoTransactions.json";
+import api from "@/src/common/lib/api";
 
 const initialState: DashboardReduxState = {
   status: {},
   reservedWallets: {
     Sender: [
-      { name: "", address: "0x45c83889BD84D5FB77039B67C30695878f506313" },
+      {
+        name: "Skyfire Demo",
+        address: "0x45c83889BD84D5FB77039B67C30695878f506313",
+      },
     ],
     Receiver: [
       {
-        name: "Reserved",
+        name: "Gemini",
         address: "0x434c55cB06B0a8baa90588eA9eC94985069AaF51",
       },
       { name: "Joke", address: "0xB94dD221ef1302576E2785dAFB4Bad28cbBeA540" },
@@ -40,31 +42,119 @@ const initialState: DashboardReduxState = {
     Receiver: [],
   },
   transactions: [],
+  claims: [],
 };
+
+export const fetchBalances = createAsyncThunk<any>(
+  "dashboard/fetchBalances",
+  async () => {
+    // const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
+    // return res.data;
+  },
+);
+
+export const walletBalance = createAsyncThunk<any, { address: string }>(
+  "dashboard/walletBalance",
+  async (address) => {
+    const res = await api.get(`v1/wallet/balance?address=${address}`);
+    return res.data;
+  },
+);
 
 export const fetchAllTransactions = createAsyncThunk<any>(
   "dashboard/fetchAllTransactions",
   async () => {
-    const res = await axios.get(`${BACKEND_API_URL}v2/transactions`);
-    // return res.data;
-    return demoTransactions;
+    const res = await api.get(`v1/wallet/transactions`);
+    return res.data;
   },
 );
 
 export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
   "dashboard/fetchWallets",
   async ({ walletType }) => {
-    const res = await axios.get(
-      `${BACKEND_API_URL}v2/wallet?walletType=${walletType}`,
+    const res = await api.get(`v1/wallet?walletType=${walletType}`);
+
+    const wallets = Array.isArray(res.data) ? res.data : [res.data];
+
+    const balances = await Promise.all(
+      wallets.map(async (w: Wallet) => {
+        return await api.get(`v1/wallet/balance?address=${w.address}`);
+      }),
     );
-    return { wallets: res.data, walletType };
+    balances.forEach((b: any, index: number) => {
+      wallets[index].balance = b.data;
+    });
+
+    return {
+      wallets: wallets.filter((w: Wallet) => {
+        return w.type === walletType;
+      }),
+      walletType,
+    };
   },
 );
 
-export const redeemClaims = createAsyncThunk<any>(
+export const redeemClaims = createAsyncThunk<any, { walletAddress: string }>(
   "dashboard/redeemClaims",
-  async () => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/transactions/redeem`);
+  async ({ walletAddress }, thunkAPI) => {
+    const r = await api.get(`v1/wallet/claims/${walletAddress}`);
+    const claims = r.data.transactions;
+    const sourceAddresses = claims.reduce(
+      (acc: string[], claim: CommonTransaction) => {
+        if (claim.claim?.sourceAddress) {
+          if (acc.indexOf(claim.claim?.sourceAddress) === -1) {
+            return acc.concat(claim.claim?.sourceAddress);
+          }
+        }
+        return acc;
+      },
+      [],
+    );
+    const res = await Promise.all(
+      sourceAddresses.map(async (address: string) => {
+        return await api.post(`v1/users/redeem`, {
+          sourceAddress: address,
+        });
+      }),
+    );
+
+    return res;
+  },
+);
+
+export const transferFund = createAsyncThunk<
+  any,
+  {
+    sourceAddress: string;
+    address: string;
+    amount: string;
+    currency: string;
+  }
+>(
+  "dashboard/transferFund",
+  async ({ sourceAddress, address, amount, currency }) => {
+    const res = await api.post(`v1/wallet/transfer`, {
+      sourceAddress: sourceAddress,
+      destinationAddress: address,
+      amount: amount,
+      currency: currency,
+    });
+    return res.data;
+  },
+);
+
+export const fetchUserTransactions = createAsyncThunk<
+  any,
+  { walletAddress: string }
+>("dashboard/fetchUserTransactions", async ({ walletAddress }) => {
+  const res = await api.get(`v1/wallet/transactions/${walletAddress}`);
+  return res.data;
+});
+
+export const fetchUserClaims = createAsyncThunk<any, { walletAddress: string }>(
+  "dashboard/fetchUserClaims",
+  async ({ walletAddress }) => {
+    const res = await api.get(`v1/wallet/claims/${walletAddress}`);
     return res.data;
   },
 );
@@ -74,7 +164,7 @@ export const createWallet = createAsyncThunk<any, { data: any }>(
   async ({ data }, thunkAPI) => {
     const price = Number(data.price) * 1000000;
     const service = data.service;
-    const res = await axios.post(`${BACKEND_API_URL}v2/wallet`, {
+    const res = await api.post(`v1/wallet`, {
       price,
       serviceName: service,
       description: data.description,
@@ -90,6 +180,14 @@ export const dashboardSlice = createSlice({
   reducers: {
     resetStatus: (state, action) => {
       state.status[action.payload.key] = action.payload.status;
+    },
+    resetState: (state) => {
+      state.status = {};
+      state.wallets = {
+        Sender: [],
+        Receiver: [],
+      };
+      state.transactions = [];
     },
   },
   extraReducers: (builder) => {
@@ -129,16 +227,40 @@ export const dashboardSlice = createSlice({
         state.status["fetchWallets"] = "failed";
       })
       /**
-       * Transactions
+       * All Transactions
        */
       .addCase(fetchAllTransactions.pending, (state, action) => {
         state.status["fetchAllTransactions"] = "pending";
       })
       .addCase(fetchAllTransactions.fulfilled, (state, action) => {
-        state.transactions = action.payload;
+        state.transactions = action.payload.transactions;
       })
       .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.status["fetchAllTransactions"] = "failed";
+      })
+      /**
+       * Transactions
+       */
+      .addCase(fetchUserClaims.pending, (state, action) => {
+        state.status["fetchUserClaims"] = "pending";
+      })
+      .addCase(fetchUserClaims.fulfilled, (state, action) => {
+        state.claims = action.payload.transactions;
+      })
+      .addCase(fetchUserClaims.rejected, (state, action) => {
+        state.status["fetchUserClaims"] = "failed";
+      })
+      /**
+       * Claims
+       */
+      .addCase(fetchUserTransactions.pending, (state, action) => {
+        state.status["fetchUserTransactions"] = "pending";
+      })
+      .addCase(fetchUserTransactions.fulfilled, (state, action) => {
+        state.transactions = action.payload.transactions;
+      })
+      .addCase(fetchUserTransactions.rejected, (state, action) => {
+        state.status["fetchUserTransactions"] = "failed";
       })
       /**
        * Create Wallet
@@ -157,6 +279,42 @@ export const dashboardSlice = createSlice({
       })
       .addCase(createWallet.rejected, (state, action) => {
         state.status["createWallet"] = "failed";
+      })
+      /**
+       * Redeem Claims
+       */
+      .addCase(redeemClaims.pending, (state, action) => {
+        state.status["redeemClaims"] = "pending";
+      })
+      .addCase(redeemClaims.fulfilled, (state, action) => {
+        state.status["redeemClaims"] = "succeeded";
+      })
+      .addCase(redeemClaims.rejected, (state, action) => {
+        state.status["redeemClaims"] = "failed";
+      })
+      /**
+       * Fetch Balances
+       */
+      .addCase(fetchBalances.pending, (state, action) => {
+        state.status["fetchBalances"] = "pending";
+      })
+      .addCase(fetchBalances.fulfilled, (state, action) => {
+        state.status["fetchBalances"] = "succeeded";
+      })
+      .addCase(fetchBalances.rejected, (state, action) => {
+        state.status["fetchBalances"] = "failed";
+      })
+      /**
+       * Transfer Fund
+       */
+      .addCase(transferFund.pending, (state, action) => {
+        state.status["transferFund"] = "pending";
+      })
+      .addCase(transferFund.fulfilled, (state, action) => {
+        state.status["transferFund"] = "succeeded";
+      })
+      .addCase(transferFund.rejected, (state, action) => {
+        state.status["transferFund"] = "failed";
       });
   },
 });
@@ -165,6 +323,81 @@ export const useDashboardSelector = (state: any) => {
   return state?.dashboard;
 };
 
-export const { resetStatus } = dashboardSlice.actions;
+export const useWalletBalanceSelector =
+  (walletType: string, wallet: Wallet) => (state: any) => {
+    const wallets = state?.dashboard?.wallets[walletType];
+    const transactions = state?.dashboard?.transactions || [];
+    if (wallets.length === 0) return { paid: 0, available: 0 };
+
+    const w = wallets.find((w: Wallet) => w.address === wallet.address);
+
+    const paid = transactions.reduce((acc: number, tx: CommonTransaction) => {
+      if (
+        tx.type === "PAYMENT" &&
+        tx.status === "SUCCESS" &&
+        tx.payment?.sourceAddress === wallet.address
+      ) {
+        acc += Number(tx.payment?.value || 0) / 1000000;
+      }
+      return acc;
+    }, 0);
+
+    const received = transactions.reduce(
+      (acc: number, tx: CommonTransaction) => {
+        if (
+          tx.type === "PAYMENT" &&
+          tx.status === "SUCCESS" &&
+          tx.payment?.destinationAddress === wallet.address
+        ) {
+          acc += Number(tx.payment?.value || 0) / 1000000;
+        }
+        return acc;
+      },
+      0,
+    );
+
+    return {
+      balance: 0,
+      escrowed: 0,
+      liability: 0,
+      available: 0,
+    };
+  };
+
+export const useBalanceSelector = (state: any) => {
+  const wallets = state?.dashboard?.wallets || { Sender: [], Receiver: [] };
+
+  // let aggregatedBalance: Wallet["balance"] = {
+  //   assets: 0,
+  //   total: 0,
+  //   virtual: 0,
+  //   escrow: {
+  //     total: 0,
+  //     available: 0,
+  //   },
+  //   liabilities: 0,
+  // };
+
+  // function aggregateBalance(wls: Wallet[], aggrBalance: Wallet["balance"]) {
+  //   return wls.reduce((acc: Wallet["balance"], w: Wallet) => {
+  //     if (acc) {
+  //       acc.assets += w.balance?.assets || 0;
+  //       acc.total += w.balance?.total || 0;
+  //       acc.virtual += w.balance?.virtual || 0;
+  //       acc.escrow.total += w.balance?.escrow.total || 0;
+  //       acc.escrow.available += w.balance?.escrow.available || 0;
+  //       acc.liabilities += w.balance?.liabilities || 0;
+  //     }
+  //     return acc;
+  //   }, aggrBalance);
+  //   return;
+  // }
+
+  // aggregatedBalance = aggregateBalance(wallets.Receiver, aggregatedBalance);
+
+  // return aggregatedBalance;
+};
+
+export const { resetStatus, resetState } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

@@ -36,10 +36,12 @@ import {
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
+import { getUserBalance, useAuthSelector } from "../reducers/authentication";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
+  const auth = useSelector(useAuthSelector);
   const dispatch = useDispatch<AppDispatch>();
   const { messages, status, shouldScrollToBottom } =
     useSelector(useAiBotSelector);
@@ -345,15 +347,26 @@ export default function ChatPane(props: any) {
             onClick={() => setShowExamples(true)}
           />
         </div>
-        <TextInput
-          className="w-full rounded-xl bg-[#f7f9fa]"
-          placeholder={t("page.chatPlaceholder")}
-          value={inputText}
-          onChange={(ev) => {
-            setInputText(ev?.target?.value);
-          }}
-          onKeyDown={handleEnter}
-        ></TextInput>
+        {!auth.user ? (
+          <Button
+            className="w-full rounded-xl"
+            onClick={() => {
+              props.showSignIn(true);
+            }}
+          >
+            {t("page.chatSignIn")}
+          </Button>
+        ) : (
+          <TextInput
+            className="w-full rounded-xl bg-[#f7f9fa]"
+            placeholder={t("page.chatPlaceholder")}
+            value={inputText}
+            onChange={(ev) => {
+              setInputText(ev?.target?.value);
+            }}
+            onKeyDown={handleEnter}
+          ></TextInput>
+        )}
         {/* <TextField
           className="w-full rounded-xl bg-[#f7f9fa]"
           variant="outlined"

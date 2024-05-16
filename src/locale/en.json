@@ -4,6 +4,7 @@
             "title": "Aida.AI",
             "poweredBy": "Powered by Skyfire Payments",
             "chatPlaceholder": "type your message here...",
+            "chatSignIn": "Please Sign In",
             "titleExamplePrompts": "Example prompts",
             "titlePaymentLogs": "Payment Protocol Logs"
         },

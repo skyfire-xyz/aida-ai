@@ -1,10 +1,11 @@
 import { useTranslations } from "next-intl";
 import DataSource from "./DataSource";
+import { Card } from "flowbite-react";
 
 export default function ExamplePrompts() {
   const t = useTranslations("ai");
   return (
-    <ul>
+    <ul className="text-sm">
       <li className="mb-1">
         <DataSource sourceName="KaggleAI" />
         {t.rich("examplePrompts.search", {

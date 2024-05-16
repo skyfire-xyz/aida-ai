@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Accordion, Badge, Button, Card, List } from "flowbite-react";
+import { Badge, Button, Card } from "flowbite-react";
 import {
   MdOutlineCheckBox,
   MdOutlineCheckBoxOutlineBlank,
 } from "react-icons/md";
+import { RxCrossCircled } from "react-icons/rx";
 import { ImSpinner11 } from "react-icons/im";
 import { FaPlay } from "react-icons/fa";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
@@ -34,7 +35,11 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
     if (executeAll) {
       const isAllExecuted = results?.every((result) => {
         const task = tasks[result];
-        return task.status === "complete" || task.status === "pending";
+        return (
+          task.status === "complete" ||
+          task.status === "pending" ||
+          task.status === "error"
+        );
       });
       if (!isAllExecuted) {
         results?.forEach((result) => {
@@ -42,6 +47,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
           if (
             task.status === "complete" ||
             task.status === "pending" ||
+            task.status === "error" ||
             !task.isDependentTasksComplete
           )
             return;
@@ -54,14 +60,14 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
   }, [executeAll, tasks]);
 
   return (
-    <div className={`flex justify-start mb-4`}>
+    <div className={`mb-4 flex justify-start`}>
       <img
         src={avatarUrl}
-        className="object-cover h-12 w-12 rounded-full"
+        className="h-10 w-10 rounded-full object-cover"
         alt=""
       />
-      <div className="ml-2 py-3 px-4 bg-[#009182] rounded-br-3xl rounded-tr-3xl rounded-tl-xl max-w-[calc(100%-80px)]">
-        <article className="text-white prose">
+      <div className="ml-2 max-w-[calc(100%-80px)] rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3">
+        <article className="prose text-white">
           <Markdown>{textMessage}</Markdown>
         </article>
         {results?.map((result, index) => {
@@ -71,6 +77,8 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
             StatusIcon = MdOutlineCheckBox;
           } else if (task.status === "pending") {
             StatusIcon = ImSpinner11;
+          } else if (task.status === "error") {
+            StatusIcon = RxCrossCircled;
           }
 
           return (
@@ -78,9 +86,9 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
               key={index}
               className={`mb-4 ${
                 task.status === "complete"
-                  ? "bg-green-100 cursor-pointer"
+                  ? "cursor-pointer bg-green-100"
                   : "white"
-              }`}
+              } `}
             >
               <div className="flex items-center">
                 <Badge color="gray" className="mr-2">
@@ -89,7 +97,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                 <TaskSource skillName={task.skill} />
                 <div>
                   <p
-                    className="font-normal text-gray-700 dark:text-gray-400 flex-grow-1"
+                    className={`flex-grow-1 font-normal text-gray-700 dark:text-gray-400 ${task.status === "error" ? "text-red-400" : ""}`}
                     onClick={() => {
                       if (task.status === "complete") {
                         setShowTasks({
@@ -103,7 +111,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                   </p>
                   {task.dependent_task_ids.length > 0 && (
                     <div className="mt-2">
-                      <span className="text-gray-400 text-sm mr-2">
+                      <span className="mr-2 text-sm text-gray-400">
                         Dependent Tasks:
                       </span>
                       {task.dependent_task_ids.map(
@@ -115,12 +123,12 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                           >
                             {id}
                           </Badge>
-                        )
+                        ),
                       )}
                     </div>
                   )}
                 </div>
-                <div className="flex ml-auto items-center">
+                <div className="ml-auto flex items-center">
                   {task.status === "incomplete" &&
                     task.isDependentTasksComplete && (
                       <Button
@@ -131,11 +139,19 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                         <div className="flex items-center">
                           <FaPlay
                             color="#009182"
-                            className="w-4 h-4 cursor-pointer flex-shrink-0"
+                            className="h-4 w-4 flex-shrink-0 cursor-pointer"
                           />
                         </div>
                       </Button>
                     )}
+                  {task.status === "error" && (
+                    <div className="ml-4 flex items-center">
+                      <RxCrossCircled
+                        color="red"
+                        className="h-6 w-6 flex-shrink-0"
+                      />
+                    </div>
+                  )}
                   {task.status === "pending" && (
                     <Button
                       color="light"
@@ -143,10 +159,10 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                       disabled
                       onClick={() => dispatch(executeTask({ task }))}
                     >
-                      <div className="flex items-center animate-spin">
+                      <div className="flex animate-spin items-center">
                         <ImSpinner11
                           color="#009182"
-                          className="w-4 h-4 cursor-pointer flex-shrink-0"
+                          className="h-4 w-4 flex-shrink-0 cursor-pointer"
                         />
                       </div>
                     </Button>
@@ -154,7 +170,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                   {task.status === "complete" &&
                     (showTasks[task.id] ? (
                       <MdOutlineArrowDropUp
-                        className="w-8 h-8 cursor-pointer flex-shrink-0"
+                        className="h-8 w-8 flex-shrink-0 cursor-pointer"
                         onClick={() => {
                           setShowTasks({
                             ...showTasks,
@@ -164,7 +180,7 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
                       />
                     ) : (
                       <MdOutlineArrowDropDown
-                        className="w-8 h-8 cursor-pointer flex-shrink-0"
+                        className="h-8 w-8 flex-shrink-0 cursor-pointer"
                         onClick={() => {
                           setShowTasks({
                             ...showTasks,
@@ -179,14 +195,29 @@ function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
             </Card>
           );
         })}
-        <Button
-          className="mt-2"
-          onClick={() => {
-            setExecuteAll(true);
-          }}
-        >
-          Execute Tasks
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            className="mt-2"
+            onClick={() => {
+              setExecuteAll(true);
+            }}
+          >
+            Execute All Tasks
+          </Button>
+          <Button
+            className="mt-2"
+            onClick={() => {
+              {
+                results?.forEach((result, index) => {
+                  const task = tasks[result];
+                  setShowTasks({ ...showTasks, [task.id]: true });
+                });
+              }
+            }}
+          >
+            Show All Results
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -6,16 +6,28 @@ export interface Task {
   dependent_task_ids: number[];
   parentId: number;
   referenceId: number;
+  objective: string;
   isDependentTasksComplete?: boolean;
 }
 
 export interface Wallet {
   name: string;
   address: string;
-  balance?: string;
   transactions?: PaymentType[];
   network?: string;
   createdAt?: string;
+  type?: string;
+  balance?: {
+    escrow: {
+      total: number;
+      available: number;
+    };
+    claims: {
+      received: number;
+      sent: number;
+    };
+    total: number;
+  };
 }
 
 export type WalletType = "Sender" | "Receiver";
@@ -33,6 +45,7 @@ export interface DashboardReduxState {
     [key: string]: "idle" | "pending" | "succeeded" | "failed";
   };
   transactions: CommonTransaction[];
+  claims: CommonTransaction[];
 }
 export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
@@ -92,8 +105,22 @@ export enum TransactionType {
 }
 
 export interface CommonTransaction {
-  type: TransactionType;
-  token: {
+  id: string;
+  txId: string;
+  txType: string;
+  userId: string;
+  type:
+    | "CLAIM"
+    | "PAYMENT"
+    | "TRANSFER"
+    | "MINTS"
+    | "BURNS"
+    | "WITHDRAWAL"
+    | "ACQUISITION"
+    | "ADJUSTMENT"
+    | "PAYMENT_CLAIM"
+    | "REDEMPTION";
+  token?: {
     tokenId?: string;
     tokenAddress?: string;
     network?: string;
@@ -102,7 +129,19 @@ export interface CommonTransaction {
   txHash?: string | null;
   status: string;
   createdAt: string;
-  paymentId?: string;
+  redemption?: {
+    sourceAddress: string;
+    sourceName?: string;
+    destinationAddress: string;
+    amounts: {
+      currency: string;
+      fee: string;
+      subtotal: string;
+      total: string;
+    };
+    destinationName?: string;
+  };
+  redemptionId?: string;
   payment?: {
     sourceAddress?: string;
     destinationAddress?: string;
@@ -110,5 +149,42 @@ export interface CommonTransaction {
     currency?: string;
     sourceName?: string;
     destinationName?: string;
+  };
+  paymentId?: string;
+  claim?: {
+    sourceAddress: string;
+    sourceName?: string;
+    destinationAddress: string;
+    value: string;
+    currency: string;
+    destinationName?: string;
+  };
+  claimId?: string;
+}
+
+export interface AuthenticationReduxState {
+  user?: {
+    email?: string;
+    username?: string;
+    id: string;
+    walletType: "Sender" | "Receiver";
+    updatedDate: string;
+    createdDate: string;
+    avatar?: string;
+  };
+  userBalance?: {
+    escrow: {
+      total: number;
+      available: number;
+    };
+    claims: {
+      received: number;
+      sent: number;
+    };
+    total: number;
+  } | null;
+  init: boolean;
+  status: {
+    [key: string]: "idle" | "pending" | "succeeded" | "failed";
   };
 }

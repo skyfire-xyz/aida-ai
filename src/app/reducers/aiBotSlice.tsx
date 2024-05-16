@@ -1,8 +1,6 @@
-import axios from "axios";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AiBotSliceReduxState, PaymentType, Task } from "./types";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import { ReducerAction } from "react";
+import api from "@/src/common/lib/api";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -23,35 +21,79 @@ const initialState: AiBotSliceReduxState = {
 
 export const executeTask = createAsyncThunk<any, { task: any }>(
   "aiBot/executeTask",
-  async ({ task }) => {
+  async ({ task }, thunkAPI) => {
+    const state: any = thunkAPI.getState();
+    const { tasks } = state.aiBot;
+
+    const dependentTasksResults = task.dependent_task_ids.reduce(
+      (allResults: [], id: number) => {
+        const dependentTask = tasks[`${task.parentId}-${id}`];
+        if (dependentTask.status === "complete") {
+          // TODO: This is only supporting websearch results for now.
+
+          let results = dependentTask.result?.results; // Search
+          if (dependentTask.skill === "text_completion") {
+            // Perplexity
+            results = [
+              {
+                title: dependentTask.result?.prompt,
+                description: dependentTask.result?.body,
+              },
+            ];
+          }
+          if (!results) return allResults;
+
+          return [
+            ...allResults,
+            ...results.map((result: any) => {
+              const { title, description, snippet } = result;
+              return { title, description: description || snippet }; // Result doesn't have "description", so use snippet for now
+            }),
+          ];
+        }
+      },
+      [],
+    );
+
     if (task.skill === "text_completion") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/chat/perplexity`, {
+      const res = await api.post(`v1/receivers/perplexity`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "random_joke") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
+      const res = await api.post(`v1/receivers/joke`, {
         searchTerm: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "image_generation") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
+      const res = await api.post(`v1/receivers/chatgpt/image`, {
         prompt: task.task,
+        objective: task.objective,
       });
       return { ...res.data, task };
     } else if (task.skill === "video_search") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
+      const res = await api.post(`v1/receivers/google/video`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "web_search") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
+      const res = await api.post(`v1/receivers/google/websearch`, {
         prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     } else if (task.skill === "dataset_search") {
-      const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-        searchTerm: task.task,
+      const res = await api.post(`v1/receivers/kaggle/search`, {
+        prompt: task.task,
+        objective: task.objective,
+        dependentTasks: dependentTasksResults,
       });
       return { ...res.data, task };
     }
@@ -61,8 +103,8 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
 export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchDataset",
   async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/search`, {
-      searchTerm: searchTerm.trim(),
+    const res = await api.post(`v1/receivers/kaggle/search`, {
+      prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "dataset", uuid: new Date().getTime() };
   },
@@ -71,7 +113,7 @@ export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
   "aiBot/fetchAnalyzeDataset",
   async ({ ref }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/dataset/analyze`, {
+    const res = await api.post(`v1/receivers/kaggle/analyze`, {
       dataset: ref,
     });
     return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
@@ -81,7 +123,7 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
 export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchTasklist",
   async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/chat/tasklist`, {
+    const res = await api.post(`v1/receivers/chatgpt/tasklist`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
@@ -91,7 +133,7 @@ export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchWebSearch",
   async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/websearch`, {
+    const res = await api.post(`v1/receivers/google/websearch`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "web_search", uuid: new Date().getTime() };
@@ -101,7 +143,7 @@ export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
 export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
   "aiBot/fetchVideoSearch",
   async ({ searchTerm }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/websearch/video`, {
+    const res = await api.post(`v1/receivers/google/video`, {
       prompt: searchTerm.trim(),
     });
     return { ...res.data, type: "video_search", uuid: new Date().getTime() };
@@ -112,7 +154,7 @@ export const fetchImageGeneration = createAsyncThunk<
   any,
   { searchTerm: string }
 >("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
-  const res = await axios.post(`${BACKEND_API_URL}v2/chat/image`, {
+  const res = await api.post(`v1/receivers/chatgpt/image`, {
     prompt: searchTerm.trim(),
   });
   return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
@@ -122,7 +164,7 @@ export const fetchMeme = createAsyncThunk<
   any,
   { searchTerm: string; meme: boolean }
 >("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
-  const res = await axios.post(`${BACKEND_API_URL}v2/joke`, {
+  const res = await api.post(`v1/receivers/humorapi`, {
     meme,
     searchTerm: searchTerm.trim(),
   });
@@ -133,7 +175,7 @@ export const fetchLogoAgent = createAsyncThunk<
   any,
   { logoAIAgent: { service: string; price: number } }
 >("aiBot/fetchLogoAgent", async ({ logoAIAgent }) => {
-  const res = await axios.post(`${BACKEND_API_URL}v2/logo`, {
+  const res = await api.post(`v1/receivers/logo`, {
     agent: logoAIAgent.service,
     cost: logoAIAgent.price,
   });
@@ -143,7 +185,7 @@ export const fetchLogoAgent = createAsyncThunk<
 export const fetchChat = createAsyncThunk<any, { prompt: string }>(
   "aiBot/fetchChat",
   async ({ prompt }) => {
-    const res = await axios.post(`${BACKEND_API_URL}v2/chat`, {
+    const res = await api.post(`v1/receivers/chatgpt`, {
       prompt,
     });
     return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
@@ -284,6 +326,7 @@ export const aiBotSlice = createSlice({
                   ...task,
                   referenceId,
                   parentId,
+                  objective: action.payload.prompt,
                 },
               };
             },
@@ -395,6 +438,7 @@ export const aiBotSlice = createSlice({
         updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
+        console.log("????");
         state.tasks[action.meta.arg.task.referenceId].status = "error";
         state.error.fetchAll = "Something went wrong";
       });

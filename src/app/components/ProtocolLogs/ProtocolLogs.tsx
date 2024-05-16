@@ -10,6 +10,7 @@ import {
 import { useTranslations } from "next-intl";
 import { scrollToBottom } from "../utils";
 import { AppDispatch } from "@/src/store";
+import { getUserBalance } from "../../reducers/authentication";
 
 export interface ProtocolLogsProps {}
 
@@ -22,20 +23,22 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
 
   const { protocolLogsV2 } = useSelector(useAiBotSelector);
 
-  console.log(protocolLogsV2, "protocolLogsV2");
-
   useEffect(() => {
     scrollToBottom([paymentsPaneRef], () => {
       dispatch(setShouldScrollToBottom(false));
     });
   }, [shouldScrollToBottom]);
 
+  useEffect(() => {
+    dispatch(getUserBalance());
+  }, [protocolLogs]);
+
   return (
     <div
-      className="flex-grow items-start mb-4 overflow-scroll bg-gray-900 rounded-md"
+      className="mb-4 flex-grow items-start overflow-scroll rounded-md bg-gray-900"
       ref={paymentsPaneRef}
     >
-      <div className="relative max-w-2xl mx-auto p-4">
+      <div className="relative mx-auto max-w-2xl p-4">
         {/* <div className="flex justify-between items-center mb-2">
             <span className="text-gray-400">Logs:</span>
           </div> */}
@@ -45,7 +48,7 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
               if (!payment) return;
               return (
                 <>
-                  <li key={index} className="last:font-semibold mb-2 flex">
+                  <li key={index} className="mb-2 flex last:font-semibold">
                     <DataSource sourceName={payment.destinationName} />
                     <div className="">
                       <span className="block">

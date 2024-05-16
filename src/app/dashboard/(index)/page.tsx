@@ -1,8 +1,23 @@
 "use client";
 
 import { FC, useEffect } from "react";
-import { Card, Dropdown, Tooltip, useThemeMode } from "flowbite-react";
+import { Button, Card, Dropdown, Tooltip, useThemeMode } from "flowbite-react";
 import { HiOutlineInformationCircle } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchAllTransactions,
+  fetchBalances,
+  fetchWallets,
+  redeemClaims,
+  resetStatus,
+  useBalanceSelector,
+  useDashboardSelector,
+} from "../../reducers/dashboardSlice";
+import { AppDispatch } from "@/src/store";
+import Notification from "../../components/Notification";
+import Service from "./components/Service";
+import { Wallet } from "../../reducers/types";
+import { useFormatter } from "next-intl";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -65,11 +80,11 @@ const SalesChart: FC = function () {
       },
     },
     markers: {
-      size: 5,
+      size: 2,
       strokeColors: "#ffffff",
       hover: {
         size: undefined,
-        sizeOffset: 3,
+        sizeOffset: 4,
       },
     },
     xaxis: {
@@ -85,7 +100,7 @@ const SalesChart: FC = function () {
       labels: {
         style: {
           colors: [labelColor],
-          fontSize: "14px",
+          fontSize: "8px",
           fontWeight: 500,
         },
       },
@@ -109,7 +124,7 @@ const SalesChart: FC = function () {
       labels: {
         style: {
           colors: [labelColor],
-          fontSize: "14px",
+          fontSize: "8px",
           fontWeight: 500,
         },
         formatter: function (value) {
@@ -118,7 +133,7 @@ const SalesChart: FC = function () {
       },
     },
     legend: {
-      fontSize: "14px",
+      fontSize: "8px",
       fontWeight: 500,
       fontFamily: "Inter, sans-serif",
       labels: {
@@ -150,7 +165,7 @@ const SalesChart: FC = function () {
   ];
 
   if (typeof window !== "undefined") {
-    return <Chart height={420} options={options} series={series} type="area" />;
+    return <Chart height={200} options={options} series={series} type="area" />;
   }
 };
 
@@ -175,44 +190,37 @@ const Datepicker: FC = function () {
 };
 
 const SalesThisWeek: FC = function () {
+  const format = useFormatter();
+  const dispatch = useDispatch<AppDispatch>();
+  // const aggrBalance = useSelector(useBalanceSelector);
+  const { wallets } = useSelector(useDashboardSelector);
+
+  useEffect(() => {
+    dispatch(fetchBalances());
+    dispatch(fetchAllTransactions());
+    dispatch(fetchWallets({ walletType: "Sender" }));
+    dispatch(fetchWallets({ walletType: "Receiver" }));
+  }, []);
+
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 dark:text-white sm:p-6 xl:p-8">
-      <div className="mb-4 flex h-[180px] items-center gap-4">
-        <Card className="h-full max-w-lg">
+      <div className="mb-4 flex items-center gap-4">
+        {/* <Card className="h-full max-w-lg">
           <div className="flex flex-col">
             <div className="mb-4">
-              Received
+              Total Amount Received
               <h5 className="tracking-tigh text-2xl font-bold">$xx.xx</h5>
             </div>
             <div>
-              Paid
+              Total Amount Paid
               <h5 className="text-2xl font-bold tracking-tight">$xx.xx</h5>
             </div>
           </div>
-        </Card>
-        <Card className="h-full max-w-lg">
-          <h4 className="text-2xl font-bold ">Balance</h4>
-          <div className="flex gap-10 dark:text-white">
-            <div>
-              <b className="flex items-center">
-                Cash
-                <Tooltip
-                  content="USDC is a regulated, digital currency that can always be redeemed 1:1 for US dollars"
-                  style="light"
-                >
-                  <HiOutlineInformationCircle className="h-5 w-5" />
-                </Tooltip>
-              </b>
-              <h5 className="text-2xl font-bold tracking-tight">$5,385</h5>
-            </div>
-            <div>
-              <b>Escrowed</b>
-              <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
-                $xx.xx
-              </h5>
-            </div>
-          </div>
-        </Card>
+        </Card> */}
+
+        {/* <div>
+          <SalesChart />
+        </div> */}
         {/* <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
             $5,385 USDC
@@ -237,31 +245,101 @@ const SalesThisWeek: FC = function () {
           </svg>
         </div> */}
       </div>
-      <SalesChart />
+      <div className="mt-8 overflow-scroll">
+        {wallets["Sender"].length > 0 && (
+          <div>
+            <h3 className="text-2xl">Sender Wallet</h3>
+            {wallets["Sender"].length > 0 &&
+              wallets["Sender"].map((wallet: Wallet, index: number) => {
+                return <Service walletType={"Sender"} wallet={wallet} />;
+              })}
+          </div>
+        )}
+        {/* 
+        <Card className="mb-10 h-full">
+          <h4 className="text-2xl font-bold ">Balance</h4>
+          <div className="flex gap-10 dark:text-white">
+            <div>
+              <span className="flex items-center">
+                Cash
+                <Tooltip
+                  content="USDC is a regulated, digital currency that can always be redeemed 1:1 for US dollars"
+                  style="light"
+                >
+                  <HiOutlineInformationCircle className="h-5 w-5" />
+                </Tooltip>
+              </span>
+              <h5 className="text-2xl font-bold tracking-tight">
+                {format.number(Number((aggrBalance?.total || 0) / 1000000), {
+                  style: "currency",
+                  currency: "USD",
+                })}
+                <span className="text-sm">USDC</span>
+              </h5>
+            </div>
+            <div>
+              <span>Escrowed</span>
+              <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
+                {format.number(
+                  Number((aggrBalance?.escrow.total || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
+                <span className="text-sm">USDC</span>
+              </h5>
+            </div>
+            <div>
+              <span>Liability</span>
+              <h5 className="text-gray-90 text-2xl font-bold tracking-tight">
+                {format.number(
+                  Number((aggrBalance?.liabilities || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
+                <span className="text-sm">USDC</span>
+              </h5>
+            </div>
+            <div>
+              <span>Available</span>
+              <h5 className="stext-gray-90 text-2xl font-bold tracking-tight">
+                {format.number(
+                  Number((aggrBalance?.escrow.available || 0) / 1000000),
+                  {
+                    style: "currency",
+                    currency: "USD",
+                  },
+                )}
+                <span className="text-sm">USDC</span>
+              </h5>
+            </div>
+          </div>
+        </Card> */}
+        {wallets["Receiver"].length > 0 && (
+          <div>
+            <h3 className="mt-10 text-2xl">Service Providers</h3>
+            {wallets["Receiver"].map((wallet: Wallet, index: number) => {
+              return <Service walletType={"Receiver"} wallet={wallet} />;
+            })}
+          </div>
+        )}
+      </div>
+      {/* <SalesChart /> */}
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
-        <Datepicker />
-        {/* <div className="shrink-0">
-          <a
-            href="#"
-            className="text-primary-700 dark:text-primary-500 inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase hover:bg-gray-100 dark:hover:bg-gray-700 sm:text-sm"
-          >
-            Sales Report
-            <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </a>
-        </div> */}
+        {/* <Datepicker /> */}
+        <Notification
+          asyncActionKey="redeemClaims"
+          resetStatus={resetStatus}
+          selector={useDashboardSelector}
+          messages={{
+            success: "Successfully redeemed funds",
+            error: "Sorry, the blockchain network is slow right now",
+            pending: "Redeeming Fund...",
+          }}
+        />
       </div>
     </div>
   );
