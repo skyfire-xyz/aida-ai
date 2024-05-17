@@ -17,7 +17,7 @@ import Notification from "../../components/Notification";
 
 export interface LoginFormInput {
   username: string;
-  _password: string;
+  password: string;
 }
 
 const SignInPage: FC = function () {
@@ -31,7 +31,7 @@ const SignInPage: FC = function () {
   } = useForm<LoginFormInput>({
     defaultValues: {
       username: "",
-      _password: "",
+      password: "",
     },
   });
 
@@ -76,12 +76,12 @@ const SignInPage: FC = function () {
               />
             </div>
             <div className="mb-2 flex flex-col gap-y-3">
-              <Label htmlFor="_password">Your password</Label>
+              <Label htmlFor="password">Your password</Label>
               <TextInput
-                id="_password"
+                id="password"
                 placeholder="••••••••"
-                type="_password"
-                {...register("_password")}
+                type="password"
+                {...register("password")}
               />
             </div>
             <div className="mb-6 flex items-center justify-between">
