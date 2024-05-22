@@ -58,6 +58,17 @@ const ExampleSidebar: FC = function () {
               Activity
             </Sidebar.Item>
             <Sidebar.Item
+              onClick={() => router.push("/dashboard/receivers")}
+              className={
+                "/dashboard/receivers" === pathname
+                  ? activeClass
+                  : nonActiveClass
+              }
+              icon={() => <GrTransaction className="h-4 w-4" />}
+            >
+              Receivers
+            </Sidebar.Item>
+            <Sidebar.Item
               onClick={() => router.push("/dashboard/developers")}
               className={
                 "/dashboard/developers" === pathname

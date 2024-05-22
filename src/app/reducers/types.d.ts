@@ -30,6 +30,20 @@ export interface Wallet {
   };
 }
 
+export interface Receiver {
+  id: string;
+  skyfireUser: {
+    id: string;
+    username: string;
+    email: string;
+    walletType: "Sender" | "Receiver";
+    walletAddress: string;
+  };
+  cost: number;
+  currency: string;
+  createdDate: string;
+}
+
 export type WalletType = "Sender" | "Receiver";
 
 export interface DashboardReduxState {
@@ -46,6 +60,7 @@ export interface DashboardReduxState {
   };
   transactions: CommonTransaction[];
   claims: CommonTransaction[];
+  receivers: Receiver[];
 }
 export interface AiBotSliceReduxState {
   messages: ChatMessageType[];
