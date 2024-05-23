@@ -8,11 +8,13 @@ import { Table } from "flowbite-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Receiver } from "../../../reducers/types";
+import { useFormatter } from "next-intl";
 
 export default function Receivers() {
   const dispatch = useDispatch<AppDispatch>();
   const { receivers } = useSelector(useDashboardSelector);
   const auth = useSelector(useAuthSelector);
+  const format = useFormatter();
 
   useEffect(() => {
     dispatch(fetchReceivers());
@@ -34,7 +36,11 @@ export default function Receivers() {
                 className="bg-white dark:border-gray-700 dark:bg-gray-800"
               >
                 <Table.Cell>{item.skyfireUser.username}</Table.Cell>
-                <Table.Cell>{item.cost}</Table.Cell>
+                <Table.Cell>
+                  {format.number(Number(item.cost / 1000000), {
+                    style: "decimal",
+                  })}
+                </Table.Cell>
                 <Table.Cell>{item.currency}</Table.Cell>
               </Table.Row>
             ))}
