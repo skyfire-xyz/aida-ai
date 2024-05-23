@@ -143,17 +143,17 @@ export const transferFund = createAsyncThunk<
   },
 );
 
-export const fetchUserTransactions = createAsyncThunk<
-  any,
-  { walletAddress: string }
->("dashboard/fetchUserTransactions", async ({ walletAddress }) => {
-  const res = await api.get(`v1/wallet/transactions/${walletAddress}`);
-  return res.data;
-});
+export const fetchUserTransactions = createAsyncThunk(
+  "dashboard/fetchUserTransactions",
+  async () => {
+    const res = await api.get("v1/wallet/transactions");
+    return res.data;
+  },
+);
 
-export const fetchUserClaims = createAsyncThunk<any, { walletAddress: string }>(
+export const fetchUserClaims = createAsyncThunk(
   "dashboard/fetchUserClaims",
-  async ({ walletAddress }) => {
+  async () => {
     const res = await api.get(`v1/wallet/claims`);
     return res.data;
   },
@@ -248,19 +248,19 @@ export const dashboardSlice = createSlice({
         state.status["fetchAllTransactions"] = "failed";
       })
       /**
-       * Transactions
+       * Claims
        */
       .addCase(fetchUserClaims.pending, (state, action) => {
         state.status["fetchUserClaims"] = "pending";
       })
       .addCase(fetchUserClaims.fulfilled, (state, action) => {
-        state.claims = action.payload.transactions;
+        state.claims = action.payload.claims;
       })
       .addCase(fetchUserClaims.rejected, (state, action) => {
         state.status["fetchUserClaims"] = "failed";
       })
       /**
-       * Claims
+       * Transactions
        */
       .addCase(fetchUserTransactions.pending, (state, action) => {
         state.status["fetchUserTransactions"] = "pending";
