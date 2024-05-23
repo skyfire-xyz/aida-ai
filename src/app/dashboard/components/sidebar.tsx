@@ -2,7 +2,7 @@ import { Sidebar, TextInput } from "flowbite-react";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { FaCode, FaRobot } from "react-icons/fa";
-import { GrTransaction } from "react-icons/gr";
+import { GrTransaction, GrTrigger } from "react-icons/gr";
 import {
   HiChartPie,
   HiInformationCircle,
@@ -56,6 +56,17 @@ const ExampleSidebar: FC = function () {
               icon={() => <GrTransaction className="h-4 w-4" />}
             >
               Activity
+            </Sidebar.Item>
+            <Sidebar.Item
+              onClick={() => router.push("/dashboard/receivers")}
+              className={
+                "/dashboard/receivers" === pathname
+                  ? activeClass
+                  : nonActiveClass
+              }
+              icon={() => <GrTrigger className="h-4 w-4" />}
+            >
+              Receivers
             </Sidebar.Item>
             <Sidebar.Item
               onClick={() => router.push("/dashboard/developers")}

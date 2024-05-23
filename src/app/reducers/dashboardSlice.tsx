@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "@/src/common/lib/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   CommonTransaction,
@@ -6,7 +6,6 @@ import {
   Wallet,
   WalletType,
 } from "./types";
-import api from "@/src/common/lib/api";
 
 const initialState: DashboardReduxState = {
   status: {},
@@ -43,6 +42,7 @@ const initialState: DashboardReduxState = {
   },
   transactions: [],
   claims: [],
+  receivers: [],
 };
 
 export const fetchBalances = createAsyncThunk<any>(
@@ -97,7 +97,7 @@ export const fetchWallets = createAsyncThunk<any, { walletType: string }>(
 export const redeemClaims = createAsyncThunk<any, { walletAddress: string }>(
   "dashboard/redeemClaims",
   async ({ walletAddress }, thunkAPI) => {
-    const r = await api.get(`v1/wallet/claims/${walletAddress}`);
+    const r = await api.get(`v1/wallet/claims`);
     const claims = r.data.transactions;
     const sourceAddresses = claims.reduce(
       (acc: string[], claim: CommonTransaction) => {
@@ -154,7 +154,14 @@ export const fetchUserTransactions = createAsyncThunk<
 export const fetchUserClaims = createAsyncThunk<any, { walletAddress: string }>(
   "dashboard/fetchUserClaims",
   async ({ walletAddress }) => {
-    const res = await api.get(`v1/wallet/claims/${walletAddress}`);
+    const res = await api.get(`v1/wallet/claims`);
+    return res.data;
+  },
+);
+export const fetchReceivers = createAsyncThunk(
+  "dashboard/fetchReceivers",
+  async () => {
+    const res = await api.get(`v1/users/receivers/list`);
     return res.data;
   },
 );
@@ -188,6 +195,8 @@ export const dashboardSlice = createSlice({
         Receiver: [],
       };
       state.transactions = [];
+      state.claims = [];
+      state.receivers = [];
     },
   },
   extraReducers: (builder) => {
@@ -315,11 +324,25 @@ export const dashboardSlice = createSlice({
       })
       .addCase(transferFund.rejected, (state, action) => {
         state.status["transferFund"] = "failed";
+      })
+      /**
+       * Fetch Receivers
+       */
+      .addCase(fetchReceivers.pending, (state, action) => {
+        state.status["fetchReceivers"] = "pending";
+      })
+      .addCase(fetchReceivers.fulfilled, (state, action) => {
+        state.receivers = action.payload;
+        state.status["fetchReceivers"] = "succeeded";
+      })
+      .addCase(fetchReceivers.rejected, (state, action) => {
+        state.status["fetchReceivers"] = "failed";
       });
   },
 });
 
 export const useDashboardSelector = (state: any) => {
+  console.log("HIEU state", state);
   return state?.dashboard;
 };
 
