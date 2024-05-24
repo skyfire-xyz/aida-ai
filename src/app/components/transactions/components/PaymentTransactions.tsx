@@ -1,18 +1,15 @@
-import { Badge, Button, Table } from "flowbite-react";
-import axios from "axios";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
-import { useEffect } from "react";
+import { useAuthSelector } from "@/src/app/reducers/authentication";
 import {
-  fetchAllTransactions,
   fetchUserTransactions,
-  redeemClaims,
   useDashboardSelector,
 } from "@/src/app/reducers/dashboardSlice";
-import { AppDispatch } from "@/src/store";
-import { useDispatch, useSelector } from "react-redux";
 import { CommonTransaction } from "@/src/app/reducers/types";
+import { AppDispatch } from "@/src/store";
+import { Badge, Table } from "flowbite-react";
 import Link from "next/link";
-import { useAuthSelector } from "@/src/app/reducers/authentication";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { formatDateString } from "../../../utils";
 
 function StatusBadge({ status }: { status: string }) {
   let color;
@@ -23,36 +20,6 @@ function StatusBadge({ status }: { status: string }) {
     <Badge className="inline-block" color={color}>
       {status}
     </Badge>
-  );
-}
-
-function PaymentRow(tx: CommonTransaction, index: number) {
-  const payment = tx.payment;
-  return (
-    <Table.Row
-      key={index}
-      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-    >
-      <Table.Cell>
-        <Badge className="inline-block">{tx?.type}</Badge>
-      </Table.Cell>
-      <Table.Cell>
-        <StatusBadge status={tx?.status} />
-      </Table.Cell>
-      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {payment?.sourceName
-          ? payment?.sourceName.replace("Supermojo", "Skyfire")
-          : ""}
-      </Table.Cell>
-      <Table.Cell>{payment?.destinationName}</Table.Cell>
-      <Table.Cell>{Number(payment?.value) / 1000000} USDC</Table.Cell>
-      <Table.Cell>
-        <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
-          {tx.txHash}
-        </Link>
-      </Table.Cell>
-      <Table.Cell></Table.Cell>
-    </Table.Row>
   );
 }
 
@@ -72,17 +39,18 @@ function ClaimRow(tx: CommonTransaction, index: number) {
         <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {claim?.sourceAddress
-          ? claim?.sourceAddress.replace("Supermojo", "Skyfire")
-          : ""}
+        {claim?.sourceName}
       </Table.Cell>
-      <Table.Cell>{claim?.destinationAddress}</Table.Cell>
-      <Table.Cell>{Number(claim?.value) / 1000000} USDC</Table.Cell>
+      <Table.Cell>{claim?.destinationName}</Table.Cell>
+      <Table.Cell>
+        {(Number(claim?.value) / 1000000).toFixed(7)} USDC
+      </Table.Cell>
       <Table.Cell>
         <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
-          {tx.txHash}
+          {tx.txHash?.substring(0, 5) + "..."}
         </Link>
       </Table.Cell>
+      <Table.Cell>{formatDateString(tx.createdAt)}</Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
   );
@@ -103,19 +71,16 @@ function RedemptionRow(tx: CommonTransaction, index: number) {
         <StatusBadge status={tx?.status} />
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-        {redemption?.sourceAddress
-          ? redemption?.sourceAddress.replace("Supermojo", "Skyfire")
-          : ""}
+        {redemption?.sourceName}
       </Table.Cell>
-      <Table.Cell>{redemption?.destinationAddress}</Table.Cell>
-      <Table.Cell>
-        {Number(redemption?.amounts.total) / 1000000} USDC
-      </Table.Cell>
+      <Table.Cell>{redemption?.destinationName}</Table.Cell>
+      <Table.Cell></Table.Cell>
       <Table.Cell>
         <Link href={`https://www.oklink.com/amoy/tx/${tx.txHash}`}>
-          {tx.txHash}
+          {tx.txHash?.substring(0, 5) + "..."}
         </Link>
       </Table.Cell>
+      <Table.Cell>{formatDateString(tx.createdAt)}</Table.Cell>
       <Table.Cell></Table.Cell>
     </Table.Row>
   );
@@ -126,7 +91,7 @@ export default function PaymentTransactions() {
   const auth = useSelector(useAuthSelector);
 
   useEffect(() => {
-    dispatch(fetchUserTransactions({ walletAddress: auth.user.walletAddress }));
+    dispatch(fetchUserTransactions());
   }, [auth]);
 
   return (
@@ -139,10 +104,11 @@ export default function PaymentTransactions() {
           <Table.Head>
             <Table.HeadCell>Type</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
-            <Table.HeadCell>Source</Table.HeadCell>
-            <Table.HeadCell>Destination Service</Table.HeadCell>
+            <Table.HeadCell>Sender Name</Table.HeadCell>
+            <Table.HeadCell>Receiver Name</Table.HeadCell>
             <Table.HeadCell>Amount</Table.HeadCell>
             <Table.HeadCell>TxHash</Table.HeadCell>
+            <Table.HeadCell>Date</Table.HeadCell>
             <Table.HeadCell>
               <span className="sr-only">Edit</span>
             </Table.HeadCell>
@@ -151,9 +117,7 @@ export default function PaymentTransactions() {
             {transactions
               // .filter((tx: CommonTransaction) => tx.type === "PAYMENT")
               .map((tx: CommonTransaction, index: number) => {
-                if (tx.type === "PAYMENT") {
-                  return PaymentRow(tx, index);
-                } else if (tx.type === "CLAIM") {
+                if (tx.type === "CLAIM") {
                   return ClaimRow(tx, index);
                 } else return RedemptionRow(tx, index);
               })}

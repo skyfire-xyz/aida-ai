@@ -42,10 +42,29 @@ export interface Receiver {
   cost: number;
   currency: string;
   createdDate: string;
+  updatedDate: string;
 }
 
 export type WalletType = "Sender" | "Receiver";
 
+export interface Claim {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  referenceId: string;
+  payment: Payment;
+}
+
+export interface Payment {
+  sourceName?: string;
+  destinationName?: string;
+  sourceAddress: string;
+  destinationAddress: string;
+  value: string;
+  currency: string;
+  network: string;
+}
 export interface DashboardReduxState {
   reservedWallets: {
     Sender: Wallet[];
@@ -148,6 +167,7 @@ export interface CommonTransaction {
     sourceAddress: string;
     sourceName?: string;
     destinationAddress: string;
+    destinationName?: string;
     amounts: {
       currency: string;
       fee: string;

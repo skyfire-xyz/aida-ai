@@ -4,11 +4,12 @@ import {
   useDashboardSelector,
 } from "@/src/app/reducers/dashboardSlice";
 import { AppDispatch } from "@/src/store";
-import { Table } from "flowbite-react";
+import { Badge, Table } from "flowbite-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Receiver } from "../../../reducers/types";
 import { useFormatter } from "next-intl";
+import { formatDateString } from "../../../utils";
 
 export default function Receivers() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +28,7 @@ export default function Receivers() {
           <Table.Head>
             <Table.HeadCell>Name</Table.HeadCell>
             <Table.HeadCell>Cost</Table.HeadCell>
-            <Table.HeadCell>Currency</Table.HeadCell>
+            <Table.HeadCell>Last Updated</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
             {receivers.map((item: Receiver) => (
@@ -37,11 +38,9 @@ export default function Receivers() {
               >
                 <Table.Cell>{item.skyfireUser.username}</Table.Cell>
                 <Table.Cell>
-                  {format.number(Number(item.cost / 1000000), {
-                    style: "decimal",
-                  })}
+                  {(Number(item?.cost) / 1000000).toFixed(7)} USDC
                 </Table.Cell>
-                <Table.Cell>{item.currency}</Table.Cell>
+                <Table.Cell>{formatDateString(item.updatedDate)}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
