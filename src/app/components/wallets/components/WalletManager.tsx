@@ -20,7 +20,7 @@ import { MdDelete } from "react-icons/md";
 import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
 import { MdLoop } from "react-icons/md";
 import { IoIosWallet } from "react-icons/io";
-import PaymentTransactions from "../../transactions/components/AllTransactions";
+
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
 import {
