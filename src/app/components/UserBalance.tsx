@@ -1,10 +1,12 @@
+'use client'
+
 import { useFormatter } from "next-intl";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getUserBalance,
   useAuthSelector,
   userBalanceSelector,
-} from "../../app/reducers/authentication";
+} from "../reducers/authentication";
 import { AppDispatch } from "@/src/store";
 import { useEffect } from "react";
 import { Badge } from "flowbite-react";

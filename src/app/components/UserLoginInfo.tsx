@@ -2,8 +2,8 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, useAuthSelector } from "../../app/reducers/authentication";
 import { AppDispatch } from "@/src/store";
-import { resetState } from "@/src/app/reducers/dashboardSlice";
-import UserBalance from "./UserBalance";
+
+import UserBalance from "../../app/components/UserBalance";
 
 function UserLoginInfo() {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +30,6 @@ function UserLoginInfo() {
               href={"#"}
               onClick={() => {
                 dispatch(setUser({}));
-                dispatch(resetState());
               }}
             >
               <span className="ml-1 text-xs">Log out</span>

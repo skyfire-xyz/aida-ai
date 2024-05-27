@@ -4,7 +4,6 @@ import { AppDispatch, store } from "@/src/store";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { getUser, useAuthSelector } from "./reducers/authentication";
-import { DarkThemeWrapper } from "./dashboard/DarkThemeWrapper";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return <Provider store={store}>{children}</Provider>;
@@ -30,11 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [auth]);
 
   if (!auth.init || !auth.user) {
-    return (
-      <DarkThemeWrapper>
-        <div></div>
-      </DarkThemeWrapper>
-    );
+    return null;
   }
   return <>{children}</>;
 }

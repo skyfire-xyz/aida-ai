@@ -10,9 +10,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
-    "@zerodev/passkey-validator": "^5.1.16",
-    "@zerodev/sdk": "^5.1.11",
-    "@zerodev/session-key": "^5.1.5",
     "axios": "^1.6.8",
     "axios-retry": "^4.1.0",
     "flowbite-react": "^0.8.0",

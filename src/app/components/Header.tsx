@@ -8,7 +8,7 @@ import { setUser, useAuthSelector } from "../reducers/authentication";
 import { Card } from "flowbite-react";
 import { AppDispatch } from "@/src/store";
 import { HiLogout } from "react-icons/hi";
-import UserLoginInfo from "../../common/components/UserLoginInfo";
+import UserLoginInfo from "./UserLoginInfo";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

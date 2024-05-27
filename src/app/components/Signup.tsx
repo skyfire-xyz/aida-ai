@@ -61,29 +61,9 @@ function SignInForm({ setIsSignup }: { setIsSignup: (bool: boolean) => void }) {
           className="w-full rounded-xl bg-[#f7f9fa]"
         ></TextInput>
       </div>
-      <div className="flex items-center justify-between">
-        <a
-          href="#"
-          className="text-primary-600 dark:text-primary-500 text-sm font-medium hover:underline"
-        >
-          Forgot password?
-        </a>
-      </div>
       <Button className="w-full" type="submit">
         Sign In
       </Button>
-      <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-        Don’t have an account yet?{" "}
-        <a
-          href="#"
-          className="text-primary-600 dark:text-primary-500 font-medium hover:underline"
-          onClick={() => {
-            router.push("/signup");
-          }}
-        >
-          Sign up
-        </a>
-      </p>
     </form>
   );
 }
