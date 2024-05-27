@@ -4,9 +4,9 @@ import { getSessionData, setSessionData } from "@/src/common/lib/utils";
 import axios from "axios";
 import { AIDA_USER_ID, BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
-import { LoginFormInput } from "../(auth)/signin/page";
 import { stat } from "fs";
 import { useSelector } from "react-redux";
+import { LoginFormInput } from "../components/Signup";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 

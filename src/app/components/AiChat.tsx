@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 import { useAuthSelector } from "../reducers/authentication";
 import { AppDispatch } from "@/src/store";
-import UserBalance from "@/src/common/components/UserBalance";
+
 // import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 type Image = any;
 interface AiChatProps {

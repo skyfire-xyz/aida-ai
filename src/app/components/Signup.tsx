@@ -7,7 +7,7 @@ import { AppDispatch } from "@/src/store";
 import { setUser, signInUser } from "../reducers/authentication";
 import { useRouter } from "next/navigation";
 
-interface LoginFormInput {
+export interface LoginFormInput {
   username: string;
   password: string;
 }
