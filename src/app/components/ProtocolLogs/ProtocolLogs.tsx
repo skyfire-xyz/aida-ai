@@ -30,7 +30,8 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
   }, [shouldScrollToBottom]);
 
   useEffect(() => {
-    dispatch(getUserBalance());
+    // TODO: Revisit
+    // dispatch(getUserBalance());
   }, [protocolLogs]);
 
   return (

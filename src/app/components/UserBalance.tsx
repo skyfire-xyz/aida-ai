@@ -22,7 +22,8 @@ function UserBalance() {
       (!userBalance && auth.user && !auth.status["getUserBalance"]) ||
       auth.status["getUserBalance"] === "idle"
     ) {
-      dispatch(getUserBalance());
+      // TODO: Revisit
+      // dispatch(getUserBalance());
     }
   }, [userBalance, auth]);
 

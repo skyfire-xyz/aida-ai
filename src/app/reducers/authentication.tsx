@@ -2,11 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AuthenticationReduxState } from "./types";
 import { getSessionData, setSessionData } from "@/src/common/lib/utils";
 import axios from "axios";
-import { AIDA_USER_ID, BACKEND_API_URL } from "@/src/common/lib/constant";
+import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import api from "@/src/common/lib/api";
 import { stat } from "fs";
 import { useSelector } from "react-redux";
-import { LoginFormInput } from "../components/Signup";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
@@ -47,16 +46,16 @@ export const createReceiverWallet = createAsyncThunk<any, { data: any }>(
   },
 );
 
-export const signInUser = createAsyncThunk<any, LoginFormInput>(
-  "authentication/signInUser",
-  async ({ username, password }, thunkAPI) => {
-    const res = await axios.post(`${BACKEND_API_URL}v1/login`, {
-      username: username,
-      password: password,
-    });
-    return res.data;
-  },
-);
+// export const signInUser = createAsyncThunk<any, LoginFormInput>(
+//   "authentication/signInUser",
+//   async ({ username, password }, thunkAPI) => {
+//     const res = await axios.post(`${BACKEND_API_URL}v1/login`, {
+//       username: username,
+//       password: password,
+//     });
+//     return res.data;
+//   },
+// );
 
 export const getUserBalance = createAsyncThunk<any>(
   "authentication/getUserBalance",
@@ -101,23 +100,6 @@ export const authenticationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      /**
-       * Sign in
-       */
-      .addCase(signInUser.pending, (state, action) => {
-        state.status["signInUser"] = "pending";
-      })
-      .addCase(signInUser.fulfilled, (state, action) => {
-        state.status["signInUser"] = "succeeded";
-        state.user = {
-          ...action.payload,
-          avatar: "/images/aichat/defaultUser.png",
-        };
-        storeLocalUserInfo(action.payload);
-      })
-      .addCase(signInUser.rejected, (state, action) => {
-        state.status["signInUser"] = "failed";
-      })
       /**
        * createSenderWallet
        */
