@@ -53,7 +53,7 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
-        <UserLoginInfo />
+        {/* <UserLoginInfo /> */}
         {/* {auth.user && (
           <div className="text-white">
             <div className="flex items-center">

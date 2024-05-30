@@ -9,17 +9,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser, useAuthSelector } from "./reducers/authentication";
 import { useEffect, useMemo, useState } from "react";
 import { AppDispatch } from "../store";
+import { SKYFIRE_API_KEY } from "../common/lib/constant";
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector(useAuthSelector);
   const [showSignInModal, setShowSignInModal] = useState(true);
-  const requireAuth = useMemo(() => {
-    return !auth.user;
-  }, [auth]);
+
 
   useEffect(() => {
-    setShowSignInModal(requireAuth);
+    setShowSignInModal(!SKYFIRE_API_KEY);
   }, [auth]);
 
   useEffect(() => {
