@@ -37,6 +37,7 @@ import {
 import { AppDispatch } from "@/src/store";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 import { getUserBalance, useAuthSelector } from "../reducers/authentication";
+import { SKYFIRE_API_KEY } from "@/src/common/lib/constant";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -347,7 +348,7 @@ export default function ChatPane(props: any) {
             onClick={() => setShowExamples(true)}
           />
         </div>
-        {!auth.user ? (
+        {!SKYFIRE_API_KEY ? (
           <Button
             className="w-full rounded-xl"
             onClick={() => {
