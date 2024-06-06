@@ -9,6 +9,7 @@ import { Card } from "flowbite-react";
 import { AppDispatch } from "@/src/store";
 import { HiLogout } from "react-icons/hi";
 import UserLoginInfo from "./UserLoginInfo";
+import APIKeyConfig from "./APIKeyConfig";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +54,8 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
+        <APIKeyConfig />
+        
         {/* <UserLoginInfo /> */}
         {/* {auth.user && (
           <div className="text-white">

@@ -73,12 +73,12 @@ export const authenticationSlice = createSlice({
   initialState,
   reducers: {
     getUser: (state) => {
-      const user = getSessionData("user");
-      if (user) {
-        const userObj = JSON.parse(user);
-        state.user = userObj;
-        storeLocalUserInfo(userObj);
-      }
+      // const user = getSessionData("user");
+      // if (user) {
+      //   const userObj = JSON.parse(user);
+      //   state.user = userObj;
+      //   storeLocalUserInfo(userObj);
+      // }
       state.init = true;
     },
     setUser: (state, { payload }) => {
