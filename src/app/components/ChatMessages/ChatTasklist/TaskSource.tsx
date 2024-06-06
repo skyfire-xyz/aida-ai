@@ -17,8 +17,8 @@ export default function TaskSource({ skillName }: { skillName: string }) {
 
   if (!imageUrl) {
     return (
-      <div className="mr-2 h-6 w-6 inline text-gray-700">
-        <span className="h-6 w-6 text-[12px] inline-block bg-white rounded-sm text-center">
+      <div className="mr-2 inline h-6 w-6 text-gray-700">
+        <span className="inline-block h-6 w-6 rounded-sm bg-white text-center text-[12px]">
           {skillName && skillName[0]}
         </span>
       </div>
@@ -30,7 +30,7 @@ export default function TaskSource({ skillName }: { skillName: string }) {
       <img
         src={imageUrl}
         alt={skillName}
-        className={`h-6 w-6 inline-block rounded-sm`}
+        className={`inline-block h-6 w-6 rounded-sm`}
       />
     </span>
   );

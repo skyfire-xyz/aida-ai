@@ -9,7 +9,7 @@ export default function BodyVideos({
   return results?.map((result, index) => (
     <Card
       key={index}
-      className="max-w-lg mb-2 cursor-pointer"
+      className="mb-2 max-w-lg cursor-pointer"
       imgSrc={result.thumbnail.static}
       onClick={() => window.open(result.link, "_blank", "noopener,noreferrer")}
       horizontal
