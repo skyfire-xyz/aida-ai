@@ -1,7 +1,4 @@
-// import DownloadIcon from '@mui/icons-material/Download';
 import Markdown from "react-markdown";
-// import ShareOnSocials from "../ShareOnSocials";
-// import { Button } from '@mui/material';
 import fileDownload from "js-file-download";
 import { Button } from "flowbite-react";
 import { useTranslations } from "next-intl";
@@ -66,7 +63,6 @@ function ChatGeneral({
               >
                 {t("aiPrompt.btnDownloadImage")}
               </Button>
-              {/* <ShareOnSocials /> */}
             </div>
           </div>
         )}

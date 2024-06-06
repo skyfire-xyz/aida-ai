@@ -1,12 +1,12 @@
-import * as React from 'react';
+import * as React from "react";
 
 const BouncingDotsLoader = () => {
   return (
-    <div className="flex space-x-2 justify-center items-center">
+    <div className="flex items-center justify-center space-x-2">
       <span className="sr-only">Loading...</span>
-      <div className="h-2 w-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-      <div className="h-2 w-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-      <div className="h-2 w-2 bg-white rounded-full animate-bounce"></div>
+      <div className="h-2 w-2 animate-bounce rounded-full bg-white [animation-delay:-0.3s]"></div>
+      <div className="h-2 w-2 animate-bounce rounded-full bg-white [animation-delay:-0.15s]"></div>
+      <div className="h-2 w-2 animate-bounce rounded-full bg-white"></div>
     </div>
   );
 };

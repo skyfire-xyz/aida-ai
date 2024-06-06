@@ -1,6 +1,5 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Card } from "flowbite-react";
 import BodyVideos from "./BodyVideos";
 
 export interface ChatVideoSearchProps {
@@ -21,7 +20,6 @@ export interface ChatVideoSearchProps {
 }
 
 function ChatVideoSearch({
-  direction,
   textMessage,
   avatarUrl,
   results,

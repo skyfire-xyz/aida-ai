@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import DataSource from "../DataSource";
+import DataSource from "../ServiceIcons";
 import { PaymentType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,9 +8,8 @@ import {
   useProtocolLogsSelector,
 } from "../../reducers/aiBotSlice";
 import { useTranslations } from "next-intl";
-import { scrollToBottom } from "../utils";
+import { scrollToBottom } from "../../utils";
 import { AppDispatch } from "@/src/store";
-import { getUserBalance } from "../../reducers/authentication";
 
 export interface ProtocolLogsProps {}
 
@@ -21,18 +20,11 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
   const protocolLogs = useSelector(useProtocolLogsSelector);
   const { shouldScrollToBottom } = useSelector(useAiBotSelector);
 
-  const { protocolLogsV2 } = useSelector(useAiBotSelector);
-
   useEffect(() => {
     scrollToBottom([paymentsPaneRef], () => {
       dispatch(setShouldScrollToBottom(false));
     });
   }, [shouldScrollToBottom]);
-
-  useEffect(() => {
-    // TODO: Revisit
-    // dispatch(getUserBalance());
-  }, [protocolLogs]);
 
   return (
     <div
@@ -40,9 +32,6 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
       ref={paymentsPaneRef}
     >
       <div className="relative mx-auto max-w-2xl p-4">
-        {/* <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-400">Logs:</span>
-          </div> */}
         <div className="h-full text-gray-300" id="code">
           <ul>
             {protocolLogs.map((payment: PaymentType, index: number) => {

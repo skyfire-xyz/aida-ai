@@ -1,20 +1,15 @@
-import axios from "axios";
 import fileDownload from "js-file-download";
 
-import { Button, Card } from "flowbite-react";
-import { ChatVideoSearchProps } from "./ChatVideoSearch";
-import { MouseEvent, MouseEventHandler, use, useState } from "react";
+import { Button } from "flowbite-react";
+import { MouseEvent, useState } from "react";
 import { FaFileDownload } from "react-icons/fa";
 import { TiZoom } from "react-icons/ti";
 import { useTranslations } from "next-intl";
 import { ChatDatasetProps } from "./ChatDataset";
-import { BACKEND_API_URL } from "@/src/common/lib/constant";
 import { addProtocolLog, fetchAnalyzeDataset } from "../../reducers/aiBotSlice";
 import { useDispatch } from "react-redux";
-import App from "next/app";
 import { AppDispatch } from "@/src/store";
-import api from "@/src/common/lib/api";
-import { getUserBalance } from "../../reducers/authentication";
+import api from "@/src/lib/api";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");
@@ -56,12 +51,6 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
             key={index}
             className="mb-4 flex items-center rounded-lg bg-white text-black"
           >
-            {/* <img
-                    className="object-cover rounded-tr-lg rounded-tl-lg w-full h-[100px]"
-                    src={
-                      'https://storage.googleapis.com/kaggle-datasets-images/4580651/7818480/97bc9a21bc6c5ac1d7e84a97e61e9730/dataset-thumbnail.jpg?t=2024-03-11-19-00-54'
-                    }
-                  /> */}
             <div className="px grow items-center px-4 py-2">
               <div className="grow">
                 <b>{data.title}</b>

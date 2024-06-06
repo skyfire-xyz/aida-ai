@@ -27,7 +27,7 @@ export const cloudflareImageLoader: ImageLoader = ({ src, width, quality }) => {
   // so we add the no-op `width` query parameter to suppress the warning
   // https://nextjs.org/docs/messages/next-image-missing-loader-width
   return `https://imagedelivery.net/${CLOUDFLARE_IMAGE_PATH}/marketplace/${normalizeSrc(
-    src
+    src,
   )}/${paramsString}`;
 };
 

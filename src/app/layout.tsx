@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import "@/src/globals.css";
-import { AuthProvider, Providers } from "./providers";
+import { Providers } from "./providers";
 import { Flowbite, ThemeModeScript } from "flowbite-react";
-import theme from "@/src/common/flowbite-theme";
-import { useSelector } from "react-redux";
-import { useAuthSelector } from "./reducers/authentication";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Notification from "./components/Notification";
+import theme from "@/src/lib/flowbite-theme";
 
 export const metadata: Metadata = {
   title: "Aida.AI - Powered by Skyfire Payments",

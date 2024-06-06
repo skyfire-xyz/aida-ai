@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
-import DataSource from "./DataSource";
-import { Card } from "flowbite-react";
+import DataSource from "./ServiceIcons";
 
 export default function ExamplePrompts() {
   const t = useTranslations("ai");

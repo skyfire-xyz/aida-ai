@@ -1,5 +1,5 @@
-import { SKYFIRE_API_KEY } from "@/src/common/lib/constant";
-import { getSessionData, setSessionData } from "@/src/common/lib/utils";
+import { SKYFIRE_API_KEY } from "@/src/lib/constant";
+import { getSessionData, setSessionData } from "@/src/lib/utils";
 import { Button, Kbd, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { FaCog } from "react-icons/fa";
@@ -33,7 +33,6 @@ export default function APIKeyConfig() {
               </p>
             </h3>
             <div className="mb-10 flex items-center justify-center gap-2 text-white">
-              {/* <ButtonClipboard text={createAPIKeyStatus.data?.apiKey} /> */}
               <TextInput
                 placeholder={"Skyfire API Key"}
                 onChange={(e) => setApiKey(e.target.value)}

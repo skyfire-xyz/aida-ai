@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AiBotSliceReduxState, PaymentType, Task } from "./types";
-import api from "@/src/common/lib/api";
+import api from "@/src/lib/api";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 

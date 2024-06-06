@@ -1,14 +1,11 @@
 "use client";
 
 import ChatPanel from "./ChatPanel";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import ExamplePrompts from "./ExamplePrompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useDispatch, useSelector } from "react-redux";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { useAuthSelector } from "../reducers/authentication";
-import { AppDispatch } from "@/src/store";
 
 // import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 type Image = any;
@@ -19,9 +16,6 @@ interface AiChatProps {
 
 export default function AiChat({ images, showSignIn }: AiChatProps) {
   const t = useTranslations("ai");
-  const dispatch = useDispatch<AppDispatch>();
-  const auth = useSelector(useAuthSelector);
-  const [mounted, setMounted] = useState(false);
 
   // const userAvatarImageData = getStrapiDataAttributes(
   //   images?.find((data) => data.attributes.name === "userAvatar")
@@ -32,10 +26,6 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
   // const botImageData = getStrapiDataAttributes(
   //   images?.find((data) => data.attributes.name === "botImageWide")
   // );
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const userAvatarImageData = { url: "" };
   const botAvatarImageData = { url: "" };
@@ -75,7 +65,6 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
                   <b>{t("page.titlePaymentLogs")}</b>
                 </Link>
               </p>
-              {/* <ProtocolLogsV2 /> */}
               <ProtocolLogs />
             </div>
           </div>
