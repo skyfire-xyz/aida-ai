@@ -1,6 +1,5 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import { Card } from "flowbite-react";
 import BodySearch from "./BodySearch";
 
 export interface ChatWebSearchProps {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-export default function SourceLogo({ sourceName }: { sourceName: string }) {
+export default function ServiceIcons({ sourceName }: { sourceName: string }) {
   const imageUrl = useMemo(() => {
     if (sourceName === "Perplexity") {
       return "/images/aichat/logo-perplexity.svg";
@@ -17,8 +17,8 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
 
   if (!imageUrl) {
     return (
-      <div className="mr-2 h-4 w-4 inline text-gray-700">
-        <span className="h-4 w-4 text-[12px] inline-block bg-white rounded-sm text-center">
+      <div className="mr-2 inline h-4 w-4 text-gray-700">
+        <span className="inline-block h-4 w-4 rounded-sm bg-white text-center text-[12px]">
           {sourceName && sourceName[0]}
         </span>
       </div>
@@ -30,7 +30,7 @@ export default function SourceLogo({ sourceName }: { sourceName: string }) {
       <img
         src={imageUrl}
         alt={sourceName}
-        className={`h-4 w-4 inline-block rounded-sm ${
+        className={`inline-block h-4 w-4 rounded-sm ${
           sourceName === "Perplexity" ? "bg-white" : ""
         }`}
       />

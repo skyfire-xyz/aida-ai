@@ -1,29 +1,37 @@
-/**
- * Converts an ISO 8601 date string to a nicely formatted string.
- *
- * @param {string} isoString - The ISO 8601 date string to be formatted.
- * @returns {string} - The nicely formatted date string.
- */
-export function formatDateString(isoString: string) {
-  // Create a new Date object from the ISO string
-  const date = new Date(isoString);
+export function scrollToBottom(refs: any, stopScroll: () => void) {
+  refs.forEach((ref: { current: HTMLDivElement }) => {
+    ref.current?.scrollTo({ top: 99999, behavior: "smooth" });
+  });
 
-  // Define options for the formatting
-  const options = {
-    weekday: "long", // Full name of the day
-    year: "numeric", // Numeric year
-    month: "long", // Full name of the month
-    day: "numeric", // Numeric day
-    hour: "2-digit", // 2-digit hour
-    minute: "2-digit", // 2-digit minute
-    second: "2-digit", // 2-digit second
-    hour12: true, // 12-hour clock with AM/PM
+  // Account for image load
+  const timer = setInterval(() => {
+    refs.forEach((ref: { current: HTMLDivElement }) => {
+      ref.current?.scrollTo({ top: 99999, behavior: "smooth" });
+    });
+  }, 300);
+  setTimeout(() => {
+    clearInterval(timer);
+    stopScroll();
+  }, 900);
+}
+
+export function getLogoAIData() {
+  const defailtLogoAI = {
+    service: "LogoAI",
+    price: 100000,
   };
-
-  // Format the date using toLocaleDateString and toLocaleTimeString
-  const formattedDate = date.toLocaleDateString();
-  const formattedTime = date.toLocaleTimeString();
-
-  // Return the combined formatted date and time string
-  return `${formattedDate} at ${formattedTime}`;
+  try {
+    const key = "__storage__ai-demo";
+    if (typeof window !== "undefined") {
+      const data = window["localStorage"].getItem(key);
+      if (data) {
+        return JSON.parse(data);
+      }
+      return defailtLogoAI;
+    } else {
+      return defailtLogoAI;
+    }
+  } catch {
+    return defailtLogoAI;
+  }
 }

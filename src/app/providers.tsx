@@ -1,35 +1,19 @@
 "use client";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { AppDispatch, store } from "@/src/store";
-import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { getUser, useAuthSelector } from "./reducers/authentication";
+import { Provider } from "react-redux";
+import { store } from "@/src/store";
+import messages from "@/src/locale/en.json";
+import { NextIntlClientProvider } from "next-intl";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <Provider store={store}>{children}</Provider>;
-}
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const dispatch = useDispatch<AppDispatch>();
-  const auth = useSelector(useAuthSelector);
-
-  useEffect(() => {
-    dispatch(getUser());
-  }, []);
-  useEffect(() => {
-    if (auth.init && !auth.user) {
-      router.push("/signin");
-    } else if (auth.init && auth.user) {
-      if (pathname === "/signup" || pathname === "/signin") {
-        router.push("/dashboard");
-      }
-    }
-  }, [auth]);
-
-  if (!auth.init || !auth.user) {
-    return null;
-  }
-  return <>{children}</>;
+  return (
+    <Provider store={store}>
+      <NextIntlClientProvider
+        timeZone={"America/New_York"}
+        locale={"en"}
+        messages={messages}
+      >
+        {children}
+      </NextIntlClientProvider>
+    </Provider>
+  );
 }

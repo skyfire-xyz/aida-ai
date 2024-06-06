@@ -6,22 +6,18 @@ import ChatGeneral from "./ChatMessages/ChatGeneral";
 import ChatDataset from "./ChatMessages/ChatDataset";
 import { useEffect, useRef, useState } from "react";
 import BouncingDotsLoader from "./BouncingLoader";
-import { getLogoAIData, scrollToBottom } from "./utils";
-import { ChatMessageType, PaymentType } from "./types";
+import { getLogoAIData, scrollToBottom } from "../utils";
+import { ChatMessageType } from "./types";
 import ExamplePrompts from "./ExamplePrompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList, {
-  ChatTaskListProps,
-} from "./ChatMessages/ChatTasklist/ChatTasklist";
+import ChatTaskList from "./ChatMessages/ChatTasklist/ChatTasklist";
 import ChatWebSearch from "./ChatMessages/ChatWebSearch";
 import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
 import {
   addInitialMessage,
   addMessage,
-  addProtocolLog,
-  fetchAnalyzeDataset,
   fetchChat,
   fetchDataset,
   fetchImageGeneration,
@@ -36,13 +32,11 @@ import {
 } from "../reducers/aiBotSlice";
 import { AppDispatch } from "@/src/store";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { getUserBalance, useAuthSelector } from "../reducers/authentication";
-import { SKYFIRE_API_KEY } from "@/src/common/lib/constant";
+import { SKYFIRE_API_KEY } from "@/src/lib/constant";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
-  const auth = useSelector(useAuthSelector);
   const dispatch = useDispatch<AppDispatch>();
   const { messages, status, shouldScrollToBottom } =
     useSelector(useAiBotSelector);
@@ -368,30 +362,6 @@ export default function ChatPane(props: any) {
             onKeyDown={handleEnter}
           ></TextInput>
         )}
-        {/* <TextField
-          className="w-full rounded-xl bg-[#f7f9fa]"
-          variant="outlined"
-          placeholder={t("page.chatPlaceholder")}
-          value={inputText}
-          onChange={(ev) => {
-            setInputText(ev?.target?.value);
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end" className="bg-[#f7f9fa]">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => {
-                    handleEnter({ key: "Enter" } as any);
-                  }}
-                >
-                  <SendIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          onKeyDown={handleEnter}
-        /> */}
       </div>
       <Modal
         show={showMicroPayments}
