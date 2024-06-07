@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       case "random_joke":
         res = await client.proxies.joke(req.data);
         break;
-      case "dataset/analyze":
+      case "dataset_analyze":
         res = await client.proxies.analyzeDataset(req.data);
         break;
       case "dataset/download":

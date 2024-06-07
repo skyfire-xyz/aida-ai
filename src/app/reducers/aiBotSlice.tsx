@@ -1,5 +1,10 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AiBotSliceReduxState, PaymentType, Task } from "./types";
+import {
+  AiBotSliceReduxState,
+  ChatMessageType,
+  PaymentType,
+  Task,
+} from "./types";
 import api from "@/src/lib/api";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
@@ -19,120 +24,14 @@ const initialState: AiBotSliceReduxState = {
   },
 };
 
-export const executeChat = createAsyncThunk<
-  any,
-  { chatType: string; data: any }
->("aiBot/executeChat", async ({ chatType, data }) => {
-  const res = await api.post(`/api/chat`, {
-    chatType,
-    data,
-  });
-  return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
-});
-
-export const fetchChat = createAsyncThunk<any, { prompt: string }>(
-  "aiBot/fetchChat",
-  async ({ prompt }) => {
+export const postChat = createAsyncThunk<any, { chatType: string; data: any }>(
+  "aiBot/postChat",
+  async ({ chatType, data }) => {
     const res = await api.post(`/api/chat`, {
-      chatType: "chat",
-      data: {
-        prompt,
-      },
+      chatType,
+      data,
     });
-    return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchMeme = createAsyncThunk<
-  any,
-  { searchTerm: string; meme: boolean }
->("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
-  const res = await api.post(`/api/chat`, {
-    chatType: "meme",
-    data: {
-      meme,
-      searchTerm: searchTerm.trim(),
-    },
-  });
-
-  return { ...res.data, type: "meme", uuid: new Date().getTime() };
-});
-
-export const fetchImageGeneration = createAsyncThunk<
-  any,
-  { searchTerm: string }
->("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
-  const res = await api.post(`/api/chat`, {
-    chatType: "image_generation",
-    data: {
-      prompt: searchTerm.trim(),
-    },
-  });
-  return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
-});
-
-export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchDataset",
-  async ({ searchTerm }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType: "dataset_search",
-      data: {
-        prompt: searchTerm.trim(),
-      },
-    });
-    return { ...res.data, type: "dataset", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
-  "aiBot/fetchAnalyzeDataset",
-  async ({ ref }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType: "dataset_analyze",
-      data: {
-        dataset: ref,
-      },
-    });
-    return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchTasklist",
-  async ({ searchTerm }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType: "tasklist",
-      data: {
-        prompt: searchTerm.trim(),
-      },
-    });
-    return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchWebSearch",
-  async ({ searchTerm }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType: "web_search",
-      data: {
-        prompt: searchTerm.trim(),
-      },
-    });
-    return { ...res.data, type: "web_search", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchVideoSearch",
-  async ({ searchTerm }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType: "video_search",
-      data: {
-        prompt: searchTerm.trim(),
-      },
-    });
-    return { ...res.data, type: "video_search", uuid: new Date().getTime() };
+    return { ...res.data, prompt, type: chatType, uuid: new Date().getTime() };
   },
 );
 
@@ -195,48 +94,6 @@ export const fetchLogoAgent = createAsyncThunk<
   return { ...res.data, type: "logo", uuid: new Date().getTime() };
 });
 
-function updateProtocolLogsState(
-  state: AiBotSliceReduxState,
-  action: PayloadAction<any>,
-) {
-  const logs = action.payload.quote || [action.payload.payment];
-  if (logs) {
-    state.protocolLogs = [...state.protocolLogs, ...logs];
-  }
-
-  // Prototyping V2
-  const logsV2 = action.payload.quote || [action.payload.payment];
-  const log = {
-    [action.payload.uuid as number]: action.payload.quote
-      ? (action.payload.quote[0] as PaymentType)
-      : (action.payload.payment as PaymentType),
-  };
-  if (logsV2) {
-    if (state.protocolLogsV2 === null) {
-      state.protocolLogsV2 = [log];
-    } else {
-      state.protocolLogsV2 = [...state.protocolLogsV2, log];
-    }
-  }
-}
-
-const processPending = (state: AiBotSliceReduxState) => {
-  state.status.botThinking = true;
-  state.shouldScrollToBottom = true;
-};
-const processError = (state: AiBotSliceReduxState) => {
-  state.status.botThinking = false;
-  state.error.fetchAll = "Something went wrong";
-};
-const processFulfilled = (
-  state: AiBotSliceReduxState,
-  action: PayloadAction,
-) => {
-  updateProtocolLogsState(state, action);
-  state.status.botThinking = false;
-  state.shouldScrollToBottom = true;
-};
-
 export const aiBotSlice = createSlice({
   name: "aiBot",
   initialState,
@@ -273,133 +130,83 @@ export const aiBotSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       /**
-       * Dataset
+       * PostChat
        */
-      .addCase(fetchDataset.pending, processPending)
-      .addCase(fetchDataset.fulfilled, (state, action) => {
+      .addCase(postChat.pending, processPending)
+      .addCase(postChat.fulfilled, (state, action) => {
+        let data;
+        switch (action.payload.type) {
+          case "dataset_search":
+            data = action.payload.datasets || [];
+            break;
+          case "tasklist":
+            data =
+              action.payload.tasks.map(
+                (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`,
+              ) || [];
+            state.tasks = {
+              ...state.tasks,
+              ...action.payload.tasks.reduce(
+                (obj: object, task: { id: number }) => {
+                  const parentId = state.taskGroupIndex;
+                  const referenceId = `${parentId}-${task.id}`;
+                  return {
+                    ...obj,
+                    [referenceId]: {
+                      ...task,
+                      referenceId,
+                      parentId,
+                      objective: action.payload.prompt,
+                    },
+                  };
+                },
+                {},
+              ),
+            };
+            state.taskGroupIndex++;
+            break;
+          case "web_search":
+            data = action.payload.results || [];
+            break;
+          case "video_search":
+            data = action.payload.results || [];
+            break;
+          case "meme":
+            data = action.payload.imageUrl;
+            break;
+          case "image_generation":
+            data = action.payload.imageUrl;
+            break;
+        }
         state.messages.push({
           uuid: action.payload.uuid,
-          type: "dataset",
+          type: action.payload.type as ChatMessageType["type"],
           avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data: action.payload.datasets || [],
-        });
-        processFulfilled(state, action);
-      })
-      .addCase(fetchDataset.rejected, processError)
-      /**
-       * Dataset Analysis
-       */
-      .addCase(fetchAnalyzeDataset.pending, processPending)
-      .addCase(fetchAnalyzeDataset.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "chat",
-          avatarUrl: robotImageUrl,
+          data: data,
           textMessage: action.payload.body,
         });
         processFulfilled(state, action);
       })
-      .addCase(fetchAnalyzeDataset.rejected, processError)
+      .addCase(postChat.rejected, processError)
+
       /**
-       * Tasklist
+       * Execute Tasks
        */
-      .addCase(fetchTasklist.pending, processPending)
-      .addCase(fetchTasklist.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "tasklist",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data:
-            action.payload.tasks.map(
-              (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`,
-            ) || [],
-        });
-        state.tasks = {
-          ...state.tasks,
-          ...action.payload.tasks.reduce(
-            (obj: object, task: { id: number }) => {
-              const parentId = state.taskGroupIndex;
-              const referenceId = `${parentId}-${task.id}`;
-              return {
-                ...obj,
-                [referenceId]: {
-                  ...task,
-                  referenceId,
-                  parentId,
-                  objective: action.payload.prompt,
-                },
-              };
-            },
-            {},
-          ),
-        };
-        state.taskGroupIndex++;
-        processFulfilled(state, action);
+      .addCase(executeTask.pending, (state, action) => {
+        state.tasks[action.meta.arg.task.referenceId].status = "pending";
       })
-      .addCase(fetchTasklist.rejected, processError)
-      /**
-       * WebSearch
-       */
-      .addCase(fetchWebSearch.pending, processPending)
-      .addCase(fetchWebSearch.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "websearch",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data: action.payload.results || [],
-        });
-        processFulfilled(state, action);
+      .addCase(executeTask.fulfilled, (state, action) => {
+        state.tasks[action.payload.task.referenceId].status = "complete";
+        state.tasks[action.payload.task.referenceId].result = action.payload;
+        updateProtocolLogsState(state, action);
       })
-      .addCase(fetchWebSearch.rejected, processError)
-      /**
-       * VideoSearch
-       */
-      .addCase(fetchVideoSearch.pending, processPending)
-      .addCase(fetchVideoSearch.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "videosearch",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data: action.payload.results || [],
-        });
-        processFulfilled(state, action);
+      .addCase(executeTask.rejected, (state, action) => {
+        state.tasks[action.meta.arg.task.referenceId].status = "error";
+        state.error.fetchAll = "Something went wrong";
       })
-      .addCase(fetchVideoSearch.rejected, processError)
-      /**
-       * Generate Image
-       */
-      .addCase(fetchImageGeneration.pending, processPending)
-      .addCase(fetchImageGeneration.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "chat",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.prompt,
-          data: action.payload.imageUrl,
-        });
-        processFulfilled(state, action);
-      })
-      .addCase(fetchImageGeneration.rejected, processError)
-      /**
-       * Meme
-       */
-      .addCase(fetchMeme.pending, processPending)
-      .addCase(fetchMeme.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "chat",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.joke,
-          data: action.payload.imageUrl,
-        });
-        processFulfilled(state, action);
-      })
-      .addCase(fetchMeme.rejected, processError)
+
       /**
        * Logo
        */
@@ -414,37 +221,7 @@ export const aiBotSlice = createSlice({
         });
         processFulfilled(state, action);
       })
-      .addCase(fetchLogoAgent.rejected, processError)
-      /**
-       * Chat
-       */
-      .addCase(fetchChat.pending, processPending)
-      .addCase(fetchChat.fulfilled, (state, action) => {
-        state.messages.push({
-          uuid: action.payload.uuid,
-          type: "chat",
-          avatarUrl: robotImageUrl,
-          textMessage: action.payload.body,
-        });
-        processFulfilled(state, action);
-      })
-      .addCase(fetchChat.rejected, processError)
-      /**
-       * Execute Tasks
-       */
-      .addCase(executeTask.pending, (state, action) => {
-        state.tasks[action.meta.arg.task.referenceId].status = "pending";
-      })
-      .addCase(executeTask.fulfilled, (state, action) => {
-        state.tasks[action.payload.task.referenceId].status = "complete";
-        state.tasks[action.payload.task.referenceId].result = action.payload;
-        updateProtocolLogsState(state, action);
-      })
-      .addCase(executeTask.rejected, (state, action) => {
-        console.log("????");
-        state.tasks[action.meta.arg.task.referenceId].status = "error";
-        state.error.fetchAll = "Something went wrong";
-      });
+      .addCase(fetchLogoAgent.rejected, processError);
   },
 });
 
@@ -479,6 +256,29 @@ export const useTasklistSelector = (state: any) => {
 
   return tasks;
 };
+
+function updateProtocolLogsState(
+  state: AiBotSliceReduxState,
+  action: PayloadAction<any>,
+) {
+  const logs = action.payload.quote || [action.payload.payment];
+  if (logs) {
+    state.protocolLogs = [...state.protocolLogs, ...logs];
+  }
+}
+function processPending(state: AiBotSliceReduxState) {
+  state.status.botThinking = true;
+  state.shouldScrollToBottom = true;
+}
+function processError(state: AiBotSliceReduxState) {
+  state.status.botThinking = false;
+  state.error.fetchAll = "Something went wrong";
+}
+function processFulfilled(state: AiBotSliceReduxState, action: PayloadAction) {
+  updateProtocolLogsState(state, action);
+  state.status.botThinking = false;
+  state.shouldScrollToBottom = true;
+}
 
 export const {
   addInitialMessage,
