@@ -19,6 +19,110 @@ const initialState: AiBotSliceReduxState = {
   },
 };
 
+export const executeChat = createAsyncThunk<
+  any,
+  { data: any; chatType: string }
+>("aiBot/executeChat", async ({ chatType, data }) => {
+  const res = await api.post(`/api/chat`, {
+    chatType,
+    data,
+  });
+  return { ...res.data, prompt, type: chatType, uuid: new Date().getTime() };
+});
+
+export const fetchMeme = createAsyncThunk<
+  any,
+  { searchTerm: string; meme: boolean }
+>("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
+  const res = await api.post(`/api/chat`, {
+    chatType: "meme",
+    data: {
+      meme,
+      searchTerm: searchTerm.trim(),
+    },
+  });
+
+  return { ...res.data, type: "meme", uuid: new Date().getTime() };
+});
+
+export const fetchImageGeneration = createAsyncThunk<
+  any,
+  { searchTerm: string }
+>("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
+  const res = await api.post(`/api/chat`, {
+    chatType: "image_generation",
+    data: {
+      prompt: searchTerm.trim(),
+    },
+  });
+  return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
+});
+
+export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchDataset",
+  async ({ searchTerm }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "dataset_search",
+      data: {
+        prompt: searchTerm.trim(),
+      },
+    });
+    return { ...res.data, type: "dataset", uuid: new Date().getTime() };
+  },
+);
+
+export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
+  "aiBot/fetchAnalyzeDataset",
+  async ({ ref }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "analyzeDataset",
+      data: {
+        dataset: ref,
+      },
+    });
+    return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
+  },
+);
+
+export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchTasklist",
+  async ({ searchTerm }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "tasklist",
+      data: {
+        prompt: searchTerm.trim(),
+      },
+    });
+    return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
+  },
+);
+
+export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchWebSearch",
+  async ({ searchTerm }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "web_search",
+      data: {
+        prompt: searchTerm.trim(),
+      },
+    });
+    return { ...res.data, type: "web_search", uuid: new Date().getTime() };
+  },
+);
+
+export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
+  "aiBot/fetchVideoSearch",
+  async ({ searchTerm }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "video_search",
+      data: {
+        prompt: searchTerm.trim(),
+      },
+    });
+    return { ...res.data, type: "video_search", uuid: new Date().getTime() };
+  },
+);
+
 export const executeTask = createAsyncThunk<any, { task: any }>(
   "aiBot/executeTask",
   async ({ task }, thunkAPI) => {
@@ -55,121 +159,17 @@ export const executeTask = createAsyncThunk<any, { task: any }>(
       [],
     );
 
-    if (task.skill === "text_completion") {
-      const res = await api.post(`v1/receivers/perplexity`, {
+    const res = await api.post(`/api/chat`, {
+      chatType: task.skill,
+      data: {
         prompt: task.task,
         objective: task.objective,
         dependentTasks: dependentTasksResults,
-      });
-      return { ...res.data, task };
-    } else if (task.skill === "random_joke") {
-      const res = await api.post(`v1/receivers/joke`, {
-        searchTerm: task.task,
-        objective: task.objective,
-        dependentTasks: dependentTasksResults,
-      });
-      return { ...res.data, task };
-    } else if (task.skill === "image_generation") {
-      const res = await api.post(`v1/receivers/chatgpt/image`, {
-        prompt: task.task,
-        objective: task.objective,
-      });
-      return { ...res.data, task };
-    } else if (task.skill === "video_search") {
-      const res = await api.post(`v1/receivers/google/video`, {
-        prompt: task.task,
-        objective: task.objective,
-        dependentTasks: dependentTasksResults,
-      });
-      return { ...res.data, task };
-    } else if (task.skill === "web_search") {
-      const res = await api.post(`v1/receivers/google/websearch`, {
-        prompt: task.task,
-        objective: task.objective,
-        dependentTasks: dependentTasksResults,
-      });
-      return { ...res.data, task };
-    } else if (task.skill === "dataset_search") {
-      const res = await api.post(`v1/receivers/kaggle/search`, {
-        prompt: task.task,
-        objective: task.objective,
-        dependentTasks: dependentTasksResults,
-      });
-      return { ...res.data, task };
-    }
-  },
-);
-
-export const fetchDataset = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchDataset",
-  async ({ searchTerm }) => {
-    const res = await api.post(`v1/receivers/kaggle/search`, {
-      prompt: searchTerm.trim(),
+      },
     });
-    return { ...res.data, type: "dataset", uuid: new Date().getTime() };
+    return { ...res.data, task };
   },
 );
-
-export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
-  "aiBot/fetchAnalyzeDataset",
-  async ({ ref }) => {
-    const res = await api.post(`v1/receivers/kaggle/analyze`, {
-      dataset: ref,
-    });
-    return { ...res.data, type: "dataset/analyze", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchTasklist = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchTasklist",
-  async ({ searchTerm }) => {
-    const res = await api.post(`v1/receivers/chatgpt/tasklist`, {
-      prompt: searchTerm.trim(),
-    });
-    return { ...res.data, type: "tasklist", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchWebSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchWebSearch",
-  async ({ searchTerm }) => {
-    const res = await api.post(`v1/receivers/google/websearch`, {
-      prompt: searchTerm.trim(),
-    });
-    return { ...res.data, type: "web_search", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchVideoSearch = createAsyncThunk<any, { searchTerm: string }>(
-  "aiBot/fetchVideoSearch",
-  async ({ searchTerm }) => {
-    const res = await api.post(`v1/receivers/google/video`, {
-      prompt: searchTerm.trim(),
-    });
-    return { ...res.data, type: "video_search", uuid: new Date().getTime() };
-  },
-);
-
-export const fetchImageGeneration = createAsyncThunk<
-  any,
-  { searchTerm: string }
->("aiBot/fetchImageGeneration", async ({ searchTerm }) => {
-  const res = await api.post(`v1/receivers/chatgpt/image`, {
-    prompt: searchTerm.trim(),
-  });
-  return { ...res.data, type: "image_generation", uuid: new Date().getTime() };
-});
-
-export const fetchMeme = createAsyncThunk<
-  any,
-  { searchTerm: string; meme: boolean }
->("aiBot/fetchMeme", async ({ searchTerm, meme }) => {
-  const res = await api.post(`v1/receivers/humorapi`, {
-    meme,
-    searchTerm: searchTerm.trim(),
-  });
-  return { ...res.data, type: "meme", uuid: new Date().getTime() };
-});
 
 export const fetchLogoAgent = createAsyncThunk<
   any,
@@ -181,16 +181,6 @@ export const fetchLogoAgent = createAsyncThunk<
   });
   return { ...res.data, type: "logo", uuid: new Date().getTime() };
 });
-
-export const fetchChat = createAsyncThunk<any, { prompt: string }>(
-  "aiBot/fetchChat",
-  async ({ prompt }) => {
-    const res = await api.post(`v1/receivers/chatgpt`, {
-      prompt,
-    });
-    return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
-  },
-);
 
 function updateProtocolLogsState(
   state: AiBotSliceReduxState,

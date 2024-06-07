@@ -4,7 +4,7 @@ import axiosRetry from "axios-retry";
 import { getSessionData } from "./utils";
 
 const api = axios.create({
-  baseURL: BACKEND_API_URL,
+  // baseURL: BACKEND_API_URL,
 });
 axiosRetry(api, { retries: 2 });
 

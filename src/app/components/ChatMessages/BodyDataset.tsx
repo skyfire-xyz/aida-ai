@@ -20,8 +20,11 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function getDataset(data: any) {
     // Regular Chat API
     try {
-      const response = await api.post(`v1/receivers/kaggle/download`, {
-        dataset: data.ref,
+      const response = await api.post(`/api/chat`, {
+        chatType: "downloadDataset",
+        data: {
+          dataset: data.ref,
+        },
       });
       const fileName = response?.data?.filename;
       dispatch(
