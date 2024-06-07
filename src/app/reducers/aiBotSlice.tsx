@@ -21,14 +21,27 @@ const initialState: AiBotSliceReduxState = {
 
 export const executeChat = createAsyncThunk<
   any,
-  { data: any; chatType: string }
+  { chatType: string; data: any }
 >("aiBot/executeChat", async ({ chatType, data }) => {
   const res = await api.post(`/api/chat`, {
     chatType,
     data,
   });
-  return { ...res.data, prompt, type: chatType, uuid: new Date().getTime() };
+  return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
 });
+
+export const fetchChat = createAsyncThunk<any, { prompt: string }>(
+  "aiBot/fetchChat",
+  async ({ prompt }) => {
+    const res = await api.post(`/api/chat`, {
+      chatType: "chat",
+      data: {
+        prompt,
+      },
+    });
+    return { ...res.data, prompt, type: "chat", uuid: new Date().getTime() };
+  },
+);
 
 export const fetchMeme = createAsyncThunk<
   any,
@@ -75,7 +88,7 @@ export const fetchAnalyzeDataset = createAsyncThunk<any, { ref: string }>(
   "aiBot/fetchAnalyzeDataset",
   async ({ ref }) => {
     const res = await api.post(`/api/chat`, {
-      chatType: "analyzeDataset",
+      chatType: "dataset_analyze",
       data: {
         dataset: ref,
       },
