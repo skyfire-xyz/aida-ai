@@ -2,44 +2,43 @@ import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 
-import ChatGeneral from "./ChatMessages/ChatGeneral";
-import ChatDataset from "./ChatMessages/ChatDataset";
+import ChatGeneral from "./chat-messages/chat-general";
+import ChatDataset from "./chat-messages/chat-dataset";
 import { useEffect, useRef, useState } from "react";
-import BouncingDotsLoader from "./BouncingLoader";
-import { getLogoAIData, scrollToBottom } from "../utils";
+import BouncingDotsLoader from "./bouncing-loader";
+
 import { ChatMessageType } from "./types";
-import ExamplePrompts from "./ExamplePrompts";
+import ExamplePrompts from "./example-prompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList from "./ChatMessages/ChatTasklist/ChatTasklist";
-import ChatWebSearch from "./ChatMessages/ChatWebSearch";
-import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
+import ChatTaskList from "./chat-messages/chat-tasklist/chat-tasklist";
+import ChatWebSearch from "./chat-messages/chat-web-search";
+import ChatVideoSearch from "./chat-messages/chat-video-search";
 import {
   addInitialMessage,
   addMessage,
-  fetchChat,
-  fetchDataset,
-  fetchImageGeneration,
-  fetchLogoAgent,
-  fetchMeme,
-  fetchTasklist,
-  fetchVideoSearch,
-  fetchWebSearch,
   setBotStatus,
+  chatSelector,
+} from "../redux/reducers/chat-slice";
+
+import ProtocolLogs from "./protocol-logs/protocol-logs";
+
+import { fetchLogoAgent, postChat } from "../redux/thunk-actions";
+import {
   setShouldScrollToBottom,
-  useAiBotSelector,
-} from "../reducers/aiBotSlice";
-import { AppDispatch } from "@/src/store";
-import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { SKYFIRE_API_KEY } from "@/src/lib/constant";
+  useShouldScrollToBottomSelector,
+} from "../redux/reducers/ui-effect-slice";
+import { AppDispatch } from "../redux/store";
+import { SKYFIRE_API_KEY } from "../config/envs";
+import { getLogoAIData, scrollToBottom } from "../utils/ui";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, status, shouldScrollToBottom } =
-    useSelector(useAiBotSelector);
+  const { messages, status } = useSelector(chatSelector);
+  const shouldScrollToBottom = useSelector(useShouldScrollToBottomSelector);
 
   const t = useTranslations("ai");
   const [inputText, setInputText] = useState("");
@@ -55,7 +54,7 @@ export default function ChatPane(props: any) {
   const addBotResponseMessage = (
     prompt: string,
     data?: any,
-    type?: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch",
+    type?: ChatMessageType["type"],
   ) => {
     chatMessages.current = [
       ...chatMessages.current,
@@ -125,7 +124,12 @@ export default function ChatPane(props: any) {
           );
           return;
         }
-        dispatch(fetchDataset({ searchTerm }));
+        dispatch(
+          postChat({
+            chatType: "dataset_search",
+            data: { prompt: searchTerm.trim() },
+          }),
+        );
       } else if (inputText.toLocaleLowerCase().includes("tasklist")) {
         ///////////////////////////////////////////////////////////
         // Tasklist
@@ -142,7 +146,12 @@ export default function ChatPane(props: any) {
           return;
         }
 
-        dispatch(fetchTasklist({ searchTerm }));
+        dispatch(
+          postChat({
+            chatType: "tasklist",
+            data: { prompt: searchTerm.trim() },
+          }),
+        );
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
         ///////////////////////////////////////////////////////////
         // Web Search Request
@@ -159,7 +168,12 @@ export default function ChatPane(props: any) {
           return;
         }
 
-        dispatch(fetchWebSearch({ searchTerm }));
+        dispatch(
+          postChat({
+            chatType: "web_search",
+            data: { prompt: searchTerm.trim() },
+          }),
+        );
       } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
         ///////////////////////////////////////////////////////////
         // Video Search Request
@@ -175,7 +189,12 @@ export default function ChatPane(props: any) {
           addBotResponseMessage(t("aiPrompt.errorMessage"));
           return;
         }
-        dispatch(fetchVideoSearch({ searchTerm }));
+        dispatch(
+          postChat({
+            chatType: "video_search",
+            data: { prompt: searchTerm.trim() },
+          }),
+        );
       } else if (
         inputText.toLocaleLowerCase().includes("generate gif") ||
         inputText.toLocaleLowerCase().includes("generate meme") ||
@@ -200,7 +219,12 @@ export default function ChatPane(props: any) {
         }
 
         // Generate Image API
-        dispatch(fetchImageGeneration({ searchTerm }));
+        dispatch(
+          postChat({
+            chatType: "image_generation",
+            data: { prompt: searchTerm.trim() },
+          }),
+        );
       } else if (
         inputText.toLocaleLowerCase().includes("random gif") ||
         inputText.toLocaleLowerCase().includes("random meme") ||
@@ -224,13 +248,23 @@ export default function ChatPane(props: any) {
           return;
         }
 
-        dispatch(fetchMeme({ searchTerm, meme: true }));
+        dispatch(
+          postChat({
+            chatType: "meme",
+            data: { searchTerm: searchTerm.trim(), meme: true },
+          }),
+        );
       } else if (inputText.includes("joke")) {
         ///////////////////////////////////////////////////////////
         // Joke Request
         ///////////////////////////////////////////////////////////
 
-        dispatch(fetchMeme({ searchTerm: "", meme: false }));
+        dispatch(
+          postChat({
+            chatType: "random_joke",
+            data: { searchTerm: "", meme: false },
+          }),
+        );
       } else {
         ///////////////////////////////////////////////////////////
         // Regular Chat Request
@@ -245,7 +279,15 @@ export default function ChatPane(props: any) {
           dispatch(fetchLogoAgent({ logoAIAgent }));
         } else {
           // Logo request before creating a wallet
-          dispatch(fetchChat({ prompt: inputText }));
+          // dispatch(fetchChat({ prompt: inputText }));
+          dispatch(
+            postChat({
+              chatType: "chat",
+              data: {
+                prompt: inputText,
+              },
+            }),
+          );
 
           if (inputText.toLocaleLowerCase().includes("logo")) {
             dispatch(setBotStatus(true));
@@ -275,7 +317,7 @@ export default function ChatPane(props: any) {
       >
         {messages &&
           messages.map((message: ChatMessageType, index: number) => {
-            if (message.type === "dataset") {
+            if (message.type === "dataset_search") {
               return (
                 <ChatDataset
                   avatarUrl={message.avatarUrl}
@@ -293,7 +335,7 @@ export default function ChatPane(props: any) {
                   results={message.data}
                 />
               );
-            } else if (message.type === "websearch") {
+            } else if (message.type === "web_search") {
               return (
                 <ChatWebSearch
                   key={index}
@@ -303,7 +345,7 @@ export default function ChatPane(props: any) {
                   results={message.data}
                 />
               );
-            } else if (message.type === "videosearch") {
+            } else if (message.type === "video_search") {
               return (
                 <ChatVideoSearch
                   key={index}

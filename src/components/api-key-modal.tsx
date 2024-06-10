@@ -2,7 +2,7 @@ import { Modal } from "flowbite-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Signup({
+export default function APIKeyModal({
   showSignup,
   onClose,
 }: {
@@ -23,7 +23,7 @@ export default function Signup({
             transition={{ duration: 0.2 }}
           >
             Please visit Skyfire Dashboard to create an API Key. And set{" "}
-            <kbd>NEXT_PUBLIC_SKYFIRE_API_KEY</kbd> in your <kbd>.env</kbd> file.
+            <kbd>SKYFIRE_API_KEY</kbd> in your <kbd>.env</kbd> file.
           </motion.div>
         </AnimatePresence>
       </Modal.Body>

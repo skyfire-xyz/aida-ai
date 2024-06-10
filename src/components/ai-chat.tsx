@@ -1,13 +1,12 @@
 "use client";
 
-import ChatPanel from "./ChatPanel";
+import ChatPanel from "./chat-panel";
 import { Dispatch, SetStateAction } from "react";
-import ExamplePrompts from "./ExamplePrompts";
+import ExamplePrompts from "./example-prompts";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
+import ProtocolLogs from "./protocol-logs/protocol-logs";
 
-// import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 type Image = any;
 interface AiChatProps {
   images: Image[];

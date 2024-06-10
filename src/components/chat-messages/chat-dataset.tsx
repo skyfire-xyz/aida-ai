@@ -1,4 +1,4 @@
-import BodyDataset from "./BodyDataset";
+import BodyDataset from "./body-dataset";
 
 export interface ChatDatasetProps {
   textMessage: string;

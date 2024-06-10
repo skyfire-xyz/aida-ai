@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { defaultImageLoader } from "@/src/lib/imageLoaders";
-import APIKeyConfig from "./APIKeyConfig";
+
+import APIKeyConfig from "./api-key-config";
+import { defaultImageLoader } from "../lib/image-loaders";
+import { ENABLE_LOCAL_API_KEY } from "../config/envs";
 
 const Header: React.FC = () => {
   const t = useTranslations("ai");
@@ -35,7 +37,7 @@ const Header: React.FC = () => {
             </div>
           </Link>
         </div>
-        <APIKeyConfig />
+        {ENABLE_LOCAL_API_KEY && <APIKeyConfig />}
       </div>
     </div>
   );

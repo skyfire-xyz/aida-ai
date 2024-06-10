@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import BodyVideos from "../BodyVideos";
-import BodySearch from "../BodySearch";
-import BodyDataset from "../BodyDataset";
+import BodyVideos from "../body-videos";
+import BodySearch from "../body-search";
+import BodyDataset from "../body-dataset";
 
 export default function TaskContent({ task }: { task: any }) {
   return (

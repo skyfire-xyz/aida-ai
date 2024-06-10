@@ -1,0 +1,64 @@
+name: Deploy Render
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      ref:
+        required: true
+        type: string
+      polling-interval:
+        description: Polling interval in ms when checking Render deploy status
+        default: "30000"
+        type: string
+    secrets:
+      RENDER_API_KEY:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: render-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn install
+      - run: yarn run build
+
+  lint:
+    runs-on: ubuntu-latest
+    environment: render-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn install
+      - run: yarn run lint
+
+  test:
+    runs-on: ubuntu-latest
+    environment: render-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn install
+      - run: yarn run test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, lint, test]
+    environment: render-${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: skyfire-xyz/github-actions/deploy@main
+        with:
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          service-name: aida-ai-${{ inputs.environment }}
+          ref: ${{ inputs.ref }}
+          wait-time: ${{ inputs.polling-interval }}

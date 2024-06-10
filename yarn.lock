@@ -835,6 +835,11 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
+"@skyfire-xyz/skyfire-sdk@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@skyfire-xyz/skyfire-sdk/-/skyfire-sdk-0.1.0.tgz#1e66b7d5fb45c6dc7077e6b6a01aaecc34a465b5"
+  integrity sha512-AEf+Tbdb8h0yh6eWu/lgRWHkhYxAbS9FR8RDhBU/MxSr+qbx/SHbaexNs6D7A5UX5TGXwpwuj47+MO8OyLLkRA==
+
 "@swc/helpers@0.5.2":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.2.tgz#85ea0c76450b61ad7d10a37050289eded783c27d"

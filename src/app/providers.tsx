@@ -1,8 +1,9 @@
 "use client";
 import { Provider } from "react-redux";
-import { store } from "@/src/store";
+
 import messages from "@/src/locale/en.json";
 import { NextIntlClientProvider } from "next-intl";
+import { store } from "../redux/store";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

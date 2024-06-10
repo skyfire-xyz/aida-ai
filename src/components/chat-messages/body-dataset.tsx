@@ -5,11 +5,14 @@ import { MouseEvent, useState } from "react";
 import { FaFileDownload } from "react-icons/fa";
 import { TiZoom } from "react-icons/ti";
 import { useTranslations } from "next-intl";
-import { ChatDatasetProps } from "./ChatDataset";
-import { addProtocolLog, fetchAnalyzeDataset } from "../../reducers/aiBotSlice";
+import { ChatDatasetProps } from "./chat-dataset";
+
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/src/store";
+import { AppDispatch } from "@/src/redux/store";
 import api from "@/src/lib/api";
+
+import { postChat } from "../../redux/thunk-actions";
+import { addProtocolLog } from "@/src/redux/reducers/protocol-logs-slice";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");
@@ -20,8 +23,11 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
   async function getDataset(data: any) {
     // Regular Chat API
     try {
-      const response = await api.post(`v1/receivers/kaggle/download`, {
-        dataset: data.ref,
+      const response = await api.post(`/api/chat`, {
+        chatType: "dataset_download",
+        data: {
+          dataset: data.ref,
+        },
       });
       const fileName = response?.data?.filename;
       dispatch(
@@ -64,7 +70,14 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
                 className="flex h-6 w-6 items-center"
                 onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
-                  dispatch(fetchAnalyzeDataset({ ref: data.ref }));
+                  dispatch(
+                    postChat({
+                      chatType: "dataset_analyze",
+                      data: {
+                        ref: data.ref,
+                      },
+                    }),
+                  );
                 }}
               >
                 <TiZoom className="h-4 w-4" />

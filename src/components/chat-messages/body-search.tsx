@@ -1,16 +1,15 @@
 import { Card } from "flowbite-react";
-import { ChatVideoSearchProps } from "./ChatVideoSearch";
+import { ChatWebSearchProps } from "./chat-web-search";
 
-export default function BodyVideos({
+export default function BodySearch({
   results,
 }: {
-  results: ChatVideoSearchProps["results"];
+  results: ChatWebSearchProps["results"];
 }) {
   return results?.map((result, index) => (
     <Card
       key={index}
       className="mb-2 max-w-lg cursor-pointer"
-      imgSrc={result.thumbnail.static}
       onClick={() => window.open(result.link, "_blank", "noopener,noreferrer")}
       horizontal
     >
@@ -18,7 +17,7 @@ export default function BodyVideos({
         {result.title}
       </h5>
       <p className="font-normal text-gray-700 dark:text-gray-400">
-        {result.description}
+        {result.snippet}
       </p>
     </Card>
   ));

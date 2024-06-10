@@ -10,13 +10,14 @@ import { RxCrossCircled } from "react-icons/rx";
 import { ImSpinner11 } from "react-icons/im";
 import { FaPlay } from "react-icons/fa";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
-import TaskSource from "./TaskSource";
+import TaskSource from "./task-source";
 
-import { executeTask, useTasklistSelector } from "../../../reducers/aiBotSlice";
+import { useTasklistSelector } from "../../../redux/reducers/chat-slice";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/src/store";
+import { AppDispatch } from "@/src/redux/store";
 
-import TaskContent from "./TaskContent";
+import TaskContent from "./task-content";
+import { executeTask } from "@/src/redux/thunk-actions";
 
 export interface ChatTaskListProps {
   avatarUrl?: string;
@@ -27,6 +28,7 @@ export interface ChatTaskListProps {
 function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
   const t = useTranslations("ai");
   const tasks = useSelector(useTasklistSelector);
+
   const [showTasks, setShowTasks] = useState<{ [key: number]: boolean }>({});
   const dispatch = useDispatch<AppDispatch>();
   const [executeAll, setExecuteAll] = useState(false);
