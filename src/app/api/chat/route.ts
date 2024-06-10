@@ -1,7 +1,7 @@
 import { ENABLE_LOCAL_API_KEY, SKYFIRE_API_KEY } from "@/src/config/envs";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 
-export function getClient(apiKey: string) {
+function getClient(apiKey: string) {
   return new SkyfireClient({
     environment: "development",
     apiKey: apiKey,
