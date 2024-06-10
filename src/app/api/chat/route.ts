@@ -1,13 +1,23 @@
-import { SKYFIRE_API_KEY } from "@/src/config/envs";
+import { ENABLE_LOCAL_API_KEY, SKYFIRE_API_KEY } from "@/src/config/envs";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 
-const client = new SkyfireClient({
-  environment: "development",
-  apiKey: SKYFIRE_API_KEY,
-});
+export function getClient(apiKey: string) {
+  return new SkyfireClient({
+    environment: "development",
+    apiKey: apiKey,
+  });
+}
 
 export async function POST(request: Request) {
   const req = await request.json();
+
+  // Allowing to override the default API key from client side if ENABLE_LOCAL_API_KEY is set
+  let API_KEY = ENABLE_LOCAL_API_KEY
+    ? request.headers.get("local-skyfire-api-key") || SKYFIRE_API_KEY
+    : SKYFIRE_API_KEY;
+
+  const client = getClient(API_KEY);
+
   let res;
   try {
     switch (req.chatType) {
