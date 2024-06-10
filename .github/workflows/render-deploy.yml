@@ -62,3 +62,4 @@ jobs:
           service-name: aida-ai-${{ inputs.environment }}
           ref: ${{ inputs.ref }}
           wait-time: ${{ inputs.polling-interval }}
+          image-tag: null
