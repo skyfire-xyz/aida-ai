@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SKYFIRE_API_KEY } from "../lib/constant";
-
-import Header from "./components/Header";
-import AiChat from "./components/AiChat";
-import APIKeyModal from "./components/APIKeyModal";
+import { SKYFIRE_API_KEY } from "../config/envs";
+import Header from "../components/header";
+import APIKeyModal from "../components/api-key-modal";
+import AiChat from "../components/ai-chat";
 
 export default function Home() {
   const [showSignInModal, setShowSignInModal] = useState(true);

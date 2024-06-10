@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchLogoAgent, postChat } from "../actions/asyncThunks";
+import { fetchLogoAgent, postChat } from "../thunk-actions";
 
 export interface UIEffectReduxState {
   shouldScrollToBottom: boolean;

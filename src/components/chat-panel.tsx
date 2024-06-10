@@ -2,33 +2,36 @@ import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 
-import ChatGeneral from "./ChatMessages/ChatGeneral";
-import ChatDataset from "./ChatMessages/ChatDataset";
+import ChatGeneral from "./chat-messages/chat-general";
+import ChatDataset from "./chat-messages/chat-dataset";
 import { useEffect, useRef, useState } from "react";
-import BouncingDotsLoader from "./BouncingLoader";
-import { getLogoAIData, scrollToBottom } from "../utils";
+import BouncingDotsLoader from "./bouncing-loader";
+
 import { ChatMessageType } from "./types";
-import ExamplePrompts from "./ExamplePrompts";
+import ExamplePrompts from "./example-prompts";
 import { Button, Modal, TextInput } from "flowbite-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import ChatTaskList from "./ChatMessages/ChatTasklist/ChatTasklist";
-import ChatWebSearch from "./ChatMessages/ChatWebSearch";
-import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
+import ChatTaskList from "./chat-messages/chat-tasklist/chat-tasklist";
+import ChatWebSearch from "./chat-messages/chat-web-search";
+import ChatVideoSearch from "./chat-messages/chat-video-search";
 import {
   addInitialMessage,
   addMessage,
   setBotStatus,
   chatSelector,
-} from "../reducers/chatSlice";
-import { AppDispatch } from "@/src/store";
-import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
-import { SKYFIRE_API_KEY } from "@/src/lib/constant";
-import { fetchLogoAgent, postChat } from "../actions/asyncThunks";
+} from "../redux/reducers/chat-slice";
+
+import ProtocolLogs from "./protocol-logs/protocol-logs";
+
+import { fetchLogoAgent, postChat } from "../redux/thunk-actions";
 import {
   setShouldScrollToBottom,
   useShouldScrollToBottomSelector,
-} from "../reducers/uiEffectSlice";
+} from "../redux/reducers/ui-effect-slice";
+import { AppDispatch } from "../redux/store";
+import { SKYFIRE_API_KEY } from "../config/envs";
+import { getLogoAIData, scrollToBottom } from "../utils/ui";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

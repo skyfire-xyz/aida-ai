@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { executeTask, postChat } from "../actions/asyncThunks";
-import { ProtocolLogsReduxState } from "./types";
+import { executeTask, postChat } from "../thunk-actions";
+import { ProtocolLogsReduxState } from "../types";
 
 const initialState: ProtocolLogsReduxState = {
   logs: [],

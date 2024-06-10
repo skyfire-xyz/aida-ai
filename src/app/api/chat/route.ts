@@ -1,4 +1,4 @@
-import { SKYFIRE_API_KEY } from "@/src/lib/constant";
+import { SKYFIRE_API_KEY } from "@/src/config/constant";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 
 const client = new SkyfireClient({

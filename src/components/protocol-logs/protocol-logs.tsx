@@ -1,15 +1,16 @@
 import { useEffect, useRef } from "react";
-import DataSource from "../ServiceIcons";
+import DataSource from "../service-icons";
 import { PaymentType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
-import { scrollToBottom } from "../../utils";
-import { AppDispatch } from "@/src/store";
-import { useProtocolLogsSelector } from "../../reducers/protocolLogsSlice";
+
 import {
   setShouldScrollToBottom,
   useShouldScrollToBottomSelector,
-} from "../../reducers/uiEffectSlice";
+} from "../../redux/reducers/ui-effect-slice";
+import { AppDispatch } from "@/src/redux/store";
+import { useProtocolLogsSelector } from "@/src/redux/reducers/chat-slice";
+import { scrollToBottom } from "@/src/utils/ui";
 
 export interface ProtocolLogsProps {}
 

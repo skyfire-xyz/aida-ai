@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import DataSource from "./ServiceIcons";
+import DataSource from "./service-icons";
 
 export default function ExamplePrompts() {
   const t = useTranslations("ai");

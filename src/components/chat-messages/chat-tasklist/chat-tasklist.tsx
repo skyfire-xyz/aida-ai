@@ -10,14 +10,14 @@ import { RxCrossCircled } from "react-icons/rx";
 import { ImSpinner11 } from "react-icons/im";
 import { FaPlay } from "react-icons/fa";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
-import TaskSource from "./TaskSource";
+import TaskSource from "./task-source";
 
-import { useTasklistSelector } from "../../../reducers/chatSlice";
+import { useTasklistSelector } from "../../../redux/reducers/chat-slice";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "@/src/store";
+import { AppDispatch } from "@/src/redux/store";
 
-import TaskContent from "./TaskContent";
-import { executeTask } from "@/src/app/actions/asyncThunks";
+import TaskContent from "./task-content";
+import { executeTask } from "@/src/redux/thunk-actions";
 
 export interface ChatTaskListProps {
   avatarUrl?: string;

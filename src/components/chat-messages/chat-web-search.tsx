@@ -1,29 +1,26 @@
 import Markdown from "react-markdown";
 import { useTranslations } from "next-intl";
-import BodyVideos from "./BodyVideos";
+import BodySearch from "./body-search";
 
-export interface ChatVideoSearchProps {
+export interface ChatWebSearchProps {
   direction: "left" | "right";
   avatarUrl?: string;
   textMessage?: string;
   results: [
     {
       title: string;
+      snippet: string;
       link: string;
-      description: string;
-      thumbnail: {
-        static: string;
-        rich: string;
-      };
     },
   ];
 }
 
-function ChatVideoSearch({
+function ChatWebSearch({
+  direction,
   textMessage,
   avatarUrl,
   results,
-}: ChatVideoSearchProps) {
+}: ChatWebSearchProps) {
   const t = useTranslations("ai");
 
   return (
@@ -37,10 +34,10 @@ function ChatVideoSearch({
         <article className="prose text-white">
           <Markdown>{textMessage}</Markdown>
         </article>
-        <BodyVideos results={results} />
+        <BodySearch results={results} />
       </div>
     </div>
   );
 }
 
-export default ChatVideoSearch;
+export default ChatWebSearch;

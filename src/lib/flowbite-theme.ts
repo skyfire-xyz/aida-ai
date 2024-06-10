@@ -1,18 +1,6 @@
 import type { CustomFlowbiteTheme } from "flowbite-react";
 
 const flowbiteTheme: CustomFlowbiteTheme = {
-  // badge: {
-  //   color: {
-  //     primary:
-  //       "bg-primary-100 text-primary-800 dark:bg-primary-200 dark:text-primary-800 group-hover:bg-primary-200 dark:group-hover:bg-primary-300",
-  //   },
-  //   icon: {
-  //     off: "rounded-full px-2 py-1",
-  //   },
-  //   size: {
-  //     xl: "px-3 py-2 text-base rounded-md",
-  //   },
-  // },
   button: {
     color: {
       primary:

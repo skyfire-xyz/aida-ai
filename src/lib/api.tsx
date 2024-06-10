@@ -1,7 +1,7 @@
 import axios from "axios";
-import { BACKEND_API_URL, SKYFIRE_API_KEY } from "./constant";
+import { SKYFIRE_API_KEY } from "../config/envs";
 import axiosRetry from "axios-retry";
-import { getSessionData } from "./utils";
+import { getSessionData } from "../utils/session-storage";
 
 const api = axios.create({
   // baseURL: BACKEND_API_URL,

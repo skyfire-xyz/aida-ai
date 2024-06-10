@@ -1,4 +1,4 @@
-import { SKYFIRE_API_KEY } from "@/src/lib/constant";
+import { SKYFIRE_API_KEY } from "@/src/config/constant";
 import { getSessionData, setSessionData } from "@/src/lib/utils";
 import { Button, Kbd, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";

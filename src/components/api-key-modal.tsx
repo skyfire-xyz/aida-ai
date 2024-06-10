@@ -2,7 +2,7 @@ import { Modal } from "flowbite-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Signup({
+export default function APIKeyModal({
   showSignup,
   onClose,
 }: {

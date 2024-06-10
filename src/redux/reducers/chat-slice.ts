@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import api from "@/src/lib/api";
-import { executeTask, fetchLogoAgent, postChat } from "../actions/asyncThunks";
-import { ChatMessageType, ChatSliceReduxState, Task } from "./types";
+import { executeTask, fetchLogoAgent, postChat } from "../thunk-actions";
+import { ChatMessageType, ChatSliceReduxState, Task } from "../types";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 

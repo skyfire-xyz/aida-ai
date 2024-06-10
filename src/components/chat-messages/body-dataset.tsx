@@ -5,13 +5,14 @@ import { MouseEvent, useState } from "react";
 import { FaFileDownload } from "react-icons/fa";
 import { TiZoom } from "react-icons/ti";
 import { useTranslations } from "next-intl";
-import { ChatDatasetProps } from "./ChatDataset";
+import { ChatDatasetProps } from "./chat-dataset";
 
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/src/store";
+import { AppDispatch } from "@/src/redux/store";
 import api from "@/src/lib/api";
-import { addProtocolLog } from "../../reducers/protocolLogsSlice";
-import { postChat } from "../../actions/asyncThunks";
+
+import { postChat } from "../../redux/thunk-actions";
+import { addProtocolLog } from "@/src/redux/reducers/protocol-logs-slice";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");

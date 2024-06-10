@@ -1,5 +1,4 @@
 export type ChatMessageType = {
-  // type: "chat" | "dataset" | "tasklist" | "websearch" | "videosearch";
   type:
     | "chat"
     | "dataset_search"
