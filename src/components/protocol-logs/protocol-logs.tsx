@@ -9,8 +9,9 @@ import {
   useShouldScrollToBottomSelector,
 } from "../../redux/reducers/ui-effect-slice";
 import { AppDispatch } from "@/src/redux/store";
-import { useProtocolLogsSelector } from "@/src/redux/reducers/chat-slice";
+
 import { scrollToBottom } from "@/src/utils/ui";
+import { useProtocolLogsSelector } from "@/src/redux/reducers/protocol-logs-slice";
 
 export interface ProtocolLogsProps {}
 

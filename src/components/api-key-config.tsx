@@ -1,8 +1,8 @@
-import { SKYFIRE_API_KEY } from "@/src/config/constant";
-import { getSessionData, setSessionData } from "@/src/lib/utils";
-import { Button, Kbd, Modal, TextInput } from "flowbite-react";
+import { Button, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { FaCog } from "react-icons/fa";
+import { getSessionData, setSessionData } from "../utils/session-storage";
+import { SKYFIRE_API_KEY } from "../config/envs";
 
 export default function APIKeyConfig() {
   const [showConfig, setShowConfig] = useState(false);

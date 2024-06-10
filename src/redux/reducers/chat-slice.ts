@@ -145,10 +145,6 @@ export const chatSelector = (state: any) => {
   return state?.chat;
 };
 
-export const useProtocolLogsSelector = (state: any) => {
-  return state?.chat?.protocolLogs;
-};
-
 export const useTasklistSelector = (state: any) => {
   // preprocess tasks
   const tasks = Object.assign({ ...state?.chat?.tasks });

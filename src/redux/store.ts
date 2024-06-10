@@ -1,9 +1,9 @@
 "use client";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import chatSlice from "./app/reducers/chatSlice";
-import protocolLogsSlice from "./app/reducers/protocolLogsSlice";
-import uiEffectSlice from "./app/reducers/uiEffectSlice";
+import chatSlice from "./reducers/chat-slice";
+import protocolLogsSlice from "./reducers/protocol-logs-slice";
+import uiEffectSlice from "./reducers/ui-effect-slice";
 
 export const store = configureStore({
   reducer: combineReducers({
