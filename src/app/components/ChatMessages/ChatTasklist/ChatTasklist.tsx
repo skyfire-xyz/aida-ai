@@ -12,11 +12,12 @@ import { FaPlay } from "react-icons/fa";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import TaskSource from "./TaskSource";
 
-import { executeTask, useTasklistSelector } from "../../../reducers/aiBotSlice";
+import { useTasklistSelector } from "../../../reducers/chatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/src/store";
 
 import TaskContent from "./TaskContent";
+import { executeTask } from "@/src/app/actions/asyncThunks";
 
 export interface ChatTaskListProps {
   avatarUrl?: string;
@@ -27,6 +28,7 @@ export interface ChatTaskListProps {
 function ChatTaskList({ textMessage, avatarUrl, results }: ChatTaskListProps) {
   const t = useTranslations("ai");
   const tasks = useSelector(useTasklistSelector);
+
   const [showTasks, setShowTasks] = useState<{ [key: number]: boolean }>({});
   const dispatch = useDispatch<AppDispatch>();
   const [executeAll, setExecuteAll] = useState(false);

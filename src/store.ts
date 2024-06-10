@@ -1,11 +1,15 @@
 "use client";
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import aiBotSlice from "./app/reducers/aiBotSlice";
+import chatSlice from "./app/reducers/chatSlice";
+import protocolLogsSlice from "./app/reducers/protocolLogsSlice";
+import uiEffectSlice from "./app/reducers/uiEffectSlice";
 
 export const store = configureStore({
   reducer: combineReducers({
-    aiBot: aiBotSlice,
+    chat: chatSlice,
+    protocolLogs: protocolLogsSlice,
+    uiEffect: uiEffectSlice,
   }),
 });
 

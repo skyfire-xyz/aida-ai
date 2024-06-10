@@ -18,22 +18,24 @@ import ChatVideoSearch from "./ChatMessages/ChatVideoSearch";
 import {
   addInitialMessage,
   addMessage,
-  fetchLogoAgent,
-  postChat,
   setBotStatus,
-  setShouldScrollToBottom,
-  useAiBotSelector,
-} from "../reducers/aiBotSlice";
+  chatSelector,
+} from "../reducers/chatSlice";
 import { AppDispatch } from "@/src/store";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 import { SKYFIRE_API_KEY } from "@/src/lib/constant";
+import { fetchLogoAgent, postChat } from "../actions/asyncThunks";
+import {
+  setShouldScrollToBottom,
+  useShouldScrollToBottomSelector,
+} from "../reducers/uiEffectSlice";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export default function ChatPane(props: any) {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, status, shouldScrollToBottom } =
-    useSelector(useAiBotSelector);
+  const { messages, status } = useSelector(chatSelector);
+  const shouldScrollToBottom = useSelector(useShouldScrollToBottomSelector);
 
   const t = useTranslations("ai");
   const [inputText, setInputText] = useState("");

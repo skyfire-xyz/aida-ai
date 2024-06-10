@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import ProtocolLogs from "./ProtocolLogs/ProtocolLogs";
 
-// import ProtocolLogsV2 from "./ProtocolLogs/ProtocolLogsV2";
 type Image = any;
 interface AiChatProps {
   images: Image[];

@@ -6,10 +6,12 @@ import { FaFileDownload } from "react-icons/fa";
 import { TiZoom } from "react-icons/ti";
 import { useTranslations } from "next-intl";
 import { ChatDatasetProps } from "./ChatDataset";
-import { addProtocolLog, fetchAnalyzeDataset } from "../../reducers/aiBotSlice";
+
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/src/store";
 import api from "@/src/lib/api";
+import { addProtocolLog } from "../../reducers/protocolLogsSlice";
+import { postChat } from "../../actions/asyncThunks";
 
 export default function BodyDataset({ datasets }: ChatDatasetProps) {
   const t = useTranslations("ai");
@@ -67,7 +69,14 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
                 className="flex h-6 w-6 items-center"
                 onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
-                  dispatch(fetchAnalyzeDataset({ ref: data.ref }));
+                  dispatch(
+                    postChat({
+                      chatType: "dataset_analyze",
+                      data: {
+                        ref: data.ref,
+                      },
+                    }),
+                  );
                 }}
               >
                 <TiZoom className="h-4 w-4" />

@@ -2,14 +2,14 @@ import { useEffect, useRef } from "react";
 import DataSource from "../ServiceIcons";
 import { PaymentType } from "../types";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setShouldScrollToBottom,
-  useAiBotSelector,
-  useProtocolLogsSelector,
-} from "../../reducers/aiBotSlice";
 import { useTranslations } from "next-intl";
 import { scrollToBottom } from "../../utils";
 import { AppDispatch } from "@/src/store";
+import { useProtocolLogsSelector } from "../../reducers/protocolLogsSlice";
+import {
+  setShouldScrollToBottom,
+  useShouldScrollToBottomSelector,
+} from "../../reducers/uiEffectSlice";
 
 export interface ProtocolLogsProps {}
 
@@ -18,7 +18,7 @@ export default function ProtocolLogs({}: ProtocolLogsProps) {
   const dispatch = useDispatch<AppDispatch>();
   const paymentsPaneRef = useRef<HTMLDivElement>(null);
   const protocolLogs = useSelector(useProtocolLogsSelector);
-  const { shouldScrollToBottom } = useSelector(useAiBotSelector);
+  const shouldScrollToBottom = useSelector(useShouldScrollToBottomSelector);
 
   useEffect(() => {
     scrollToBottom([paymentsPaneRef], () => {

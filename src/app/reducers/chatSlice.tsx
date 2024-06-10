@@ -1,21 +1,14 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  AiBotSliceReduxState,
-  ChatMessageType,
-  PaymentType,
-  Task,
-} from "./types";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import api from "@/src/lib/api";
+import { executeTask, fetchLogoAgent, postChat } from "../actions/asyncThunks";
+import { ChatMessageType, ChatSliceReduxState, Task } from "./types";
 
 const robotImageUrl = "/images/aichat/ai-robot.png";
 
-const initialState: AiBotSliceReduxState = {
+const initialState: ChatSliceReduxState = {
   messages: [],
-  protocolLogs: [],
-  protocolLogsV2: null,
   tasks: {},
   taskGroupIndex: 1,
-  shouldScrollToBottom: false,
   status: {
     botThinking: false,
   },
@@ -24,78 +17,8 @@ const initialState: AiBotSliceReduxState = {
   },
 };
 
-export const postChat = createAsyncThunk<any, { chatType: string; data: any }>(
-  "aiBot/postChat",
-  async ({ chatType, data }) => {
-    const res = await api.post(`/api/chat`, {
-      chatType,
-      data,
-    });
-    return { ...res.data, prompt, type: chatType, uuid: new Date().getTime() };
-  },
-);
-
-export const executeTask = createAsyncThunk<any, { task: any }>(
-  "aiBot/executeTask",
-  async ({ task }, thunkAPI) => {
-    const state: any = thunkAPI.getState();
-    const { tasks } = state.aiBot;
-
-    const dependentTasksResults = task.dependent_task_ids.reduce(
-      (allResults: [], id: number) => {
-        const dependentTask = tasks[`${task.parentId}-${id}`];
-        if (dependentTask.status === "complete") {
-          // TODO: This is only supporting websearch results for now.
-
-          let results = dependentTask.result?.results; // Search
-          if (dependentTask.skill === "text_completion") {
-            // Perplexity
-            results = [
-              {
-                title: dependentTask.result?.prompt,
-                description: dependentTask.result?.body,
-              },
-            ];
-          }
-          if (!results) return allResults;
-
-          return [
-            ...allResults,
-            ...results.map((result: any) => {
-              const { title, description, snippet } = result;
-              return { title, description: description || snippet }; // Result doesn't have "description", so use snippet for now
-            }),
-          ];
-        }
-      },
-      [],
-    );
-
-    const res = await api.post(`/api/chat`, {
-      chatType: task.skill,
-      data: {
-        prompt: task.task,
-        objective: task.objective,
-        dependentTasks: dependentTasksResults,
-      },
-    });
-    return { ...res.data, task };
-  },
-);
-
-export const fetchLogoAgent = createAsyncThunk<
-  any,
-  { logoAIAgent: { service: string; price: number } }
->("aiBot/fetchLogoAgent", async ({ logoAIAgent }) => {
-  const res = await api.post(`v1/receivers/logo`, {
-    agent: logoAIAgent.service,
-    cost: logoAIAgent.price,
-  });
-  return { ...res.data, type: "logo", uuid: new Date().getTime() };
-});
-
-export const aiBotSlice = createSlice({
-  name: "aiBot",
+export const chatSlice = createSlice({
+  name: "chat",
   initialState,
   reducers: {
     addInitialMessage: (state, { payload }) => {
@@ -116,16 +39,9 @@ export const aiBotSlice = createSlice({
         textMessage: payload.textMessage,
         data: payload.data,
       });
-      state.shouldScrollToBottom = true;
-    },
-    addProtocolLog: (state, { payload }) => {
-      updateProtocolLogsState(state, payload);
     },
     setBotStatus: (state, { payload }) => {
       state.status.botThinking = payload;
-    },
-    setShouldScrollToBottom: (state, { payload }) => {
-      state.shouldScrollToBottom = payload;
     },
   },
   extraReducers: (builder) => {
@@ -146,6 +62,7 @@ export const aiBotSlice = createSlice({
               action.payload.tasks.map(
                 (task: { id: number }) => `${state.taskGroupIndex}-${task.id}`,
               ) || [];
+
             state.tasks = {
               ...state.tasks,
               ...action.payload.tasks.reduce(
@@ -200,7 +117,6 @@ export const aiBotSlice = createSlice({
       .addCase(executeTask.fulfilled, (state, action) => {
         state.tasks[action.payload.task.referenceId].status = "complete";
         state.tasks[action.payload.task.referenceId].result = action.payload;
-        updateProtocolLogsState(state, action);
       })
       .addCase(executeTask.rejected, (state, action) => {
         state.tasks[action.meta.arg.task.referenceId].status = "error";
@@ -225,19 +141,19 @@ export const aiBotSlice = createSlice({
   },
 });
 
-export const useAiBotSelector = (state: any) => {
-  return state?.aiBot;
+export const chatSelector = (state: any) => {
+  return state?.chat;
 };
 
 export const useProtocolLogsSelector = (state: any) => {
-  return state?.aiBot?.protocolLogs;
+  return state?.chat?.protocolLogs;
 };
 
 export const useTasklistSelector = (state: any) => {
   // preprocess tasks
-  const tasks = Object.assign({ ...state?.aiBot?.tasks });
+  const tasks = Object.assign({ ...state?.chat?.tasks });
   if (tasks && Object.keys(tasks).length > 0) {
-    Object.values(state?.aiBot?.tasks).map((value) => {
+    Object.values(state?.chat?.tasks).map((value) => {
       const task = value as Task;
       const dependentTasks = task.dependent_task_ids.map((id: number) => {
         const referenceId = `${task.parentId}-${id}`;
@@ -257,35 +173,18 @@ export const useTasklistSelector = (state: any) => {
   return tasks;
 };
 
-function updateProtocolLogsState(
-  state: AiBotSliceReduxState,
-  action: PayloadAction<any>,
-) {
-  const logs = action.payload.quote || [action.payload.payment];
-  if (logs) {
-    state.protocolLogs = [...state.protocolLogs, ...logs];
-  }
-}
-function processPending(state: AiBotSliceReduxState) {
+function processPending(state: ChatSliceReduxState) {
   state.status.botThinking = true;
-  state.shouldScrollToBottom = true;
 }
-function processError(state: AiBotSliceReduxState) {
+function processError(state: ChatSliceReduxState) {
   state.status.botThinking = false;
   state.error.fetchAll = "Something went wrong";
 }
-function processFulfilled(state: AiBotSliceReduxState, action: PayloadAction) {
-  updateProtocolLogsState(state, action);
+function processFulfilled(state: ChatSliceReduxState, action: PayloadAction) {
   state.status.botThinking = false;
-  state.shouldScrollToBottom = true;
 }
 
-export const {
-  addInitialMessage,
-  addMessage,
-  addProtocolLog,
-  setBotStatus,
-  setShouldScrollToBottom,
-} = aiBotSlice.actions;
+export const { addInitialMessage, addMessage, setBotStatus } =
+  chatSlice.actions;
 
-export default aiBotSlice.reducer;
+export default chatSlice.reducer;
