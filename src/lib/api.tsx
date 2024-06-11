@@ -10,7 +10,9 @@ api.interceptors.request.use(
   (config) => {
     // Allowing to override the default API key set in the envs
     const key = getSessionData("LOCAL_SKYFIRE_API_KEY");
-    config.headers["local-skyfire-api-key"] = key || SKYFIRE_API_KEY;
+    if (key) {
+      config.headers["local-skyfire-api-key"] = key;
+    }
     return config;
   },
   (error) => {
