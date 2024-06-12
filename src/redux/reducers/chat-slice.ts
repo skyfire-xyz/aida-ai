@@ -172,8 +172,15 @@ export const useTasklistSelector = (state: any) => {
 function processPending(state: ChatSliceReduxState) {
   state.status.botThinking = true;
 }
-function processError(state: ChatSliceReduxState) {
+function processError(state: ChatSliceReduxState, action: PayloadAction<any>) {
   state.status.botThinking = false;
+  state.messages.push({
+    uuid: `${new Date().getTime()}`,
+    type: "error",
+    avatarUrl: robotImageUrl,
+    textMessage:
+      "Sorry, something went wrong when interacting with the AI. Please try again.",
+  });
   state.error.fetchAll = "Something went wrong";
 }
 function processFulfilled(state: ChatSliceReduxState, action: PayloadAction) {

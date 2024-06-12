@@ -4,6 +4,7 @@ import {
   SKYFIRE_ENV,
 } from "@/src/config/envs";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
+import { ApiError } from "@/src/types/api";
 
 function getClient(apiKey: string) {
   return new SkyfireClient({
@@ -62,11 +63,25 @@ export async function POST(request: Request) {
         break;
     }
   } catch (err) {
-    console.error(err);
-    throw err;
+    if (err instanceof Error) {
+      const error = err as ApiError;
+      return Response.json(
+        { message: error.body.message },
+        { status: error.status },
+      );
+    }
+
+    return Response.json(
+      { message: "Unexpected Server Error" },
+      { status: 500 },
+    );
   }
 
-  if (!res) return Response.json({ error: "Invalid API" });
+  if (!res)
+    return Response.json(
+      { message: "Unexpected Server Error" },
+      { status: 500 },
+    );
 
   return Response.json(res);
 }

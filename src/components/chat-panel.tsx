@@ -32,6 +32,7 @@ import {
 import { AppDispatch } from "../redux/store";
 import { SKYFIRE_API_KEY } from "../config/envs";
 import { getLogoAIData, scrollToBottom } from "../utils/ui";
+import ChatError from "./chat-messages/chat-error";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -353,6 +354,15 @@ export default function ChatPane(props: any) {
                   avatarUrl={message.avatarUrl}
                   textMessage={message.textMessage}
                   results={message.data}
+                />
+              );
+            } else if (message.type === "error") {
+              return (
+                <ChatError
+                  key={index}
+                  direction={message.direction}
+                  avatarUrl={message.avatarUrl}
+                  textMessage={message.textMessage}
                 />
               );
             }
