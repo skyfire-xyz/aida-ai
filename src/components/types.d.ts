@@ -1,6 +1,7 @@
 export type ChatMessageType = {
   type:
     | "chat"
+    | "error"
     | "dataset_search"
     | "tasklist"
     | "web_search"

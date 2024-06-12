@@ -29,6 +29,7 @@ export type ChatMessageType = {
   uuid?: string;
   type:
     | "chat"
+    | "error"
     | "dataset_search"
     | "tasklist"
     | "web_search"

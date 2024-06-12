@@ -24,7 +24,7 @@ Aida\.AI demonstrates the capabilities of the Skyfire SDK, providing developers 
 
    - Sign up at [Skyfire Dashboard](https://sky-dashboard-qa.onrender.com/auth) (Link TBD) to create an account.
    - After signing up, create an API key from your dashboard.
-   - Set the API key as an environment variable:
+   - Set the API key as an environment variable in `.env` file:
 
    ```bash
    SKYFIRE_API_KEY=your_api_key_here
