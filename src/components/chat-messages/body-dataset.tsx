@@ -29,20 +29,20 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
           dataset: data.ref,
         },
       });
-      const fileName = response?.data?.filename;
+      const fileUrl = response?.data?.fileUrl;
       dispatch(
         addProtocolLog({ payload: { payment: response?.data.payment } }),
       );
-      return fileName;
+      return fileUrl;
     } catch {}
     return false;
   }
 
-  async function downloadDataset(filename: string) {
+  async function downloadDataset(fileUrl: string) {
     // Regular Chat API
     try {
-      const response = await api.get(`${filename}`);
-      fileDownload(response.data, filename);
+      const response = await api.get(`${fileUrl}`);
+      fileDownload(response.data, fileUrl);
     } catch (error) {
       console.log("error");
     }
