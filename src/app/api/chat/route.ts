@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       case "dataset_analyze":
         res = await client.proxies.analyzeDataset(req.data);
         break;
-      case "dataset/download":
+      case "dataset_download":
         res = await client.proxies.downloadDataset(req.data);
         break;
       default:
