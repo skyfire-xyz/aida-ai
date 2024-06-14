@@ -74,7 +74,7 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
                     postChat({
                       chatType: "dataset_analyze",
                       data: {
-                        ref: data.ref,
+                        dataset: data.ref,
                       },
                     }),
                   );
