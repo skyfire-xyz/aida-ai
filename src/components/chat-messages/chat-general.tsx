@@ -23,7 +23,7 @@ function ChatGeneral({
     return (
       <div className="mb-4 flex justify-end">
         <div className="mr-2 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-gray-400 px-4 py-3">
-          <article className="prose text-white">
+          <article className="prose whitespace-pre-wrap text-white">
             <Markdown>{textMessage}</Markdown>
           </article>
         </div>
@@ -44,8 +44,8 @@ function ChatGeneral({
         alt=""
       />
       <div className="ml-2 max-w-[calc(100%-80px)] rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3 md:max-w-[400px]">
-        <article className="prose text-white">
-          <Markdown>{textMessage}</Markdown>
+        <article className="prose whitespace-pre-wrap text-white">
+          <Markdown>{`test\ntest`}</Markdown>
         </article>
         {children && <div className="mt-1">{children}</div>}
         {contentImageUrl && (
