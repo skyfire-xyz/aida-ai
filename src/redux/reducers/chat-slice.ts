@@ -97,10 +97,6 @@ export const chatSlice = createSlice({
           case "image_generation":
             data = action.payload.imageUrl;
             break;
-          case "flirt":
-            data = action.payload.imageUrl;
-            textMessage = action.payload.translatedResponse;
-            break;
         }
         state.messages.push({
           uuid: action.payload.uuid,
