@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
-    "@skyfire-xyz/skyfire-sdk": "^0.1.0",
+    "@skyfire-xyz/skyfire-sdk": "^0.2.0",
     "axios": "^1.6.8",
     "axios-retry": "^4.1.0",
     "eslint-config-prettier": "^9.1.0",

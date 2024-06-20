@@ -59,6 +59,12 @@ export async function POST(request: Request) {
       case "dataset_download":
         res = await client.proxies.downloadDataset(req.data);
         break;
+      case "slang":
+        res = await client.proxies.chatSlangOpenRouter(req.data);
+        break;
+      case "flirt":
+        res = await client.proxies.chatTranslateOpenRouter(req.data);
+        break;
       default:
         break;
     }
