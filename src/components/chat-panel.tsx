@@ -191,19 +191,14 @@ export default function ChatPane(props: any) {
           return;
         }
 
-        const [situation, sourceLang, targetLang] = searchTerm
-          .trim()
-          .split(" ");
-
-        if (!situation || !sourceLang || !targetLang) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
         dispatch(
           postChat({
             chatType: "flirt",
-            data: { situation, sourceLang, targetLang },
+            data: {
+              situation: searchTerm.trim(),
+              sourceLang: "english",
+              targetLang: "french",
+            },
           }),
         );
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
