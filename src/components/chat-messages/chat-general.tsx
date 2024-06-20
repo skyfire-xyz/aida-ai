@@ -45,7 +45,7 @@ function ChatGeneral({
       />
       <div className="ml-2 max-w-[calc(100%-80px)] rounded-br-3xl rounded-tl-xl rounded-tr-3xl bg-[#009182] px-4 py-3 md:max-w-[400px]">
         <article className="prose whitespace-pre-wrap text-white">
-          <Markdown>{`test\ntest`}</Markdown>
+          <Markdown>{textMessage}</Markdown>
         </article>
         {children && <div className="mt-1">{children}</div>}
         {contentImageUrl && (
