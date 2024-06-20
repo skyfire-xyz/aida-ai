@@ -53,6 +53,7 @@ export const chatSlice = createSlice({
       .addCase(postChat.pending, processPending)
       .addCase(postChat.fulfilled, (state, action) => {
         let data;
+        let textMessage = action.payload.body;
         switch (action.payload.type) {
           case "dataset_search":
             data = action.payload.datasets || [];
@@ -96,13 +97,17 @@ export const chatSlice = createSlice({
           case "image_generation":
             data = action.payload.imageUrl;
             break;
+          case "flirt":
+            data = action.payload.imageUrl;
+            textMessage = action.payload.translatedResponse;
+            break;
         }
         state.messages.push({
           uuid: action.payload.uuid,
           type: action.payload.type as ChatMessageType["type"],
           avatarUrl: robotImageUrl,
           data: data,
-          textMessage: action.payload.body,
+          textMessage: textMessage,
         });
         processFulfilled(state, action);
       })

@@ -42,6 +42,18 @@ export default function ExamplePrompts() {
         })}
       </li>
       <li className="mb-1">
+        <DataSource sourceName="OpenRouter" />
+        {t.rich("examplePrompts.slang", {
+          b: (chunks) => <b>{chunks}</b>,
+        })}
+      </li>
+      <li className="mb-1">
+        <DataSource sourceName="OpenRouter" />
+        {t.rich("examplePrompts.flirt", {
+          b: (chunks) => <b>{chunks}</b>,
+        })}
+      </li>
+      <li className="mb-1">
         <DataSource sourceName="ChatGPT" />
         <DataSource sourceName="Perplexity" />
         {t.rich("examplePrompts.other", {

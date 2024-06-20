@@ -12,6 +12,8 @@ export default function ServiceIcons({ sourceName }: { sourceName: string }) {
       return "/images/aichat/logo-chatgpt.svg";
     } else if (sourceName === "Gemini") {
       return "/images/aichat/logo-gemini.svg";
+    } else if (sourceName === "OpenRouter") {
+      return "/images/aichat/logo-openrouter.png";
     }
   }, [sourceName]);
 
