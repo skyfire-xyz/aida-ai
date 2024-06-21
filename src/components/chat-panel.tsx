@@ -197,7 +197,7 @@ export default function ChatPane(props: any) {
             data: {
               situation: searchTerm.trim(),
               sourceLang: "english",
-              targetLang: "french",
+              targetLang: "spanish",
             },
           }),
         );
@@ -358,10 +358,10 @@ export default function ChatPane(props: any) {
   };
 
   return (
-    <div className="flex h-full w-full flex-col justify-between">
+    <div className="flex size-full flex-col justify-between">
       <div
         id="chat-pane"
-        className="mt-5 flex flex-grow flex-col overflow-scroll px-5 "
+        className="mt-5 flex grow flex-col overflow-scroll px-5 "
         ref={chatPaneRef}
       >
         {messages &&
@@ -434,11 +434,11 @@ export default function ChatPane(props: any) {
       <div className="flex-none px-3 py-5 pt-1 md:pt-5">
         <div className="mb-2 flex justify-end md:hidden">
           <HiOutlineCurrencyDollar
-            className="h-5 w-5"
+            className="size-5"
             onClick={() => setShowMicroPayments(true)}
           />
           <IoIosInformationCircleOutline
-            className="h-5 w-5"
+            className="size-5"
             onClick={() => setShowExamples(true)}
           />
         </div>
