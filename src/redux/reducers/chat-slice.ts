@@ -50,6 +50,7 @@ export const chatSlice = createSlice({
       /**
        * PostChat
        */
+      // rebase test
       .addCase(postChat.pending, processPending)
       .addCase(postChat.fulfilled, (state, action) => {
         let data;
@@ -96,10 +97,6 @@ export const chatSlice = createSlice({
             break;
           case "image_generation":
             data = action.payload.imageUrl;
-            break;
-          case "flirt":
-            data = action.payload.imageUrl;
-            textMessage = action.payload.translatedResponse;
             break;
         }
         state.messages.push({

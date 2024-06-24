@@ -75,7 +75,7 @@ export const receiverConfigs: Receiver[] = [
             data: {
               situation: searchTerm.trim(),
               sourceLang: "english",
-              targetLang: "french",
+              targetLang: "spanish",
             },
           }),
         );
