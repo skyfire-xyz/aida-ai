@@ -5,6 +5,7 @@ import {
 } from "@/src/config/envs";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 import { ApiError } from "@/src/types/api";
+import { receiverConfigs } from "@/src/config/receivers";
 
 function getClient(apiKey: string) {
   return new SkyfireClient({
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
 
   const client = getClient(API_KEY);
 
-  let res;
+  let res: any = null;
   try {
     switch (req.chatType) {
       case "chat":
@@ -59,14 +60,19 @@ export async function POST(request: Request) {
       case "dataset_download":
         res = await client.proxies.downloadDataset(req.data);
         break;
-      case "slang":
-        res = await client.proxies.chatSlangOpenRouter(req.data);
-        break;
-      case "flirt":
-        res = await client.proxies.chatTranslateOpenRouter(req.data);
-        break;
       default:
         break;
+    }
+    // Getting receivers from configuration file
+    if (!res) {
+      await Promise.all(
+        receiverConfigs.map(async (config) => {
+          if (!res && config.typeName === req.chatType) {
+            res = await client.proxies[config.proxyName](req.data);
+            return res;
+          }
+        }),
+      );
     }
   } catch (err) {
     if (err instanceof Error) {

@@ -1,20 +1,24 @@
 import { useMemo } from "react";
+import { receiverConfigs } from "../config/receivers";
 
 export default function ServiceIcons({ sourceName }: { sourceName: string }) {
   const imageUrl = useMemo(() => {
+    let url = "";
     if (sourceName === "Perplexity") {
-      return "/images/aichat/logo-perplexity.svg";
+      url = "/images/aichat/logo-perplexity.svg";
     } else if (sourceName === "HumorAI") {
-      return "/images/aichat/logo-humorapi.svg";
+      url = "/images/aichat/logo-humorapi.svg";
     } else if (sourceName === "KaggleAI") {
-      return "/images/aichat/logo-kaggle.svg";
+      url = "/images/aichat/logo-kaggle.svg";
     } else if (sourceName === "ChatGPT") {
-      return "/images/aichat/logo-chatgpt.svg";
+      url = "/images/aichat/logo-chatgpt.svg";
     } else if (sourceName === "Gemini") {
-      return "/images/aichat/logo-gemini.svg";
-    } else if (sourceName === "OpenRouter") {
-      return "/images/aichat/logo-openrouter.png";
+      url = "/images/aichat/logo-gemini.svg";
     }
+    receiverConfigs.forEach((config) => {
+      url = config.sourceName === sourceName ? config.logoImageURL : url;
+    });
+    return url;
   }, [sourceName]);
 
   if (!imageUrl) {

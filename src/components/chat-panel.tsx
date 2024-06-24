@@ -33,6 +33,7 @@ import { AppDispatch } from "../redux/store";
 import { SKYFIRE_API_KEY } from "../config/envs";
 import { getLogoAIData, scrollToBottom } from "../utils/ui";
 import ChatError from "./chat-messages/chat-error";
+import { receiverConfigs } from "../config/receivers";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -153,54 +154,6 @@ export default function ChatPane(props: any) {
             data: { prompt: searchTerm.trim() },
           }),
         );
-      } else if (inputText.toLocaleLowerCase().includes("slang")) {
-        ///////////////////////////////////////////////////////////
-        // Open Router - Slang
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        const match = inputText.match(/slang:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        dispatch(
-          postChat({
-            chatType: "slang",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (inputText.toLocaleLowerCase().includes("flirt")) {
-        ///////////////////////////////////////////////////////////
-        // Open Router - Flirt
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        const match = inputText.match(/flirt:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        dispatch(
-          postChat({
-            chatType: "flirt",
-            data: {
-              situation: searchTerm.trim(),
-              sourceLang: "english",
-              targetLang: "french",
-            },
-          }),
-        );
       } else if (inputText.toLocaleLowerCase().includes("websearch")) {
         ///////////////////////////////////////////////////////////
         // Web Search Request
@@ -315,6 +268,22 @@ export default function ChatPane(props: any) {
           }),
         );
       } else {
+        ///////////////////////////////////////////////////////////
+        // Handle Custom Prompts from receivers configs
+        ///////////////////////////////////////////////////////////
+        // let handled = false;
+        const handled = await Promise.all(
+          receiverConfigs.map(
+            async (config) =>
+              await config.promptHandler(inputText, {
+                dispatch,
+                addBotResponseMessage,
+                t,
+              }),
+          ),
+        );
+        if (handled.includes(true)) return;
+
         ///////////////////////////////////////////////////////////
         // Regular Chat Request
         ///////////////////////////////////////////////////////////

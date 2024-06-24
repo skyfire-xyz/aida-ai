@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import DataSource from "./service-icons";
+import { receiverConfigs } from "../config/receivers";
 
 export default function ExamplePrompts() {
   const t = useTranslations("ai");
@@ -41,18 +42,12 @@ export default function ExamplePrompts() {
           b: (chunks) => <b>{chunks}</b>,
         })}
       </li>
-      <li className="mb-1">
-        <DataSource sourceName="OpenRouter" />
-        {t.rich("examplePrompts.slang", {
-          b: (chunks) => <b>{chunks}</b>,
-        })}
-      </li>
-      <li className="mb-1">
-        <DataSource sourceName="OpenRouter" />
-        {t.rich("examplePrompts.flirt", {
-          b: (chunks) => <b>{chunks}</b>,
-        })}
-      </li>
+      {receiverConfigs.map((config) => (
+        <li className="mb-1" key={config.typeName}>
+          <DataSource sourceName={config.sourceName} />
+          {config.examplePrompt}
+        </li>
+      ))}
       <li className="mb-1">
         <DataSource sourceName="ChatGPT" />
         <DataSource sourceName="Perplexity" />
