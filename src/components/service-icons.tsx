@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { receiverConfigs } from "../config/receivers";
+import { receivers } from "../config/receivers";
 
 export default function ServiceIcons({ sourceName }: { sourceName: string }) {
   const imageUrl = useMemo(() => {
@@ -15,7 +15,7 @@ export default function ServiceIcons({ sourceName }: { sourceName: string }) {
     } else if (sourceName === "Gemini") {
       url = "/images/aichat/logo-gemini.svg";
     }
-    receiverConfigs.forEach((config) => {
+    receivers.forEach((config) => {
       url = config.sourceName === sourceName ? config.logoImageURL : url;
     });
     return url;

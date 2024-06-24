@@ -1,11 +1,21 @@
-type ProxyName = "chatGpt" | "chatSlangOpenRouter" | "chatTranslateOpenRouter"; // TODO: Ideally FE should get this type from SDK
+type ProxyName =
+  | "chatGpt"
+  | "chatSlangOpenRouter"
+  | "chatTranslateOpenRouter"
+  | "video"
+  | "websearch"
+  | "tasklist"
+  | "chatPerplexity"
+  | "joke"
+  | "image"
+  | "searchDataset"; // TODO: Ideally FE should get this type from SDK
 
 type ReceiverConfig = {
   typeName: string; // type name used in FE to identify the receiver ( parameter received from BE for dependant call )
   proxyName: ProxyName; // Fundtion name in client.proxies
   sourceName: string; // source name received in BE payment
   logoImageURL: string; // logo image url
-  examplePrompt: JSX.Element; // Example Prompt HTML
+  examplePrompt: JSX.Element | null; // Example Prompt HTML
   promptHandler: (inputText: string, context: any) => Promise<boolean>; // Right a logic to handle the prompt for this receiver
 };
 
@@ -14,7 +24,7 @@ export class Receiver {
   proxyName: ProxyName;
   sourceName: string;
   logoImageURL: string;
-  examplePrompt: JSX.Element;
+  examplePrompt: JSX.Element | null;
   promptHandler: (inputText: string, context: any) => Promise<boolean>;
 
   constructor(config: ReceiverConfig) {

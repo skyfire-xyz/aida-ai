@@ -33,7 +33,7 @@ import { AppDispatch } from "../redux/store";
 import { SKYFIRE_API_KEY } from "../config/envs";
 import { getLogoAIData, scrollToBottom } from "../utils/ui";
 import ChatError from "./chat-messages/chat-error";
-import { receiverConfigs } from "../config/receivers";
+import { receivers } from "../config/receivers";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -105,222 +105,33 @@ export default function ChatPane(props: any) {
       // Wait for a little bit to simulate bot thinking
       await sleep(300);
 
-      // API Call here
-      if (inputText.toLocaleLowerCase().includes("search dataset")) {
-        ///////////////////////////////////////////////////////////
-        // Dataset Request
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        const match = inputText.match(/search dataset:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          dispatch(
-            addMessage({
-              type: "chat",
-              textMessage: t("aiPrompt.errorMessage"),
+      ///////////////////////////////////////////////////////////
+      // Receivers prompt handling
+      ///////////////////////////////////////////////////////////
+      const handled = await Promise.all(
+        receivers.map(
+          async (config) =>
+            await config.promptHandler(inputText, {
+              dispatch,
+              addBotResponseMessage,
+              addMessage,
+              t,
             }),
-          );
-          return;
-        }
-        dispatch(
-          postChat({
-            chatType: "dataset_search",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (inputText.toLocaleLowerCase().includes("tasklist")) {
-        ///////////////////////////////////////////////////////////
-        // Tasklist
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
+        ),
+      );
+      if (handled.includes(true)) return;
 
-        const match = inputText.match(/tasklist:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        dispatch(
-          postChat({
-            chatType: "tasklist",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (inputText.toLocaleLowerCase().includes("websearch")) {
-        ///////////////////////////////////////////////////////////
-        // Web Search Request
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        const match = inputText.match(/websearch:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        dispatch(
-          postChat({
-            chatType: "web_search",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (inputText.toLocaleLowerCase().includes("videosearch")) {
-        ///////////////////////////////////////////////////////////
-        // Video Search Request
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        const match = inputText.match(/videosearch:(.+)/i);
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-        dispatch(
-          postChat({
-            chatType: "video_search",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (
-        inputText.toLocaleLowerCase().includes("generate gif") ||
-        inputText.toLocaleLowerCase().includes("generate meme") ||
-        inputText.toLocaleLowerCase().includes("generate image")
-      ) {
-        ///////////////////////////////////////////////////////////
-        // Generate Image Request
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        let match = inputText.match(/generate image:(.+)/i);
-        if (!match) match = inputText.match(/generate gif:(.+)/i);
-        if (!match) match = inputText.match(/generate meme:(.+)/i);
-
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        // Generate Image API
-        dispatch(
-          postChat({
-            chatType: "image_generation",
-            data: { prompt: searchTerm.trim() },
-          }),
-        );
-      } else if (
-        inputText.toLocaleLowerCase().includes("random gif") ||
-        inputText.toLocaleLowerCase().includes("random meme") ||
-        inputText.toLocaleLowerCase().includes("random image")
-      ) {
-        ///////////////////////////////////////////////////////////
-        // Meme Request
-        ///////////////////////////////////////////////////////////
-        let searchTerm = "";
-
-        let match = inputText.match(/random image:(.+)/i);
-        if (!match) match = inputText.match(/random gif:(.+)/i);
-        if (!match) match = inputText.match(/random meme:(.+)/i);
-
-        if (match) {
-          searchTerm = match[1];
-        }
-
-        if (!searchTerm) {
-          addBotResponseMessage(t("aiPrompt.errorMessage"));
-          return;
-        }
-
-        dispatch(
-          postChat({
-            chatType: "meme",
-            data: { searchTerm: searchTerm.trim(), meme: true },
-          }),
-        );
-      } else if (inputText.includes("joke")) {
-        ///////////////////////////////////////////////////////////
-        // Joke Request
-        ///////////////////////////////////////////////////////////
-
-        dispatch(
-          postChat({
-            chatType: "random_joke",
-            data: { searchTerm: "", meme: false },
-          }),
-        );
-      } else {
-        ///////////////////////////////////////////////////////////
-        // Handle Custom Prompts from receivers configs
-        ///////////////////////////////////////////////////////////
-        // let handled = false;
-        const handled = await Promise.all(
-          receiverConfigs.map(
-            async (config) =>
-              await config.promptHandler(inputText, {
-                dispatch,
-                addBotResponseMessage,
-                t,
-              }),
-          ),
-        );
-        if (handled.includes(true)) return;
-
-        ///////////////////////////////////////////////////////////
-        // Regular Chat Request
-        ///////////////////////////////////////////////////////////
-
-        if (
-          inputText.toLocaleLowerCase().includes("logo") &&
-          inputText.toLocaleLowerCase().includes("now")
-        ) {
-          // Logo request after creating a wallet on admin console
-          const logoAIAgent = getLogoAIData();
-          dispatch(fetchLogoAgent({ logoAIAgent }));
-        } else {
-          // Logo request before creating a wallet
-          // dispatch(fetchChat({ prompt: inputText }));
-          dispatch(
-            postChat({
-              chatType: "chat",
-              data: {
-                prompt: inputText,
-              },
-            }),
-          );
-
-          if (inputText.toLocaleLowerCase().includes("logo")) {
-            dispatch(setBotStatus(true));
-            setTimeout(() => {
-              dispatch(setBotStatus(false));
-              dispatch(
-                addMessage({
-                  type: "chat",
-                  textMessage: t("aiPrompt.textVisitAdminDashboard"),
-                }),
-              );
-            }, 1000);
-          }
-        }
-      }
+      ///////////////////////////////////////////////////////////
+      // Regular Chat Request
+      ///////////////////////////////////////////////////////////
+      dispatch(
+        postChat({
+          chatType: "chat",
+          data: {
+            prompt: inputText,
+          },
+        }),
+      );
 
       if (ev.preventDefault) ev.preventDefault();
     }
