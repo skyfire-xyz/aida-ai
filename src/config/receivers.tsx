@@ -1,7 +1,5 @@
 import { Receiver } from "../receivers/type";
 import geminiVideoSearch from "../receivers/gemini-video-search";
-import openRouterFlirt from "../receivers/open-router-flirt";
-import openRouterSlang from "../receivers/open-router-slang";
 import geminiWebSearch from "../receivers/gemini-websearch";
 import imageGeneration from "../receivers/chatgpt-image-generation";
 import humorAPIRandomJoke from "../receivers/humorapi-joke";
@@ -17,6 +15,4 @@ export const receivers: Receiver[] = [
   imageGeneration,
   geminiVideoSearch,
   geminiWebSearch,
-  openRouterSlang,
-  openRouterFlirt,
 ];
