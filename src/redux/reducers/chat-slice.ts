@@ -50,9 +50,11 @@ export const chatSlice = createSlice({
       /**
        * PostChat
        */
+      // rebase test
       .addCase(postChat.pending, processPending)
       .addCase(postChat.fulfilled, (state, action) => {
         let data;
+        let textMessage = action.payload.body;
         switch (action.payload.type) {
           case "dataset_search":
             data = action.payload.datasets || [];
@@ -102,7 +104,7 @@ export const chatSlice = createSlice({
           type: action.payload.type as ChatMessageType["type"],
           avatarUrl: robotImageUrl,
           data: data,
-          textMessage: action.payload.body,
+          textMessage: textMessage,
         });
         processFulfilled(state, action);
       })

@@ -5,6 +5,7 @@ import {
 } from "@/src/config/envs";
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 import { ApiError } from "@/src/types/api";
+import { receivers } from "@/src/config/receivers";
 
 function getClient(apiKey: string) {
   return new SkyfireClient({
@@ -23,35 +24,21 @@ export async function POST(request: Request) {
 
   const client = getClient(API_KEY);
 
-  let res;
+  let res: any = null;
   try {
     switch (req.chatType) {
       case "chat":
         res = await client.proxies.chatGpt(req.data);
-        break;
-      case "meme":
-        res = await client.proxies.joke(req.data);
-        break;
-      case "image_generation":
-        res = await client.proxies.image(req.data);
-        break;
-      case "video_search":
-        res = await client.proxies.video(req.data);
-        break;
-      case "web_search":
-        res = await client.proxies.websearch(req.data);
-        break;
-      case "tasklist":
-        res = await client.proxies.tasklist(req.data);
-        break;
-      case "dataset_search":
-        res = await client.proxies.searchDataset(req.data);
         break;
       case "text_completion":
         res = await client.proxies.chatPerplexity(req.data);
         break;
       case "random_joke":
         res = await client.proxies.joke(req.data);
+        res = {
+          ...res,
+          body: res.joke, // BE returns 'joke' instead of 'body'
+        };
         break;
       case "dataset_analyze":
         res = await client.proxies.analyzeDataset(req.data);
@@ -61,6 +48,17 @@ export async function POST(request: Request) {
         break;
       default:
         break;
+    }
+    // Getting receivers from configuration file
+    if (!res) {
+      await Promise.all(
+        receivers.map(async (config) => {
+          if (!res && config.typeName === req.chatType) {
+            res = await client.proxies[config.proxyName](req.data);
+            return res;
+          }
+        }),
+      );
     }
   } catch (err) {
     if (err instanceof Error) {
