@@ -6,6 +6,8 @@ import humorAPIRandomJoke from "../receivers/humorapi-joke";
 import chatGPTTasklist from "../receivers/chatgpt-tasklist";
 import humorAPIMeme from "../receivers/humorapi-meme";
 import kaggleDatasetSearch from "../receivers/kaggle-dataset-search";
+import openRouterSlang from "../receivers/open-router-slang";
+import openRouterFlirt from "../receivers/open-router-flirt";
 
 export const receivers: Receiver[] = [
   kaggleDatasetSearch,
@@ -15,4 +17,6 @@ export const receivers: Receiver[] = [
   imageGeneration,
   geminiVideoSearch,
   geminiWebSearch,
+  openRouterSlang,
+  openRouterFlirt,
 ];
