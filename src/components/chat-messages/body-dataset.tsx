@@ -29,20 +29,26 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
           dataset: data.ref,
         },
       });
-      const fileUrl = response?.data?.fileUrl;
+
       dispatch(
         addProtocolLog({ payload: { payment: response?.data.payment } }),
       );
-      return fileUrl;
+      return response?.data;
     } catch {}
     return false;
   }
 
-  async function downloadDataset(fileUrl: string) {
+  async function downloadDataset({
+    filename,
+    fileUrl,
+  }: {
+    filename: string;
+    fileUrl: string;
+  }) {
     // Regular Chat API
     try {
       const response = await api.get(`${fileUrl}`);
-      fileDownload(response.data, fileUrl);
+      fileDownload(response.data, filename);
     } catch (error) {
       console.log("error");
     }
@@ -87,8 +93,8 @@ export default function BodyDataset({ datasets }: ChatDatasetProps) {
                 className="flex h-6 w-6 items-center"
                 onClick={async (e: MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
-                  const filename = await getDataset(data);
-                  const res = await downloadDataset(filename);
+                  const downloadRes = await getDataset(data);
+                  await downloadDataset(downloadRes);
                 }}
               >
                 <FaFileDownload />
