@@ -2,7 +2,7 @@ import { postChat } from "@/src/redux/thunk-actions";
 import { Receiver } from "./type";
 
 const slangAgent = new Receiver({
-  typeName: "sa",
+  typeName: "slang",
   proxyName: "chatSlangAgent",
   sourceName: "SlangAgent",
   logoImageURL: "/images/aichat/logo-openrouter.png",
