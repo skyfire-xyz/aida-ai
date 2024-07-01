@@ -8,6 +8,7 @@ import humorAPIMeme from "../receivers/humorapi-meme";
 import kaggleDatasetSearch from "../receivers/kaggle-dataset-search";
 import openRouterSlang from "../receivers/open-router-slang";
 import openRouterFlirt from "../receivers/open-router-flirt";
+import slangAgent from "../receivers/slang-agent-prompt";
 
 export const receivers: Receiver[] = [
   kaggleDatasetSearch,
@@ -19,4 +20,5 @@ export const receivers: Receiver[] = [
   geminiWebSearch,
   openRouterSlang,
   openRouterFlirt,
+  slangAgent,
 ];

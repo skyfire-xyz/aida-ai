@@ -835,10 +835,10 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@skyfire-xyz/skyfire-sdk@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@skyfire-xyz/skyfire-sdk/-/skyfire-sdk-0.2.0.tgz#ecd402439a0d6f17e056d59c6ee9d17b401bcd94"
-  integrity sha512-4uWBR/J9c4mUEBU1CyF2p0jP08c+du5CkhLt/sehnG7DeOU08/+MbLCphvtb7qo3edaTlifg/Ydrl136ytbBCg==
+"@skyfire-xyz/skyfire-sdk@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@skyfire-xyz/skyfire-sdk/-/skyfire-sdk-0.3.0.tgz#774f072d9b3bf71d0590ecc6d38e261e7cd57e3f"
+  integrity sha512-LupFOUZqFTHNKaUwa+B+QH+joT7JdGD2aF1mDRe9yuPQFQo3Q7x/S0s5xMjZbqVEnSpXEIDcKENkj6dc2jrDDg==
 
 "@swc/helpers@0.5.2":
   version "0.5.2"
