@@ -8,15 +8,15 @@ const slangAgent = new Receiver({
   logoImageURL: "/images/aichat/logo-openrouter.png",
   examplePrompt: (
     <>
-      <b>SA</b>: pop off girly pop
+      <b>SlangAgent</b>: brb gtg do hw pookie
     </>
   ),
   promptHandler: async (inputText, context) => {
     const { dispatch, addBotResponseMessage, t } = context;
-    if (inputText.toLocaleLowerCase().includes("sa:")) {
+    if (inputText.toLocaleLowerCase().includes("slangagent:")) {
       let searchTerm = "";
 
-      const match = inputText.match(/sa:(.+)/i);
+      const match = inputText.match(/slangagent:(.+)/i);
       if (match) {
         searchTerm = match[1];
       }
