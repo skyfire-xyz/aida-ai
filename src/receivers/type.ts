@@ -2,6 +2,7 @@ type ProxyName =
   | "chatGpt"
   | "chatSlangOpenRouter"
   | "chatTranslateOpenRouter"
+  | "chatSlangAgent"
   | "video"
   | "websearch"
   | "tasklist"
