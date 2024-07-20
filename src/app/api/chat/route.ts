@@ -6,6 +6,7 @@ import {
 import { SkyfireClient } from "@skyfire-xyz/skyfire-sdk";
 import { ApiError } from "@/src/types/api";
 import { receivers } from "@/src/config/receivers";
+import axios from "axios";
 
 function getClient(apiKey: string) {
   return new SkyfireClient({
@@ -46,6 +47,12 @@ export async function POST(request: Request) {
       case "dataset_download":
         res = await client.proxies.downloadDataset(req.data);
         break;
+      case "slang":
+        res = await axios.post(
+          "http://127.0.0.1:5000/v1/receivers/slang-agent",
+          req.data,
+        );
+        return Response.json(res.data);
       default:
         break;
     }
