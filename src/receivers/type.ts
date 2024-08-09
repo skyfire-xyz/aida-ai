@@ -6,7 +6,6 @@ type ProxyName =
   | "video"
   | "websearch"
   | "tasklist"
-  | "chatPerplexity"
   | "joke"
   | "image"
   | "searchDataset"; // TODO: Ideally FE should get this type from SDK
