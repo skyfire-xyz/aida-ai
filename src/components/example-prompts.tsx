@@ -18,7 +18,6 @@ export default function ExamplePrompts() {
       })}
       <li className="mb-1">
         <DataSource sourceName="ChatGPT" />
-        <DataSource sourceName="Perplexity" />
         {t.rich("examplePrompts.other", {
           b: (chunks) => <b>{chunks}</b>,
         })}
