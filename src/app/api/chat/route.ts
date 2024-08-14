@@ -31,7 +31,7 @@ export async function POST(request: Request) {
         res = await client.proxies.chatGpt(req.data);
         break;
       case "text_completion":
-        res = await client.proxies.chatPerplexity(req.data);
+        res = await client.proxies.chatGpt(req.data);
         break;
       case "random_joke":
         res = await client.proxies.joke(req.data);
