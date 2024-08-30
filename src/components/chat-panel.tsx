@@ -222,26 +222,15 @@ export default function ChatPane(props: any) {
             onClick={() => setShowExamples(true)}
           />
         </div>
-        {!SKYFIRE_API_KEY ? (
-          <Button
-            className="w-full rounded-xl"
-            onClick={() => {
-              props.showSignIn(true);
-            }}
-          >
-            {t("page.chatSignIn")}
-          </Button>
-        ) : (
-          <TextInput
-            className="w-full rounded-xl bg-[#f7f9fa]"
-            placeholder={t("page.chatPlaceholder")}
-            value={inputText}
-            onChange={(ev) => {
-              setInputText(ev?.target?.value);
-            }}
-            onKeyDown={handleEnter}
-          ></TextInput>
-        )}
+        <TextInput
+          className="w-full rounded-xl bg-[#f7f9fa]"
+          placeholder={t("page.chatPlaceholder")}
+          value={inputText}
+          onChange={(ev) => {
+            setInputText(ev?.target?.value);
+          }}
+          onKeyDown={handleEnter}
+        ></TextInput>
       </div>
       <Modal
         show={showMicroPayments}

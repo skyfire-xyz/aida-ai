@@ -1,8 +1,7 @@
-export const SKYFIRE_API_KEY =
-  process.env.SKYFIRE_API_KEY || "2474059e-f1e2-49f8-aa20-236e16d2c0c5";
+export const SKYFIRE_API_KEY = process.env.SKYFIRE_API_KEY || "";
 
 export const ENABLE_LOCAL_API_KEY =
   process.env.NEXT_PUBLIC_ENABLE_LOCAL_API_KEY || false;
 
 export const SKYFIRE_ENV =
-  (process.env.SKYFIRE_ENV as ENV_TYPES) || "development";
+  (process.env.SKYFIRE_ENV as ENV_TYPES) || "production";
