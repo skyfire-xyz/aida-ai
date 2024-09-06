@@ -30,7 +30,6 @@ import {
   useShouldScrollToBottomSelector,
 } from "../redux/reducers/ui-effect-slice";
 import { AppDispatch } from "../redux/store";
-import { SKYFIRE_API_KEY } from "../config/envs";
 import { getLogoAIData, scrollToBottom } from "../utils/ui";
 import ChatError from "./chat-messages/chat-error";
 import { receivers } from "../config/receivers";

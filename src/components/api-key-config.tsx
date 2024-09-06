@@ -2,13 +2,12 @@ import { Button, Modal, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { getSessionData, setSessionData } from "../utils/session-storage";
-import { SKYFIRE_API_KEY } from "../config/envs";
 
 export default function APIKeyConfig() {
   const [showConfig, setShowConfig] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const skyFireKey = getSessionData("LOCAL_SKYFIRE_API_KEY");
-  const activeAPIKey = skyFireKey || SKYFIRE_API_KEY;
+  const activeAPIKey = skyFireKey || "********";
 
   return (
     <div>

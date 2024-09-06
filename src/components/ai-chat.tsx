@@ -10,10 +10,9 @@ import ProtocolLogs from "./protocol-logs/protocol-logs";
 type Image = any;
 interface AiChatProps {
   images: Image[];
-  showSignIn: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function AiChat({ images, showSignIn }: AiChatProps) {
+export default function AiChat({ images }: AiChatProps) {
   const t = useTranslations("ai");
 
   // const userAvatarImageData = getStrapiDataAttributes(
@@ -35,7 +34,6 @@ export default function AiChat({ images, showSignIn }: AiChatProps) {
       <div className="container mx-auto h-full rounded-lg shadow-lg">
         <div className="h-full justify-between rounded-lg bg-white sm:flex-col md:flex md:flex-row">
           <ChatPanel
-            showSignIn={showSignIn}
             userImageUrl={
               userAvatarImageData?.url || "/images/aichat/defaultUser.png"
             }
